@@ -49,9 +49,7 @@ OPENFIGI_BATCH   = 100   # max items per request
 # doesn't automatically win. Cluster signal now much stronger.
 WEIGHT_PORTFOLIO_PCT  = 0.20   # how large the position is in the portfolio
 WEIGHT_DELTA_PCT      = 0.20   # how aggressively the manager bought
-WEIGHT_SHARES_OS      = 0.20   # % of outstanding shares held
-WEIGHT_SECTOR_NEW     = 0.10   # new sector for this manager?
-# Note: remaining 0.30 weight is effectively captured by cluster bonus below
+# Cluster bonus (CLUSTER_BONUS_MULTIPLIER) provides the remaining signal weight
 
 # ── Scoring thresholds ────────────────────────────────────────────────────────
 MIN_PORTFOLIO_WEIGHT_PCT   = 0.5    # ignore positions < 0.5% of portfolio
@@ -71,7 +69,7 @@ OPTION_MIN_DAYS     = 90
 OPTION_MAX_DAYS     = 180
 
 # ── Claude API ────────────────────────────────────────────────────────────────
-CLAUDE_MODEL        = "claude-sonnet-4-20250514"
+CLAUDE_MODEL        = "claude-sonnet-4-6"
 CLAUDE_MAX_TOKENS   = 4096
 CLAUDE_RETRY_COUNT  = 3
 CLAUDE_RETRY_DELAY  = 5   # seconds
