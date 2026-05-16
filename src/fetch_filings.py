@@ -233,6 +233,9 @@ def map_cusips_to_tickers(cusips: list[str]) -> dict[str, str]:
                 time.sleep(60)
                 resp = requests.post(OPENFIGI_URL, json=payload,
                                      headers={"Content-Type": "application/json"}, timeout=20)
+            if resp.status_code != 200:
+                print(f"  ⚠️  OpenFIGI returned HTTP {resp.status_code}, skipping batch")
+                continue
             results = resp.json()
             for cusip, result in zip(batch, results):
                 if "data" in result and result["data"]:
