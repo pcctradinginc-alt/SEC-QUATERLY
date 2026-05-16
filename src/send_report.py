@@ -56,7 +56,8 @@ def generate_html_report(analysis: dict) -> str:
     for stock in top5:
         ticker = stock["ticker"]
         opt    = options_by_ticker.get(ticker, {})
-        flags_html = "".join(flag_badge(f) for f in stock.get("flags_from_score", []))
+        primary_flag = stock.get("primary_flag", "")
+        flags_html = flag_badge(primary_flag) if primary_flag else ""
 
         # Buyers list
         buyers = ", ".join(stock.get("key_buyers", []))
