@@ -180,7 +180,7 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
             # Prior portfolio weight
             prior_port_weight = None
             if prior_pos and prior:
-                prior_aum = prior["filers"].get(filer_name, {}).get("total_value", 0)
+                prior_aum = prior["filers"].get(filer_name, {}).get("reported_aum_k", 0)
                 if prior_aum > 0:
                     prior_port_weight = (prior_pos.get("value_usd_thousands", 0) / prior_aum) * 100.0
 
