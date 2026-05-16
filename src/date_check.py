@@ -72,7 +72,7 @@ def write_github_output(key: str, value: str):
             f.write(f"{key}={value}\n")
     else:
         # Local testing fallback
-        print(f"::set-output name={key}::{value}")
+        print(f"[local] {key}={value}")
 
 
 if __name__ == "__main__":
