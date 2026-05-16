@@ -44,25 +44,43 @@ def load_options(today_str: str) -> dict:
 
 
 def format_options_for_prompt(ticker: str, opt_data: dict) -> str:
-    """Formats option candidates concisely for the prompt."""
-    options = opt_data.get("options", [])
+    """Formats option candidates concisely for the prompt, including live stock price."""
+    options       = opt_data.get("options", [])
+    current_price = opt_data.get("current_price")
+    change_pct    = opt_data.get("change_pct")
+    direction     = opt_data.get("direction", "BULLISH")
+
+    price_str = f"${current_price}" if current_price else "n/a"
+    change_str = f"{change_pct:+.2f}%" if change_pct is not None else "n/a"
+
     if not options:
-        return f"{ticker}: No options data available\n"
+        return f"\n{ticker} — Current: {price_str} ({change_str}) | No options data available\n"
 
-    lines = [f"\n{ticker} OPTIONS ({opt_data.get('direction', 'BULLISH')}):"]
-    lines.append(f"{'Symbol':<22}{'Strike':<10}{'Expiry':<14}{'Bid':<8}{'Ask':<8}"
-                 f"{'Vol':<8}{'OI':<8}{'Delta':<8}{'IV':<8}")
-    lines.append("─" * 94)
+    lines = [f"\n{ticker} — Current price: {price_str} ({change_str} today) | Direction: {direction}"]
+    lines.append(f"{'Symbol':<22}{'Strike':<10}{'vs Spot':<10}{'Expiry':<14}{'Mid':<8}"
+                 f"{'Sprd%':<8}{'Vol':<8}{'OI':<8}{'Delta':<8}{'IV':<8}")
+    lines.append("─" * 104)
 
-    for opt in options[:8]:  # show up to 8 candidates
-        delta_str = f"{opt['delta']:.2f}" if opt.get("delta") else "n/a"
-        iv_str    = f"{float(opt['implied_volatility']):.1%}" if opt.get("implied_volatility") else "n/a"
+    for opt in options[:8]:
+        strike     = opt.get("strike")
+        delta_str  = f"{opt['delta']:.2f}" if opt.get("delta") else "n/a"
+        iv_str     = f"{float(opt['implied_volatility']):.1%}" if opt.get("implied_volatility") else "n/a"
+        mid_str    = f"${opt['mid']}" if opt.get("mid") else "n/a"
+        spread_str = f"{opt['spread_pct']}%" if opt.get("spread_pct") is not None else "n/a"
+
+        # Show how far the strike is from current price
+        if strike and current_price:
+            vs_spot = f"{((float(strike) / float(current_price)) - 1) * 100:+.1f}%"
+        else:
+            vs_spot = "n/a"
+
         lines.append(
             f"{str(opt.get('symbol', '')):<22}"
-            f"{str(opt.get('strike', '')):<10}"
+            f"{str(strike or ''):<10}"
+            f"{vs_spot:<10}"
             f"{str(opt.get('expiration_date', '')):<14}"
-            f"{str(opt.get('bid', '')):<8}"
-            f"{str(opt.get('ask', '')):<8}"
+            f"{mid_str:<8}"
+            f"{spread_str:<8}"
             f"{str(opt.get('volume', '')):<8}"
             f"{str(opt.get('open_interest', '')):<8}"
             f"{delta_str:<8}"
@@ -104,13 +122,18 @@ REAL OPTIONS DATA FROM TRADIER:
 {''.join(option_tables)}
 
 OPTION SELECTION CRITERIA:
-1. Strike selection: For BULLISH plays, prefer slightly OTM (Delta 0.35-0.50) for leverage
-   with reasonable probability of profit. ATM (Delta 0.45-0.55) for higher conviction plays.
+1. Strike selection: Use the "vs Spot" column to assess moneyness. For BULLISH plays, prefer
+   slightly OTM (+2% to +8% above current price, Delta 0.35-0.50) for leverage with reasonable
+   probability of profit. ATM (Delta 0.45-0.55) for higher conviction plays.
 2. Expiry: 3-6 months allows time for institutional thesis to play out (13F data is already
    ~45 days old, so add that to your horizon).
 3. IV consideration: Avoid buying options with unusually high IV (paying too much premium).
-4. Volume/OI: Prefer liquid options (volume >200, OI >500) for better execution.
-5. If Greeks unavailable: select based on strike proximity to current implied price and liquidity.
+   Compare IV levels across strikes and expiries in the table.
+4. Liquidity: Prefer options with volume >200, OI >500, and spread% <10%. Spread% is shown
+   in the table — wide spreads (>12%) hurt entry/exit significantly.
+5. Current price context: The live stock price is shown above each options table. Use it to
+   judge whether the thesis has already played out (stock already up a lot since 13F filing)
+   or still has room to run.
 
 OUTPUT FORMAT (respond ONLY with valid JSON, no markdown fences):
 {{
