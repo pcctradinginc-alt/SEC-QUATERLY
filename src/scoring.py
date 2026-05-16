@@ -11,6 +11,7 @@ Fixes from architecture audit:
 """
 
 import json
+import re
 from collections import defaultdict
 from datetime import date
 
@@ -147,7 +148,6 @@ def detect_clusters(scored: list[dict]) -> dict[str, list[str]]:
         name   = entry.get("name", "").strip().upper()
 
         # Normalize company name: remove common suffixes for better matching
-        import re
         name_norm = re.sub(r"\b(INC|CORP|LTD|LLC|LP|PLC|CO|THE|DEL|COM)\b", "", name)
         name_norm = re.sub(r"\s+", " ", name_norm).strip()
 
@@ -163,11 +163,14 @@ def detect_clusters(scored: list[dict]) -> dict[str, list[str]]:
 
 
 def apply_cluster_bonus(scored: list[dict], clusters: dict[str, list[str]]) -> list[dict]:
-    """Multiplies raw_score by CLUSTER_BONUS_MULTIPLIER for clustered tickers."""
+    """Multiplies raw_score by CLUSTER_BONUS_MULTIPLIER for clustered tickers.
+    Checks ticker first, then CUSIP as fallback (mirrors detect_clusters key logic).
+    """
     for entry in scored:
-        if entry["ticker"] in clusters:
-            entry["cluster_funds"] = clusters[entry["ticker"]]
-            entry["cluster_count"] = len(clusters[entry["ticker"]])
+        cluster_key = entry["ticker"] or entry.get("cusip", "")
+        if cluster_key in clusters:
+            entry["cluster_funds"] = clusters[cluster_key]
+            entry["cluster_count"] = len(clusters[cluster_key])
             entry["raw_score"]    *= CLUSTER_BONUS_MULTIPLIER
             if "CLUSTER" not in entry["flags"]:
                 entry["flags"].append("CLUSTER")
