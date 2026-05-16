@@ -29,12 +29,16 @@ from config import (
 
 def load_round1(today_str: str) -> dict:
     path = DATA_DIR / f"{today_str}_claude_round1.json"
+    if not path.exists():
+        raise FileNotFoundError(f"Claude Round 1 results not found: {path}")
     with open(path) as f:
         return json.load(f)
 
 
 def load_options(today_str: str) -> dict:
     path = DATA_DIR / f"{today_str}_options.json"
+    if not path.exists():
+        raise FileNotFoundError(f"Options data not found: {path}")
     with open(path) as f:
         return json.load(f)
 
@@ -71,7 +75,7 @@ def format_options_for_prompt(ticker: str, opt_data: dict) -> str:
 
 
 def build_round2_prompt(r1: dict, options_data: dict) -> str:
-    today_str = r1["analysis_date"]
+    today_str = r1.get("analysis_date", date.today().isoformat())
 
     # Build thesis summary
     theses = []
