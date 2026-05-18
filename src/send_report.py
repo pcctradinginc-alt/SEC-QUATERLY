@@ -98,6 +98,50 @@ def _post_filing_block(perf: dict) -> str:
     )
 
 
+def _multi_quarter_block(mq: dict) -> str:
+    """
+    Renders a compact banner when a stock has been built over multiple quarters.
+    Only shown when build_quarters >= 2; becomes more prominent at >= 3 and >= 5.
+    """
+    if not mq:
+        return ""
+    bq = mq.get("build_quarters", 0)
+    if bq < 2:
+        return ""
+
+    avg_delta  = mq.get("avg_delta_pct")
+    silent     = mq.get("silent_build", False)
+    flags      = mq.get("flags", [])
+
+    if bq >= 5:
+        bg, border, color, icon = "#fdf4ff", "#d8b4fe", "#6b21a8", "🔥"
+    elif bq >= 3:
+        bg, border, color, icon = "#eff6ff", "#bfdbfe", "#1e40af", "📈"
+    else:
+        bg, border, color, icon = "#f0fdf4", "#bbf7d0", "#166534", "➕"
+
+    delta_str = f" · Ø&nbsp;+{avg_delta:.0f}%&nbsp;/&nbsp;Quartal" if avg_delta else ""
+    silent_badge = (
+        '&nbsp;<span style="background:#7c3aed;color:white;padding:1px 7px;'
+        'border-radius:10px;font-size:10px;font-weight:700">SILENT BUILD</span>'
+        if silent else ""
+    )
+    strong_badge = (
+        '&nbsp;<span style="background:#dc2626;color:white;padding:1px 7px;'
+        'border-radius:10px;font-size:10px;font-weight:700">STRONG BUILD</span>'
+        if "STRONG_BUILD" in flags else ""
+    )
+
+    return (
+        f'<div style="background:{bg};border:1px solid {border};border-radius:8px;'
+        f'padding:9px 14px;margin-bottom:12px;">'
+        f'<span style="color:{color};font-size:13px;font-weight:600">'
+        f'{icon} {bq} Quartale in Folge aufgebaut{delta_str}'
+        f'</span>{silent_badge}{strong_badge}'
+        f'</div>'
+    )
+
+
 def generate_backtest_html(backtest: dict) -> str:
     """Renders a compact performance summary block for the report."""
     s = backtest.get("summary", {})
@@ -226,6 +270,7 @@ def generate_html_report(analysis: dict, backtest: dict | None = None) -> str:
           <div style="margin-bottom:12px">{flags_html}</div>
 
           {_post_filing_block(stock.get("post_filing_perf", {}))}
+          {_multi_quarter_block(stock.get("mq_signal", {}))}
 
           <div style="background:#f9fafb;border-radius:8px;padding:16px;margin-bottom:16px;">
             <div style="font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;margin-bottom:6px">Investment Thesis</div>
