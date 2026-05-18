@@ -151,6 +151,12 @@ def compute_raw_score(pos: dict, filer_name: str) -> float:
     if tx_type in ("REDUCED", "SOLD", "UNCHANGED"):
         return 0.0
 
+    # Skip positions where the fund is net short/hedged via puts.
+    # A filer with 100 long shares and 10,000 put shares is bearish,
+    # not a conviction buy – scoring it bullish would be a false signal.
+    if not pos.get("net_bullish", True):
+        return 0.0
+
     delta_component = 100.0 if delta_pct is None else abs(delta_pct)
 
     raw = (WEIGHT_PORTFOLIO_PCT * port_pct) + (WEIGHT_DELTA_PCT * delta_component)
@@ -177,6 +183,12 @@ def apply_flags(pos: dict, rank: int) -> list[str]:
 
     if tx_type == "ADDED" and delta_pct is not None and delta_pct >= DOUBLE_DOWN_MIN_DELTA:
         flags.append("AGGRESSIVE_ADD")
+
+    # Warn if the long position is accompanied by a significant put hedge
+    put_val  = pos.get("put_value_usd_k", 0)
+    long_val = pos.get("value_usd_thousands", 0)
+    if put_val > 0 and long_val > 0 and put_val > long_val * 0.5:
+        flags.append("PUT_HEDGE_PRESENT")
 
     return flags
 
