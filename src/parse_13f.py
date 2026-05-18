@@ -296,6 +296,8 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
             "cik":           filer_data["cik"],
             "reported_aum_k": reported_aum,
             "filing_date":   filer_data["meta"]["filingDate"],
+            # report_date = quarter-end (period of report); used as price anchor.
+            "report_date":   filer_data["meta"].get("reportDate") or filer_data["meta"]["filingDate"],
             "is_amendment":  filer_data["meta"]["isAmendment"],
             "position_count": len(positions),
             "positions":     positions,
