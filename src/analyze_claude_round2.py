@@ -54,10 +54,17 @@ def format_options_for_prompt(ticker: str, opt_data: dict) -> str:
     price_str = f"${current_price}" if current_price else "n/a"
     change_str = f"{change_pct:+.2f}%" if change_pct is not None else "n/a"
 
+    iv_m = opt_data.get("iv_metrics", {})
+    iv_line = ""
+    if iv_m:
+        iv_line = (f" | IV Rank: {iv_m.get('iv_rank','?')} "
+                   f"(HV30={iv_m.get('hv_30d_pct','?')}%, "
+                   f"IV/HV={iv_m.get('iv_hv_ratio','?')}) → {iv_m.get('verdict','')}")
+
     if not options:
         return f"\n{ticker} — Current: {price_str} ({change_str}) | No options data available\n"
 
-    lines = [f"\n{ticker} — Current price: {price_str} ({change_str} today) | Direction: {direction}"]
+    lines = [f"\n{ticker} — Current price: {price_str} ({change_str} today) | Direction: {direction}{iv_line}"]
     lines.append(f"{'Symbol':<22}{'Strike':<10}{'vs Spot':<10}{'Expiry':<14}{'Mid':<8}"
                  f"{'Sprd%':<8}{'Vol':<8}{'OI':<8}{'Delta':<8}{'IV':<8}")
     lines.append("─" * 104)
@@ -128,42 +135,76 @@ OPTION SELECTION CRITERIA:
    probability of profit. ATM (Delta 0.45-0.55) for higher conviction plays.
 2. Expiry: 3-6 months allows time for institutional thesis to play out (13F data is already
    ~45 days old, so add that to your horizon).
-3. IV consideration: Avoid buying options with unusually high IV (paying too much premium).
-   Compare IV levels across strikes and expiries in the table.
+3. IV Rank (shown above each options table): CRITICAL filter.
+   - IV Rank ≥ 70 (EXPENSIVE): Do NOT buy naked calls. Instead recommend a Bull Call Spread
+     (buy lower strike, sell higher strike same expiry) to neutralise the IV premium.
+   - IV Rank 40–69 (MODERATE): Naked call acceptable, note the elevated premium.
+   - IV Rank < 40 (CHEAP): Naked call preferred; IV expansion adds to profit.
+   The IV/HV ratio tells you how much you're paying over realised volatility.
 4. Liquidity: Prefer options with volume >200, OI >500, and spread% <10%. Spread% is shown
    in the table — wide spreads (>12%) hurt entry/exit significantly.
 5. Current price context: The live stock price is shown above each options table. Use it to
    judge whether the thesis has already played out (stock already up a lot since 13F filing)
    or still has room to run.
 
-OUTPUT FORMAT (respond ONLY with valid JSON, no markdown fences):
-{{
-  "analysis_date": "{today_str}",
-  "options_recommendations": [
-    {{
-      "rank": 1,
-      "stock_ticker": "TICKER",
-      "company_name": "Full Name",
-      "option_symbol": "EXACT_OPTION_SYMBOL_FROM_DATA",
-      "option_type": "CALL",
-      "strike": 150.0,
-      "expiration": "YYYY-MM-DD",
-      "entry_price_mid": 5.50,
-      "max_risk_per_contract": 550.0,
-      "investment_thesis_link": "1-2 sentences linking the 13F signal to this specific option choice",
-      "option_rationale": "Why THIS strike and expiry specifically – delta, IV, time horizon reasoning",
-      "profit_target": "e.g. +50-80% on option premium if stock moves +10-15%",
-      "stop_loss": "e.g. -50% on option premium",
-      "key_risk": "1 sentence on the main risk for this trade",
-      "greeks_note": "Available|Pre-market estimate only"
-    }}
-  ],
-  "portfolio_note": "Brief note on sizing – e.g. equal weight vs. high conviction weighting",
-  "disclaimer": "Options involve significant risk. This is based on delayed 13F data and real-time option prices may differ. Not investment advice."
-}}"""
+Use the submit_options_recommendations tool to return your selections.
+For each stock: if IV Rank ≥ 70 set strategy="BULL_CALL_SPREAD" and populate short_leg_symbol/short_strike;
+otherwise set strategy="LONG_CALL" and omit the short leg fields.
+Always populate iv_rank_note explaining your strategy choice."""
 
 
-def call_claude_with_retry(prompt: str) -> str:
+_ROUND2_TOOL = {
+    "name": "submit_options_recommendations",
+    "description": "Submit the recommended option trades for the top-5 stocks.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "options_recommendations": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                    "type": "object",
+                    "required": ["rank","stock_ticker","company_name","option_symbol",
+                                 "option_type","strike","expiration","entry_price_mid",
+                                 "max_risk_per_contract","investment_thesis_link",
+                                 "option_rationale","profit_target","stop_loss","key_risk"],
+                    "properties": {
+                        "rank":                    {"type": "integer"},
+                        "stock_ticker":            {"type": "string"},
+                        "company_name":            {"type": "string"},
+                        "strategy":                {"type": "string",
+                                                    "description": "LONG_CALL or BULL_CALL_SPREAD"},
+                        "option_symbol":           {"type": "string"},
+                        "short_leg_symbol":        {"type": "string",
+                                                    "description": "Sell leg for spreads; omit for naked calls"},
+                        "option_type":             {"type": "string"},
+                        "strike":                  {"type": "number"},
+                        "short_strike":            {"type": "number",
+                                                    "description": "Short leg strike for spreads"},
+                        "expiration":              {"type": "string"},
+                        "entry_price_mid":         {"type": "number"},
+                        "max_risk_per_contract":   {"type": "number"},
+                        "investment_thesis_link":  {"type": "string"},
+                        "option_rationale":        {"type": "string"},
+                        "iv_rank_note":            {"type": "string",
+                                                    "description": "Note on IV rank and why strategy was chosen"},
+                        "profit_target":           {"type": "string"},
+                        "stop_loss":               {"type": "string"},
+                        "key_risk":                {"type": "string"},
+                        "greeks_note":             {"type": "string"},
+                    },
+                },
+            },
+            "portfolio_note": {"type": "string"},
+            "disclaimer":     {"type": "string"},
+        },
+        "required": ["options_recommendations"],
+    },
+}
+
+
+def call_claude_with_retry(prompt: str) -> dict:
+    """Calls Claude with tool_use forced – returns the structured dict directly."""
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
     for attempt in range(1, CLAUDE_RETRY_COUNT + 1):
@@ -171,14 +212,15 @@ def call_claude_with_retry(prompt: str) -> str:
             response = client.messages.create(
                 model=CLAUDE_MODEL_R2,
                 max_tokens=CLAUDE_MAX_TOKENS,
-                system=(
-                    "You are an expert options strategist. Respond ONLY with valid JSON. "
-                    "No markdown, no code fences, no preamble. "
-                    "Your entire response must be parseable by json.loads()."
-                ),
+                system="You are an expert options strategist.",
+                tools=[_ROUND2_TOOL],
+                tool_choice={"type": "tool", "name": "submit_options_recommendations"},
                 messages=[{"role": "user", "content": prompt}],
             )
-            return response.content[0].text
+            for block in response.content:
+                if block.type == "tool_use" and block.name == "submit_options_recommendations":
+                    return block.input
+            raise ValueError("Claude returned no tool_use block")
 
         except anthropic.RateLimitError:
             wait = CLAUDE_RETRY_DELAY * (2 ** (attempt - 1))
@@ -191,17 +233,6 @@ def call_claude_with_retry(prompt: str) -> str:
             time.sleep(wait)
 
     raise RuntimeError(f"Claude API failed after {CLAUDE_RETRY_COUNT} attempts")
-
-
-def parse_response(raw: str) -> dict:
-    cleaned = re.sub(r"```(?:json)?", "", raw).strip()
-    try:
-        return json.loads(cleaned)
-    except json.JSONDecodeError:
-        match = re.search(r"\{.*\}", cleaned, re.DOTALL)
-        if match:
-            return json.loads(match.group())
-        raise ValueError(f"Cannot parse Claude Round 2 response:\n{raw[:500]}")
 
 
 def validate_result(result: dict) -> bool:
@@ -236,8 +267,7 @@ def run():
 
     print(f"📤 Sending real options data for {len(r1.get('top5', []))} stocks to Claude...")
 
-    raw_response = call_claude_with_retry(prompt)
-    result       = parse_response(raw_response)
+    result = call_claude_with_retry(prompt)
 
     if not validate_result(result):
         raise RuntimeError("Claude Round 2 result failed validation – aborting report")
