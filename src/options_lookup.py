@@ -25,6 +25,69 @@ from config import (
 )
 
 
+def compute_iv_rank(ticker: str, current_atm_iv: float | None) -> dict:
+    """
+    Estimates IV Rank (0–100) using 252 days of realised volatility as a proxy
+    for the IV range, since we don't store historical IV series.
+
+    Method:
+      - Compute rolling 21-day annualised HV (≈ 30-calendar-day window)
+      - IV Rank = (current_IV − HV_52w_low) / (HV_52w_high − HV_52w_low) × 100
+      - Verdict guides Claude on strategy: cheap → naked call, expensive → spread
+
+    Returns {} on any error so the rest of the pipeline is unaffected.
+    """
+    if current_atm_iv is None:
+        return {}
+    try:
+        import numpy as np
+        import yfinance as yf
+        from datetime import timedelta
+
+        yf_t  = ticker.replace("/", "-")
+        start = (date.today() - timedelta(days=400)).isoformat()
+        hist  = yf.download(yf_t, start=start, end=date.today().isoformat(),
+                            auto_adjust=True, progress=False)
+        if hist.empty or len(hist) < 63:
+            return {}
+
+        closes = hist["Close"].squeeze().dropna()
+        log_r  = np.log(closes / closes.shift(1)).dropna()
+
+        # Rolling 21-trading-day (≈ monthly) realised vol, annualised
+        roll_hv = log_r.rolling(21).std() * np.sqrt(252)
+
+        hv_52w = roll_hv.tail(252).dropna()
+        if len(hv_52w) < 20:
+            return {}
+
+        low, high = float(hv_52w.min()), float(hv_52w.max())
+        hv_30d    = float(roll_hv.iloc[-1])
+
+        if high <= low:
+            return {}
+
+        iv_rank = max(0.0, min(100.0, (current_atm_iv - low) / (high - low) * 100))
+        iv_hv   = round(current_atm_iv / hv_30d, 2) if hv_30d > 0 else None
+
+        if iv_rank >= 70:
+            verdict = "EXPENSIVE – prefer Bull Call Spread over naked call"
+        elif iv_rank >= 40:
+            verdict = "MODERATE – naked call acceptable"
+        else:
+            verdict = "CHEAP – naked call preferred, IV may expand"
+
+        return {
+            "iv_rank":       round(iv_rank, 1),
+            "hv_30d_pct":    round(hv_30d * 100, 1),
+            "iv_hv_ratio":   iv_hv,
+            "verdict":       verdict,
+        }
+    except Exception as e:
+        print(f"    ⚠️  IV rank calc failed for {ticker}: {e}")
+        return {}
+
+
 def get_headers() -> dict:
     api_key = os.environ.get("TRADIER_API_KEY", "")
     if not api_key:
@@ -248,6 +311,26 @@ def fetch_options_for_ticker(ticker: str, direction: str, headers: dict,
                 break
 
     all_options.sort(key=lambda x: x.get("volume") or 0, reverse=True)
+    top_options = all_options[:10]
+
+    # IV Rank: use ATM option (closest strike to current price) as IV anchor
+    atm_iv = None
+    if current_price and top_options:
+        atm_opt = min(
+            (o for o in top_options if o.get("implied_volatility")),
+            key=lambda o: abs((o.get("strike") or 0) - current_price),
+            default=None,
+        )
+        if atm_opt:
+            try:
+                atm_iv = float(atm_opt["implied_volatility"])
+            except (TypeError, ValueError):
+                pass
+
+    iv_metrics = compute_iv_rank(ticker, atm_iv)
+    if iv_metrics:
+        print(f"    IV Rank: {iv_metrics['iv_rank']} | HV30: {iv_metrics['hv_30d_pct']}% | "
+              f"IV/HV: {iv_metrics.get('iv_hv_ratio')} | {iv_metrics['verdict']}")
 
     return {
         "ticker":           ticker,
@@ -255,7 +338,8 @@ def fetch_options_for_ticker(ticker: str, direction: str, headers: dict,
         "change_pct":       change_pct,
         "direction":        direction,
         "expiries_checked": expiries,
-        "options":          all_options[:10],
+        "iv_metrics":       iv_metrics,
+        "options":          top_options,
     }
 
 
