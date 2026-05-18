@@ -2,15 +2,16 @@
 analyze_claude_round2.py
 Claude API – Round 2: Select the best specific options from real Tradier data.
 
-Claude now receives:
-  - The top 5 investment theses from Round 1
-  - Real option chains (strike, expiry, IV, delta, volume) from Tradier
-  - Task: pick the single best option per stock and explain WHY
+Uses claude-sonnet (CLAUDE_MODEL_R2) – precision matters here.
+Claude receives the top 5 theses + real option chains and picks the
+single best contract per stock, with explicit reasoning on strike,
+expiry, IV, and liquidity.
 
-Fixes:
-  R-06  Structured JSON output enforced
-  R-13  Retry with exponential backoff
-  R-14  Validates that report is non-empty before saving
+Improvements:
+  - CLAUDE_MODEL_R2 (Sonnet) explicitly
+  - Structured JSON output enforced
+  - Retry with exponential backoff
+  - Validates that report is non-empty before saving
 """
 
 import json
@@ -22,7 +23,7 @@ from datetime import date
 import anthropic
 
 from config import (
-    CLAUDE_MAX_TOKENS, CLAUDE_MODEL, CLAUDE_RETRY_COUNT,
+    CLAUDE_MAX_TOKENS, CLAUDE_MODEL_R2, CLAUDE_RETRY_COUNT,
     CLAUDE_RETRY_DELAY, DATA_DIR,
 )
 
@@ -168,7 +169,7 @@ def call_claude_with_retry(prompt: str) -> str:
     for attempt in range(1, CLAUDE_RETRY_COUNT + 1):
         try:
             response = client.messages.create(
-                model=CLAUDE_MODEL,
+                model=CLAUDE_MODEL_R2,
                 max_tokens=CLAUDE_MAX_TOKENS,
                 system=(
                     "You are an expert options strategist. Respond ONLY with valid JSON. "
