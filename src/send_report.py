@@ -186,8 +186,29 @@ def generate_html_report(analysis: dict, backtest: dict | None = None) -> str:
         primary_flag = stock.get("primary_flag", "")
         flags_html = flag_badge(primary_flag) if primary_flag else ""
 
-        # Buyers list
-        buyers = ", ".join(stock.get("key_buyers", []))
+        # Buyers list – prefer enriched filer_details (port weight + delta) if available
+        filer_details = stock.get("filer_details", [])
+        if filer_details:
+            buyer_items = []
+            for fd in filer_details:
+                name       = fd.get("filer", "")
+                port_pct   = fd.get("port_weight_pct")
+                delta_type = fd.get("delta_type", "")
+                delta_pct  = fd.get("delta_pct")
+
+                detail_parts = []
+                if port_pct is not None:
+                    detail_parts.append(f"{port_pct:.2f}% of port")
+                if delta_type == "NEW":
+                    detail_parts.append("NEW")
+                elif delta_pct is not None:
+                    detail_parts.append(f"{delta_pct:+.0f}%")
+
+                detail = f" ({', '.join(detail_parts)})" if detail_parts else ""
+                buyer_items.append(f"<span style='white-space:nowrap'>{name}{detail}</span>")
+            buyers_html = " &nbsp;·&nbsp; ".join(buyer_items)
+        else:
+            buyers_html = ", ".join(stock.get("key_buyers", []))
 
         options_html += f"""
         <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
@@ -214,7 +235,7 @@ def generate_html_report(analysis: dict, backtest: dict | None = None) -> str:
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
             <div style="background:#eff6ff;border-radius:8px;padding:12px;">
               <div style="font-size:11px;color:#3b82f6;font-weight:600">KEY BUYERS</div>
-              <div style="color:#1e40af;font-size:13px;margin-top:4px">{buyers}</div>
+              <div style="color:#1e40af;font-size:13px;margin-top:4px;line-height:1.7">{buyers_html}</div>
             </div>
             <div style="background:#fef3c7;border-radius:8px;padding:12px;">
               <div style="font-size:11px;color:#d97706;font-weight:600">RISK NOTE</div>
