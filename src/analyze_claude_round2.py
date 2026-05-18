@@ -16,7 +16,7 @@ Improvements:
 
 import json
 import os
-import re
+import re  # used both for response parsing and company-name normalisation
 import time
 from datetime import date
 
@@ -248,21 +248,42 @@ def run():
         print(f"   #{rec['rank']} {rec['stock_ticker']} → {rec['option_symbol']} "
               f"@ ${mid} | {rec.get('profit_target', '')}")
 
-    # Enrich round1_top5 with post-filing price performance and per-filer detail
-    # from scores.json so the report can show price movement and buyer breakdown.
+    # Enrich round1_top5 with post-filing price performance, per-filer detail,
+    # and multi-quarter signal from scores.json.
+    # When OpenFIGI mapping failed, scores.json keys are CUSIPs rather than
+    # ticker symbols. In that case we fall back to normalised company-name matching.
     top5 = r1.get("top5", [])
     try:
         scores_path = DATA_DIR / f"{today_str}_scores.json"
         with open(scores_path) as sf:
             scores = json.load(sf)
         aggregated = scores.get("aggregated", [])
-        perf_by_ticker   = {agg["ticker"]: agg.get("post_filing_perf", {}) for agg in aggregated}
-        filers_by_ticker = {agg["ticker"]: agg.get("filers", [])          for agg in aggregated}
+
+        def _norm(n: str) -> str:
+            n = re.sub(
+                r'\b(INC\.?|CORP\.?|LTD\.?|LLC|LP|PLC|CO\.?|THE|HOLDING|HOLDINGS|'
+                r'INCORPORATED|CORPORATION|LIMITED)\b', '', n.upper())
+            return re.sub(r'[^A-Z0-9]', ' ', n).split()[0] if n.strip() else ''
+
+        by_ticker: dict = {}
+        by_name:   dict = {}
+        for agg in aggregated:
+            by_ticker[agg["ticker"]] = agg
+            norm = _norm(agg.get("name", ""))
+            if norm:
+                by_name[norm] = agg
+
+        enriched = 0
         for stock in top5:
-            t = stock.get("ticker", "")
-            stock["post_filing_perf"] = perf_by_ticker.get(t, {})
-            stock["filer_details"]    = filers_by_ticker.get(t, [])
-        enriched = sum(1 for s in top5 if s.get("post_filing_perf"))
+            t  = stock.get("ticker", "")
+            cn = _norm(stock.get("company_name", ""))
+            matched = by_ticker.get(t) or by_name.get(cn)
+            if matched:
+                enriched += 1
+            stock["post_filing_perf"] = matched.get("post_filing_perf", {}) if matched else {}
+            stock["filer_details"]    = matched.get("filers",            []) if matched else []
+            stock["mq_signal"]        = matched.get("mq_signal",         {}) if matched else {}
+
         print(f"  ✅ Enriched {enriched}/{len(top5)} stocks with post-filing perf + filer details")
     except Exception as e:
         print(f"  ⚠️  Could not enrich with post-filing perf / filer details: {e}")
