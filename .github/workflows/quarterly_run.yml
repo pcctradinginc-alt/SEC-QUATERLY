@@ -58,7 +58,7 @@ jobs:
         if: steps.date_check.outputs.should_run == 'true'
         run: python src/scoring.py
 
-      - name: Claude Analysis Round 1 - Identify Top 5
+      - name: Claude Analysis Round 1 - Identify Top 5 (Haiku)
         if: steps.date_check.outputs.should_run == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -70,11 +70,15 @@ jobs:
           TRADIER_API_KEY: ${{ secrets.TRADIER_API_KEY }}
         run: python src/options_lookup.py
 
-      - name: Claude Analysis Round 2 - Select Best Options
+      - name: Claude Analysis Round 2 - Select Best Options (Sonnet)
         if: steps.date_check.outputs.should_run == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python src/analyze_claude_round2.py
+
+      - name: Backtest - Track Historical Signal Performance
+        if: steps.date_check.outputs.should_run == 'true'
+        run: python src/backtest.py
 
       - name: Generate & Send Report via Gmail
         if: steps.date_check.outputs.should_run == 'true'
@@ -91,3 +95,16 @@ jobs:
           git add data/holdings/ reports/
           git diff --staged --quiet || git commit -m "📊 Quarterly 13F analysis $(date +%Y-%m-%d)"
           git push
+
+      # ── Failure notification ──────────────────────────────────────────────────
+      # Runs only when the workflow fails AND the main pipeline was supposed to run.
+      # Uses the existing Gmail credentials so no extra services are needed.
+      - name: Send failure alert
+        if: failure() && steps.date_check.outputs.should_run == 'true'
+        env:
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: |
+          python src/notify.py \
+            "GitHub Actions – SEC 13F Pipeline" \
+            "Workflow run ${{ github.run_id }} failed. Check: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
