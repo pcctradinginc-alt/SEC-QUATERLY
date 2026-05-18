@@ -65,9 +65,13 @@ def fetch_price_changes(tickers: list[str], filing_dates: dict[str, str]) -> dic
     oldest    = min(dates)
     today_str = date.today().isoformat()
 
+    # yfinance uses BRK-B format, not BRK/B (Tradier format)
+    yf_tickers = [t.replace("/", "-") for t in tickers]
+    ticker_map  = {yf: orig for yf, orig in zip(yf_tickers, tickers)}
+
     try:
         hist = yf.download(
-            tickers,
+            yf_tickers,
             start=oldest,
             end=today_str,
             auto_adjust=True,
@@ -87,9 +91,11 @@ def fetch_price_changes(tickers: list[str], filing_dates: dict[str, str]) -> dic
             result[ticker] = empty.copy()
             continue
 
+        yf_t = ticker.replace("/", "-")
+
         try:
-            series = close if len(tickers) == 1 else (
-                close[ticker] if ticker in close.columns else None
+            series = close if len(yf_tickers) == 1 else (
+                close[yf_t] if yf_t in close.columns else None
             )
 
             if series is None or series.empty:
