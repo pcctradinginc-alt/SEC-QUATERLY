@@ -293,6 +293,96 @@ def map_cusips_to_tickers(cusips: list[str]) -> dict[str, str]:
     return mapping
 
 
+# ── Step 4b: SEC name-based ticker fallback ──────────────────────────────────
+
+def _build_sec_name_map() -> dict[str, str]:
+    """
+    Downloads SEC's company_tickers.json (free, no key, no rate limit).
+    Returns {normalised_name: ticker} for ~10k US-listed companies.
+    Used as fallback when OpenFIGI CUSIP mapping fails.
+    """
+    url = "https://data.sec.gov/files/company_tickers.json"
+    try:
+        resp = edgar_get(url)
+        data = resp.json()
+    except Exception as e:
+        print(f"  ⚠️  SEC ticker map download failed: {e}")
+        return {}
+
+    name_map: dict[str, str] = {}
+    suffix_strip = (
+        " INC", " CORP", " LTD", " LLC", " LP", " PLC",
+        " CO", " HOLDINGS", " GROUP", " TRUST", " FUND",
+        " INCORPORATED", " CORPORATION", " LIMITED",
+    )
+    for entry in data.values():
+        raw    = entry.get("title", "").upper().strip()
+        ticker = entry.get("ticker", "").strip()
+        if not raw or not ticker:
+            continue
+        name_map[raw] = ticker
+        # Also index the name with trailing legal suffixes removed
+        for sfx in suffix_strip:
+            if raw.endswith(sfx):
+                name_map[raw[: -len(sfx)].strip()] = ticker
+                break
+    return name_map
+
+
+def _sec_ticker_fallback(
+    all_data: dict, cusip_to_ticker: dict[str, str]
+) -> dict[str, str]:
+    """
+    For every CUSIP that OpenFIGI could not resolve, attempts a name-based
+    lookup against the SEC company_tickers.json master list.
+    Returns a dict of newly discovered {cusip: ticker} pairs.
+    """
+    unresolved: list[dict] = []
+    for filer_data in all_data.values():
+        for h in filer_data.get("holdings", []):
+            if h.get("cusip") and not cusip_to_ticker.get(h["cusip"]):
+                unresolved.append(h)
+
+    if not unresolved:
+        return {}
+
+    # De-duplicate by CUSIP – keep first seen nameOfIssuer
+    cusip_to_name: dict[str, str] = {}
+    for h in unresolved:
+        c = h["cusip"]
+        if c not in cusip_to_name:
+            cusip_to_name[c] = h.get("nameOfIssuer", "").upper().strip()
+
+    print(f"\n🔍 SEC name fallback for {len(cusip_to_name)} unresolved CUSIPs…")
+    sec_map = _build_sec_name_map()
+    if not sec_map:
+        return {}
+
+    suffix_strip = (
+        " INC", " CORP", " LTD", " LLC", " LP", " PLC",
+        " CO", " HOLDINGS", " GROUP", " TRUST", " FUND",
+    )
+    resolved: dict[str, str] = {}
+    for cusip, name in cusip_to_name.items():
+        # Try exact match
+        if name in sec_map:
+            resolved[cusip] = sec_map[name]
+            continue
+        # Try with trailing suffix removed
+        for sfx in suffix_strip:
+            if name.endswith(sfx):
+                short = name[: -len(sfx)].strip()
+                if short in sec_map:
+                    resolved[cusip] = sec_map[short]
+                    break
+
+    if resolved:
+        print(f"   ✅ SEC fallback resolved {len(resolved)} additional CUSIPs")
+    else:
+        print(f"   ℹ️  SEC fallback: no additional matches found")
+    return resolved
+
+
 # ── Step 5: Split check ───────────────────────────────────────────────────────
 
 def _is_valid_equity_ticker(ticker: str) -> bool:
@@ -402,14 +492,21 @@ def run():
 
     print(f"\n🔍 Mapping {len(all_cusips)} CUSIPs to tickers via OpenFIGI...")
     cusip_to_ticker = map_cusips_to_tickers(list(all_cusips))
-    print(f"   Mapped: {len(cusip_to_ticker)} / {len(all_cusips)}")
+    print(f"   OpenFIGI mapped: {len(cusip_to_ticker)} / {len(all_cusips)}")
+
+    # Fallback: SEC company_tickers.json for any CUSIP OpenFIGI couldn't resolve
+    sec_extra = _sec_ticker_fallback(all_data, cusip_to_ticker)
+    cusip_to_ticker.update(sec_extra)
+    if sec_extra:
+        print(f"   Total after SEC fallback: {len(cusip_to_ticker)} / {len(all_cusips)}")
 
     all_tickers = set()
     for filer_data in all_data.values():
         if "holdings" not in filer_data:
             continue
         for h in filer_data["holdings"]:
-            h["ticker"] = cusip_to_ticker.get(h["cusip"], "")
+            ticker = cusip_to_ticker.get(h["cusip"], "")
+            h["ticker"] = ticker if _is_valid_equity_ticker(ticker) else ""
             if h["ticker"]:
                 all_tickers.add(h["ticker"])
 
