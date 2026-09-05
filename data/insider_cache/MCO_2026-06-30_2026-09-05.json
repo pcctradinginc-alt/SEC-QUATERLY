@@ -1,0 +1,110 @@
+{
+ "cik": "0001059556",
+ "error": null,
+ "form4_count": 6,
+ "reasons": [
+  "Insiders were net sellers ($2,186,456 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -2186456.49,
+  "officer_or_director_buyers": [],
+  "sell_count": 7,
+  "sell_value_usd": 2186456.49,
+  "sells": [
+   {
+    "accession": "0001481153-26-000015",
+    "date": "2026-07-01",
+    "filing_date": "2026-07-02",
+    "insider": "Fauber Robert",
+    "is_director": true,
+    "is_officer": true,
+    "price": 455.49,
+    "role": "President and CEO",
+    "shares": 300.0,
+    "value_usd": 136647.0
+   },
+   {
+    "accession": "0001481153-26-000015",
+    "date": "2026-07-01",
+    "filing_date": "2026-07-02",
+    "insider": "Fauber Robert",
+    "is_director": true,
+    "is_officer": true,
+    "price": 455.49,
+    "role": "President and CEO",
+    "shares": 1167.0,
+    "value_usd": 531556.83
+   },
+   {
+    "accession": "0001990258-26-000013",
+    "date": "2026-07-01",
+    "filing_date": "2026-07-02",
+    "insider": "Steele Richard G",
+    "is_director": false,
+    "is_officer": true,
+    "price": 455.49,
+    "role": "SVP - General Counsel",
+    "shares": 157.0,
+    "value_usd": 71511.93
+   },
+   {
+    "accession": "0001481153-26-000016",
+    "date": "2026-08-03",
+    "filing_date": "2026-08-04",
+    "insider": "Fauber Robert",
+    "is_director": true,
+    "is_officer": true,
+    "price": 484.3,
+    "role": "President and CEO",
+    "shares": 300.0,
+    "value_usd": 145290.0
+   },
+   {
+    "accession": "0001481153-26-000016",
+    "date": "2026-08-03",
+    "filing_date": "2026-08-04",
+    "insider": "Fauber Robert",
+    "is_director": true,
+    "is_officer": true,
+    "price": 484.3,
+    "role": "President and CEO",
+    "shares": 1167.0,
+    "value_usd": 565178.1
+   },
+   {
+    "accession": "0001628280-26-060093",
+    "date": "2026-09-01",
+    "filing_date": "2026-09-02",
+    "insider": "Fauber Robert",
+    "is_director": true,
+    "is_officer": true,
+    "price": 501.89,
+    "role": "President and CEO",
+    "shares": 300.0,
+    "value_usd": 150567.0
+   },
+   {
+    "accession": "0001628280-26-060093",
+    "date": "2026-09-01",
+    "filing_date": "2026-09-02",
+    "insider": "Fauber Robert",
+    "is_director": true,
+    "is_officer": true,
+    "price": 501.89,
+    "role": "President and CEO",
+    "shares": 1167.0,
+    "value_usd": 585705.63
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "MCO",
+ "until": "2026-09-05"
+}

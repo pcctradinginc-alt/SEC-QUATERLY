@@ -1,0 +1,122 @@
+{
+ "cik": "0000040545",
+ "error": null,
+ "form4_count": 5,
+ "reasons": [
+  "Insiders were net sellers ($7,180,160 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -7180160.05,
+  "officer_or_director_buyers": [],
+  "sell_count": 8,
+  "sell_value_usd": 7180160.05,
+  "sells": [
+   {
+    "accession": "0002015929-26-000007",
+    "date": "2026-07-23",
+    "filing_date": "2026-07-27",
+    "insider": "Procacci Riccardo",
+    "is_director": false,
+    "is_officer": true,
+    "price": 347.93,
+    "role": "Senior Vice President",
+    "shares": 1026.0,
+    "value_usd": 356976.18
+   },
+   {
+    "accession": "0002015929-26-000007",
+    "date": "2026-07-23",
+    "filing_date": "2026-07-27",
+    "insider": "Procacci Riccardo",
+    "is_director": false,
+    "is_officer": true,
+    "price": 347.9,
+    "role": "Senior Vice President",
+    "shares": 491.0,
+    "value_usd": 170818.9
+   },
+   {
+    "accession": "0002052951-26-000007",
+    "date": "2026-07-24",
+    "filing_date": "2026-07-28",
+    "insider": "Ali Mohamed",
+    "is_director": false,
+    "is_officer": true,
+    "price": 353.75,
+    "role": "Senior Vice President",
+    "shares": 1769.0,
+    "value_usd": 625783.75
+   },
+   {
+    "accession": "0002052951-26-000007",
+    "date": "2026-07-24",
+    "filing_date": "2026-07-28",
+    "insider": "Ali Mohamed",
+    "is_director": false,
+    "is_officer": true,
+    "price": 353.74,
+    "role": "Senior Vice President",
+    "shares": 1266.0,
+    "value_usd": 447834.84
+   },
+   {
+    "accession": "0002052951-26-000007",
+    "date": "2026-07-24",
+    "filing_date": "2026-07-28",
+    "insider": "Ali Mohamed",
+    "is_director": false,
+    "is_officer": true,
+    "price": 353.72,
+    "role": "Senior Vice President",
+    "shares": 2782.0,
+    "value_usd": 984049.04
+   },
+   {
+    "accession": "0002052951-26-000007",
+    "date": "2026-07-24",
+    "filing_date": "2026-07-28",
+    "insider": "Ali Mohamed",
+    "is_director": false,
+    "is_officer": true,
+    "price": 353.64,
+    "role": "Senior Vice President",
+    "shares": 2279.0,
+    "value_usd": 805945.56
+   },
+   {
+    "accession": "0001953063-26-000009",
+    "date": "2026-08-11",
+    "filing_date": "2026-08-12",
+    "insider": "Giglietti Robert M.",
+    "is_director": false,
+    "is_officer": true,
+    "price": 369.88,
+    "role": "Vice President",
+    "shares": 5344.0,
+    "value_usd": 1976638.72
+   },
+   {
+    "accession": "0001953063-26-000009",
+    "date": "2026-08-11",
+    "filing_date": "2026-08-12",
+    "insider": "Giglietti Robert M.",
+    "is_director": false,
+    "is_officer": true,
+    "price": 369.97,
+    "role": "Vice President",
+    "shares": 4898.0,
+    "value_usd": 1812113.06
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "GE",
+ "until": "2026-09-05"
+}
