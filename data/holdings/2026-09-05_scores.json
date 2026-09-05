@@ -27203,16 +27203,16 @@
     },
     {
       "filer": "Oaktree Capital Management (Marks)",
-      "ticker": "767292AB1",
-      "cusip": "767292AB1",
-      "name": "RIOT PLATFORMS INC",
+      "ticker": "87918AAF2",
+      "cusip": "87918AAF2",
+      "name": "TELADOC HEALTH INC",
       "port_weight_pct": 0.958,
       "weight_vs_median": 4.63,
       "position_tier": "OTHER",
       "delta_pct": null,
       "delta_type": "NEW",
       "delta_shares": 0,
-      "value_usd_k": 52278722,
+      "value_usd_k": 52256588,
       "put_value_usd_k": 0,
       "rank_in_port": 32,
       "filing_date": "2026-06-30",
@@ -27251,16 +27251,16 @@
     },
     {
       "filer": "Oaktree Capital Management (Marks)",
-      "ticker": "87918AAF2",
-      "cusip": "87918AAF2",
-      "name": "TELADOC HEALTH INC",
+      "ticker": "767292AB1",
+      "cusip": "767292AB1",
+      "name": "RIOT PLATFORMS INC",
       "port_weight_pct": 0.958,
       "weight_vs_median": 4.63,
       "position_tier": "OTHER",
       "delta_pct": null,
       "delta_type": "NEW",
       "delta_shares": 0,
-      "value_usd_k": 52256588,
+      "value_usd_k": 52278722,
       "put_value_usd_k": 0,
       "rank_in_port": 33,
       "filing_date": "2026-06-30",
@@ -34272,54 +34272,6 @@
     },
     {
       "filer": "Two Sigma Investments (Quant)",
-      "ticker": "ALNY",
-      "cusip": "02043Q107",
-      "name": "ALNYLAM PHARMACEUTICALS INC",
-      "port_weight_pct": 0.548,
-      "weight_vs_median": 4.49,
-      "position_tier": "OTHER",
-      "delta_pct": null,
-      "delta_type": "NEW",
-      "delta_shares": 0,
-      "value_usd_k": 564713315,
-      "put_value_usd_k": 0,
-      "rank_in_port": 37,
-      "filing_date": "2026-06-30",
-      "report_date": "2026-06-30",
-      "filing_date_actual": "2026-08-14",
-      "position_change_raw": 100.0,
-      "manager_quality_score": 0.0,
-      "freshness_score": 0.607,
-      "filing_delay_days": 45,
-      "flags": [
-        "NEW_POSITION",
-        "SIZE_WEAK"
-      ],
-      "post_filing_perf": {
-        "pct_change": -11.6,
-        "filing_close": 301.03,
-        "current_price": 266.11,
-        "days_since_filing": 67
-      },
-      "price_action_penalty": 0.0,
-      "components": {
-        "active_weight": 0.1,
-        "position_change": 50.0,
-        "manager_quality": 0.0,
-        "consensus": 0.0,
-        "accumulation": 50.0,
-        "freshness": 60.7,
-        "abnormal_ownership": 0.0
-      },
-      "crowding_penalty": 0.0,
-      "crowding_label": "LOW",
-      "alpha_score": 21.1,
-      "conviction_score": 21.1,
-      "cluster_funds": [],
-      "cluster_count": 1
-    },
-    {
-      "filer": "Two Sigma Investments (Quant)",
       "ticker": "INTU",
       "cusip": "461202103",
       "name": "INTUIT",
@@ -34331,7 +34283,7 @@
       "delta_shares": 0,
       "value_usd_k": 564153327,
       "put_value_usd_k": 0,
-      "rank_in_port": 38,
+      "rank_in_port": 37,
       "filing_date": "2026-06-30",
       "report_date": "2026-06-30",
       "filing_date_actual": "2026-08-14",
@@ -34364,6 +34316,54 @@
       "crowding_label": "LOW",
       "alpha_score": 0.0,
       "conviction_score": 0.0,
+      "cluster_funds": [],
+      "cluster_count": 1
+    },
+    {
+      "filer": "Two Sigma Investments (Quant)",
+      "ticker": "ALNY",
+      "cusip": "02043Q107",
+      "name": "ALNYLAM PHARMACEUTICALS INC",
+      "port_weight_pct": 0.548,
+      "weight_vs_median": 4.49,
+      "position_tier": "OTHER",
+      "delta_pct": null,
+      "delta_type": "NEW",
+      "delta_shares": 0,
+      "value_usd_k": 564713315,
+      "put_value_usd_k": 0,
+      "rank_in_port": 38,
+      "filing_date": "2026-06-30",
+      "report_date": "2026-06-30",
+      "filing_date_actual": "2026-08-14",
+      "position_change_raw": 100.0,
+      "manager_quality_score": 0.0,
+      "freshness_score": 0.607,
+      "filing_delay_days": 45,
+      "flags": [
+        "NEW_POSITION",
+        "SIZE_WEAK"
+      ],
+      "post_filing_perf": {
+        "pct_change": -11.6,
+        "filing_close": 301.03,
+        "current_price": 266.11,
+        "days_since_filing": 67
+      },
+      "price_action_penalty": 0.0,
+      "components": {
+        "active_weight": 0.1,
+        "position_change": 50.0,
+        "manager_quality": 0.0,
+        "consensus": 0.0,
+        "accumulation": 50.0,
+        "freshness": 60.7,
+        "abnormal_ownership": 0.0
+      },
+      "crowding_penalty": 0.0,
+      "crowding_label": "LOW",
+      "alpha_score": 21.1,
+      "conviction_score": 21.1,
       "cluster_funds": [],
       "cluster_count": 1
     },
@@ -38573,6 +38573,58 @@
     },
     {
       "filer": "Whale Rock Capital Management",
+      "ticker": "MDB",
+      "cusip": "60937P106",
+      "name": "MONGODB INC",
+      "port_weight_pct": 0.606,
+      "weight_vs_median": 0.27,
+      "position_tier": "OTHER",
+      "delta_pct": null,
+      "delta_type": "NEW",
+      "delta_shares": 0,
+      "value_usd_k": 75459263,
+      "put_value_usd_k": 0,
+      "rank_in_port": 27,
+      "filing_date": "2026-06-30",
+      "report_date": "2026-06-30",
+      "filing_date_actual": "2026-08-14",
+      "position_change_raw": 100.0,
+      "manager_quality_score": 0.401,
+      "freshness_score": 0.936,
+      "filing_delay_days": 45,
+      "flags": [
+        "NEW_POSITION",
+        "SIZE_WEAK",
+        "CLUSTER"
+      ],
+      "post_filing_perf": {
+        "pct_change": 9.8,
+        "filing_close": 335.9,
+        "current_price": 368.74,
+        "days_since_filing": 67
+      },
+      "price_action_penalty": 0.0,
+      "components": {
+        "active_weight": 0.1,
+        "position_change": 50.0,
+        "manager_quality": 40.1,
+        "consensus": 1.3,
+        "accumulation": 50.0,
+        "freshness": 93.6,
+        "abnormal_ownership": 0.0
+      },
+      "crowding_penalty": 0.0,
+      "crowding_label": "LOW",
+      "alpha_score": 30.6,
+      "conviction_score": 30.6,
+      "cluster_funds": [
+        "Whale Rock Capital Management",
+        "ValueAct Holdings"
+      ],
+      "cluster_count": 2
+    },
+    {
+      "filer": "Whale Rock Capital Management",
       "ticker": "NVDA",
       "cusip": "67066G104",
       "name": "NVIDIA CORPORATION",
@@ -38584,7 +38636,7 @@
       "delta_shares": 0,
       "value_usd_k": 75474748,
       "put_value_usd_k": 0,
-      "rank_in_port": 27,
+      "rank_in_port": 28,
       "filing_date": "2026-06-30",
       "report_date": "2026-06-30",
       "filing_date_actual": "2026-08-14",
@@ -38634,58 +38686,6 @@
         "Atreides Management"
       ],
       "cluster_count": 13
-    },
-    {
-      "filer": "Whale Rock Capital Management",
-      "ticker": "MDB",
-      "cusip": "60937P106",
-      "name": "MONGODB INC",
-      "port_weight_pct": 0.606,
-      "weight_vs_median": 0.27,
-      "position_tier": "OTHER",
-      "delta_pct": null,
-      "delta_type": "NEW",
-      "delta_shares": 0,
-      "value_usd_k": 75459263,
-      "put_value_usd_k": 0,
-      "rank_in_port": 28,
-      "filing_date": "2026-06-30",
-      "report_date": "2026-06-30",
-      "filing_date_actual": "2026-08-14",
-      "position_change_raw": 100.0,
-      "manager_quality_score": 0.401,
-      "freshness_score": 0.936,
-      "filing_delay_days": 45,
-      "flags": [
-        "NEW_POSITION",
-        "SIZE_WEAK",
-        "CLUSTER"
-      ],
-      "post_filing_perf": {
-        "pct_change": 9.8,
-        "filing_close": 335.9,
-        "current_price": 368.74,
-        "days_since_filing": 67
-      },
-      "price_action_penalty": 0.0,
-      "components": {
-        "active_weight": 0.1,
-        "position_change": 50.0,
-        "manager_quality": 40.1,
-        "consensus": 1.3,
-        "accumulation": 50.0,
-        "freshness": 93.6,
-        "abnormal_ownership": 0.0
-      },
-      "crowding_penalty": 0.0,
-      "crowding_label": "LOW",
-      "alpha_score": 30.6,
-      "conviction_score": 30.6,
-      "cluster_funds": [
-        "Whale Rock Capital Management",
-        "ValueAct Holdings"
-      ],
-      "cluster_count": 2
     },
     {
       "filer": "Appaloosa (Tepper)",
@@ -57804,6 +57804,57 @@
     },
     {
       "filer": "Dodge & Cox",
+      "ticker": "MET",
+      "cusip": "59156R108",
+      "name": "MetLife, Inc.",
+      "port_weight_pct": 2.145,
+      "weight_vs_median": 60.42,
+      "position_tier": "TOP10",
+      "delta_pct": null,
+      "delta_type": "NEW",
+      "delta_shares": 0,
+      "value_usd_k": 4097759602,
+      "put_value_usd_k": 0,
+      "rank_in_port": 9,
+      "filing_date": "2026-06-30",
+      "report_date": "2026-06-30",
+      "filing_date_actual": "2026-08-13",
+      "position_change_raw": 100.0,
+      "manager_quality_score": 0.56,
+      "freshness_score": 0.613,
+      "filing_delay_days": 44,
+      "flags": [
+        "NEW_POSITION",
+        "SIZE_INTERESTING",
+        "TOP10_ENTRY",
+        "OUTSIZED_VS_MANAGER_TYPICAL",
+        "PRICE_ACTION_WARNING"
+      ],
+      "post_filing_perf": {
+        "pct_change": 16.1,
+        "filing_close": 84.09,
+        "current_price": 97.62,
+        "days_since_filing": 67
+      },
+      "price_action_penalty": 10.0,
+      "components": {
+        "active_weight": 1.7,
+        "position_change": 50.0,
+        "manager_quality": 56.0,
+        "consensus": 0.8,
+        "accumulation": 50.0,
+        "freshness": 61.3,
+        "abnormal_ownership": 0.0
+      },
+      "crowding_penalty": 0.0,
+      "crowding_label": "LOW",
+      "alpha_score": 20.1,
+      "conviction_score": 20.1,
+      "cluster_funds": [],
+      "cluster_count": 1
+    },
+    {
+      "filer": "Dodge & Cox",
       "ticker": "SUNB",
       "cusip": "866966104",
       "name": "Sunbelt Rentals Holdings, Inc.",
@@ -57815,7 +57866,7 @@
       "delta_shares": 0,
       "value_usd_k": 4096716044,
       "put_value_usd_k": 0,
-      "rank_in_port": 9,
+      "rank_in_port": 10,
       "filing_date": "2026-06-30",
       "report_date": "2026-06-30",
       "filing_date_actual": "2026-08-13",
@@ -57855,57 +57906,6 @@
         "Harris Associates (Oakmark)"
       ],
       "cluster_count": 2
-    },
-    {
-      "filer": "Dodge & Cox",
-      "ticker": "MET",
-      "cusip": "59156R108",
-      "name": "MetLife, Inc.",
-      "port_weight_pct": 2.145,
-      "weight_vs_median": 60.42,
-      "position_tier": "TOP10",
-      "delta_pct": null,
-      "delta_type": "NEW",
-      "delta_shares": 0,
-      "value_usd_k": 4097759602,
-      "put_value_usd_k": 0,
-      "rank_in_port": 10,
-      "filing_date": "2026-06-30",
-      "report_date": "2026-06-30",
-      "filing_date_actual": "2026-08-13",
-      "position_change_raw": 100.0,
-      "manager_quality_score": 0.56,
-      "freshness_score": 0.613,
-      "filing_delay_days": 44,
-      "flags": [
-        "NEW_POSITION",
-        "SIZE_INTERESTING",
-        "TOP10_ENTRY",
-        "OUTSIZED_VS_MANAGER_TYPICAL",
-        "PRICE_ACTION_WARNING"
-      ],
-      "post_filing_perf": {
-        "pct_change": 16.1,
-        "filing_close": 84.09,
-        "current_price": 97.62,
-        "days_since_filing": 67
-      },
-      "price_action_penalty": 10.0,
-      "components": {
-        "active_weight": 1.7,
-        "position_change": 50.0,
-        "manager_quality": 56.0,
-        "consensus": 0.8,
-        "accumulation": 50.0,
-        "freshness": 61.3,
-        "abnormal_ownership": 0.0
-      },
-      "crowding_penalty": 0.0,
-      "crowding_label": "LOW",
-      "alpha_score": 20.1,
-      "conviction_score": 20.1,
-      "cluster_funds": [],
-      "cluster_count": 1
     },
     {
       "filer": "Dodge & Cox",
@@ -60826,55 +60826,6 @@
     },
     {
       "filer": "Dodge & Cox",
-      "ticker": "CX",
-      "cusip": "151290889",
-      "name": "Cemex SAB de CV",
-      "port_weight_pct": 0.504,
-      "weight_vs_median": 14.2,
-      "position_tier": "OTHER",
-      "delta_pct": null,
-      "delta_type": "NEW",
-      "delta_shares": 0,
-      "value_usd_k": 962251644,
-      "put_value_usd_k": 0,
-      "rank_in_port": 66,
-      "filing_date": "2026-06-30",
-      "report_date": "2026-06-30",
-      "filing_date_actual": "2026-08-13",
-      "position_change_raw": 100.0,
-      "manager_quality_score": 0.56,
-      "freshness_score": 0.613,
-      "filing_delay_days": 44,
-      "flags": [
-        "NEW_POSITION",
-        "SIZE_WEAK",
-        "OUTSIZED_VS_MANAGER_TYPICAL"
-      ],
-      "post_filing_perf": {
-        "pct_change": -8.1,
-        "filing_close": 12.0,
-        "current_price": 11.03,
-        "days_since_filing": 67
-      },
-      "price_action_penalty": 0.0,
-      "components": {
-        "active_weight": 0.0,
-        "position_change": 50.0,
-        "manager_quality": 56.0,
-        "consensus": 0.2,
-        "accumulation": 50.0,
-        "freshness": 61.3,
-        "abnormal_ownership": 0.0
-      },
-      "crowding_penalty": 0.0,
-      "crowding_label": "LOW",
-      "alpha_score": 29.6,
-      "conviction_score": 29.6,
-      "cluster_funds": [],
-      "cluster_count": 1
-    },
-    {
-      "filer": "Dodge & Cox",
       "ticker": "COP",
       "cusip": "20825C104",
       "name": "ConocoPhillips",
@@ -60886,7 +60837,7 @@
       "delta_shares": 0,
       "value_usd_k": 963322885,
       "put_value_usd_k": 0,
-      "rank_in_port": 67,
+      "rank_in_port": 66,
       "filing_date": "2026-06-30",
       "report_date": "2026-06-30",
       "filing_date_actual": "2026-08-13",
@@ -60926,6 +60877,55 @@
         "Harris Associates (Oakmark)"
       ],
       "cluster_count": 2
+    },
+    {
+      "filer": "Dodge & Cox",
+      "ticker": "CX",
+      "cusip": "151290889",
+      "name": "Cemex SAB de CV",
+      "port_weight_pct": 0.504,
+      "weight_vs_median": 14.2,
+      "position_tier": "OTHER",
+      "delta_pct": null,
+      "delta_type": "NEW",
+      "delta_shares": 0,
+      "value_usd_k": 962251644,
+      "put_value_usd_k": 0,
+      "rank_in_port": 67,
+      "filing_date": "2026-06-30",
+      "report_date": "2026-06-30",
+      "filing_date_actual": "2026-08-13",
+      "position_change_raw": 100.0,
+      "manager_quality_score": 0.56,
+      "freshness_score": 0.613,
+      "filing_delay_days": 44,
+      "flags": [
+        "NEW_POSITION",
+        "SIZE_WEAK",
+        "OUTSIZED_VS_MANAGER_TYPICAL"
+      ],
+      "post_filing_perf": {
+        "pct_change": -8.1,
+        "filing_close": 12.0,
+        "current_price": 11.03,
+        "days_since_filing": 67
+      },
+      "price_action_penalty": 0.0,
+      "components": {
+        "active_weight": 0.0,
+        "position_change": 50.0,
+        "manager_quality": 56.0,
+        "consensus": 0.2,
+        "accumulation": 50.0,
+        "freshness": 61.3,
+        "abnormal_ownership": 0.0
+      },
+      "crowding_penalty": 0.0,
+      "crowding_label": "LOW",
+      "alpha_score": 29.6,
+      "conviction_score": 29.6,
+      "cluster_funds": [],
+      "cluster_count": 1
     },
     {
       "filer": "Dodge & Cox",
@@ -88376,8 +88376,8 @@
       "early_smart_money": false
     },
     {
-      "ticker": "767292AB1",
-      "name": "RIOT PLATFORMS INC",
+      "ticker": "87918AAF2",
+      "name": "TELADOC HEALTH INC",
       "filers": [
         {
           "filer": "Oaktree Capital Management (Marks)",
@@ -88394,7 +88394,7 @@
         }
       ],
       "alpha_score": 32.2,
-      "total_value_usd_k": 52278722,
+      "total_value_usd_k": 52256588,
       "flags": [
         "NEW_POSITION",
         "SIZE_WEAK"
@@ -88427,8 +88427,8 @@
       "early_smart_money": false
     },
     {
-      "ticker": "87918AAF2",
-      "name": "TELADOC HEALTH INC",
+      "ticker": "767292AB1",
+      "name": "RIOT PLATFORMS INC",
       "filers": [
         {
           "filer": "Oaktree Capital Management (Marks)",
@@ -88445,7 +88445,7 @@
         }
       ],
       "alpha_score": 32.2,
-      "total_value_usd_k": 52256588,
+      "total_value_usd_k": 52278722,
       "flags": [
         "NEW_POSITION",
         "SIZE_WEAK"
@@ -115902,183 +115902,12 @@
     }
   },
   "manager_quality": {
-    "Pershing Square Inc": {
-      "quality_score": 0.574,
-      "concentration_score": 0.979,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 14,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "7G Capital Management": {
-      "quality_score": 0.58,
-      "concentration_score": 1.0,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 10,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "RV Capital (Zeller)": {
-      "quality_score": 0.855,
-      "concentration_score": 0.984,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 13,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Abrams Capital Management": {
-      "quality_score": 0.718,
-      "concentration_score": 0.995,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 11,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Chou Associates Management": {
-      "quality_score": 0.687,
-      "concentration_score": 0.889,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 31,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Arbiter Partners Capital Management": {
-      "quality_score": 0.533,
-      "concentration_score": 0.842,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 40,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Coatue (Laffont)": {
-      "quality_score": 0.352,
-      "concentration_score": 0.705,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 66,
-      "quarters_used": 3,
-      "is_bootstrapped": true
-    },
     "SurgoCap Partners": {
       "quality_score": 0.575,
       "concentration_score": 0.984,
       "turnover_score": null,
       "avg_turnover_pct": null,
       "position_count": 13,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Pershing Square (Ackman)": {
-      "quality_score": 0.818,
-      "concentration_score": 0.995,
-      "turnover_score": 0.92,
-      "avg_turnover_pct": 4.8,
-      "position_count": 11,
-      "quarters_used": 3,
-      "is_bootstrapped": false
-    },
-    "Alphabet Inc": {
-      "quality_score": 0.272,
-      "concentration_score": 0.905,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 28,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "NVIDIA Corp": {
-      "quality_score": 0.3,
-      "concentration_score": 1.0,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 8,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Whale Rock Capital Management": {
-      "quality_score": 0.401,
-      "concentration_score": 0.868,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 35,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Muhlenkamp & Co": {
-      "quality_score": 0.692,
-      "concentration_score": 0.905,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 28,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "ValueAct Holdings": {
-      "quality_score": 0.987,
-      "concentration_score": 0.958,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 18,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Trian Fund Management (Peltz)": {
-      "quality_score": 0.58,
-      "concentration_score": 1.0,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 8,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Lone Pine Capital (Mandel)": {
-      "quality_score": 0.402,
-      "concentration_score": 0.874,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 34,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Thiel Macro (Thiel)": {
-      "quality_score": 0.44,
-      "concentration_score": 1.0,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 8,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Third Point (Loeb)": {
-      "quality_score": 0.529,
-      "concentration_score": 0.832,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 42,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Donald Smith & Co": {
-      "quality_score": 0.632,
-      "concentration_score": 0.705,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 66,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Harris Associates (Oakmark)": {
-      "quality_score": 0.622,
-      "concentration_score": 0.205,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 161,
       "quarters_used": 1,
       "is_bootstrapped": true
     },
@@ -116091,273 +115920,12 @@
       "quarters_used": 3,
       "is_bootstrapped": false
     },
-    "Dodge & Cox": {
-      "quality_score": 0.56,
-      "concentration_score": 0.0,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 222,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Baupost Group (Klarman)": {
-      "quality_score": 0.979,
-      "concentration_score": 0.932,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 23,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Duke University": {
-      "quality_score": 0.58,
-      "concentration_score": 1.0,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 0,
-      "quarters_used": 2,
-      "is_bootstrapped": true
-    },
-    "DME Capital Management": {
-      "quality_score": 0.523,
-      "concentration_score": 0.811,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 46,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Semper Augustus Investments Group": {
-      "quality_score": 0.797,
-      "concentration_score": 0.789,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 50,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Brown University": {
-      "quality_score": 0.899,
-      "concentration_score": 1.0,
-      "turnover_score": 0.863,
-      "avg_turnover_pct": 8.2,
-      "position_count": 10,
-      "quarters_used": 3,
-      "is_bootstrapped": false
-    },
-    "Situational Awareness LP": {
-      "quality_score": 0.352,
-      "concentration_score": 0.932,
-      "turnover_score": 0.008,
-      "avg_turnover_pct": 59.5,
-      "position_count": 23,
-      "quarters_used": 3,
-      "is_bootstrapped": false
-    },
-    "Duke University (DUMAC)": {
-      "quality_score": 0.851,
-      "concentration_score": 0.968,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 16,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Oaktree Capital Management (Marks)": {
-      "quality_score": 0.656,
-      "concentration_score": 0.321,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 139,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Duquesne Family Office (Druckenmiller)": {
-      "quality_score": 0.454,
-      "concentration_score": 0.579,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 90,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "SoftBank Group Corp": {
-      "quality_score": 0.268,
-      "concentration_score": 0.895,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 30,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Brave Warrior Advisors (Ainslie)": {
-      "quality_score": 0.533,
-      "concentration_score": 0.842,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 40,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Himalaya Capital Management (Li Lu)": {
-      "quality_score": 1.0,
-      "concentration_score": 1.0,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 8,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "TCI Fund (Chris Hohn)": {
-      "quality_score": 0.588,
-      "concentration_score": 1.0,
-      "turnover_score": 0.337,
-      "avg_turnover_pct": 39.8,
-      "position_count": 6,
-      "quarters_used": 2,
-      "is_bootstrapped": false
-    },
-    "Appaloosa (Tepper)": {
-      "quality_score": 0.416,
-      "concentration_score": 0.921,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 25,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Viking Global (Halvorsen)": {
-      "quality_score": 0.637,
-      "concentration_score": 0.579,
-      "turnover_score": 0.718,
-      "avg_turnover_pct": 16.9,
-      "position_count": 90,
-      "quarters_used": 3,
-      "is_bootstrapped": false
-    },
-    "Harvard Management Co": {
-      "quality_score": 0.721,
-      "concentration_score": 0.953,
-      "turnover_score": 0.303,
-      "avg_turnover_pct": 41.8,
-      "position_count": 19,
-      "quarters_used": 3,
-      "is_bootstrapped": false
-    },
-    "Fairfax Financial Holdings (Watsa)": {
-      "quality_score": 0.825,
-      "concentration_score": 0.884,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 32,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "TCI Fund Management (Hohn)": {
-      "quality_score": 0.858,
-      "concentration_score": 0.995,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 11,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Sound Shore Management": {
-      "quality_score": 0.673,
-      "concentration_score": 0.842,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 40,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Yale University": {
-      "quality_score": 1.0,
-      "concentration_score": 1.0,
-      "turnover_score": 1.0,
-      "avg_turnover_pct": 0.0,
-      "position_count": 4,
-      "quarters_used": 3,
-      "is_bootstrapped": false
-    },
     "Soros Fund Management (Soros)": {
       "quality_score": 0.14,
       "concentration_score": 0.0,
       "turnover_score": null,
       "avg_turnover_pct": null,
       "position_count": 254,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Lountzis Asset Management": {
-      "quality_score": 0.649,
-      "concentration_score": 0.763,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 55,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Ancient Art (Pabrai)": {
-      "quality_score": 0.851,
-      "concentration_score": 0.968,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 16,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Berkshire Hathaway (Buffett)": {
-      "quality_score": 0.97,
-      "concentration_score": 0.9,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 29,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Renaissance Technologies (Quant)": {
-      "quality_score": 0.0,
-      "concentration_score": 0.0,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 500,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "AQR Capital (Asness)": {
-      "quality_score": 0.416,
-      "concentration_score": 0.0,
-      "turnover_score": 0.842,
-      "avg_turnover_pct": 9.5,
-      "position_count": 498,
-      "quarters_used": 3,
-      "is_bootstrapped": false
-    },
-    "Tiger Global (Coleman)": {
-      "quality_score": 0.691,
-      "concentration_score": 0.811,
-      "turnover_score": 0.899,
-      "avg_turnover_pct": 6.1,
-      "position_count": 46,
-      "quarters_used": 3,
-      "is_bootstrapped": false
-    },
-    "Atreides Management": {
-      "quality_score": 0.383,
-      "concentration_score": 0.811,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 46,
-      "quarters_used": 1,
-      "is_bootstrapped": true
-    },
-    "Two Sigma Investments (Quant)": {
-      "quality_score": 0.0,
-      "concentration_score": 0.0,
-      "turnover_score": null,
-      "avg_turnover_pct": null,
-      "position_count": 493,
       "quarters_used": 1,
       "is_bootstrapped": true
     },
@@ -116370,6 +115938,177 @@
       "quarters_used": 1,
       "is_bootstrapped": true
     },
+    "DME Capital Management": {
+      "quality_score": 0.523,
+      "concentration_score": 0.811,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 46,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "SoftBank Group Corp": {
+      "quality_score": 0.268,
+      "concentration_score": 0.895,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 30,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "7G Capital Management": {
+      "quality_score": 0.58,
+      "concentration_score": 1.0,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 10,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Ancient Art (Pabrai)": {
+      "quality_score": 0.851,
+      "concentration_score": 0.968,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 16,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Himalaya Capital Management (Li Lu)": {
+      "quality_score": 1.0,
+      "concentration_score": 1.0,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 8,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "NVIDIA Corp": {
+      "quality_score": 0.3,
+      "concentration_score": 1.0,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 8,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Fairfax Financial Holdings (Watsa)": {
+      "quality_score": 0.825,
+      "concentration_score": 0.884,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 32,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Trian Fund Management (Peltz)": {
+      "quality_score": 0.58,
+      "concentration_score": 1.0,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 8,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "ValueAct Holdings": {
+      "quality_score": 0.987,
+      "concentration_score": 0.958,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 18,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "AQR Capital (Asness)": {
+      "quality_score": 0.416,
+      "concentration_score": 0.0,
+      "turnover_score": 0.842,
+      "avg_turnover_pct": 9.5,
+      "position_count": 498,
+      "quarters_used": 3,
+      "is_bootstrapped": false
+    },
+    "Viking Global (Halvorsen)": {
+      "quality_score": 0.637,
+      "concentration_score": 0.579,
+      "turnover_score": 0.718,
+      "avg_turnover_pct": 16.9,
+      "position_count": 90,
+      "quarters_used": 3,
+      "is_bootstrapped": false
+    },
+    "Whale Rock Capital Management": {
+      "quality_score": 0.401,
+      "concentration_score": 0.868,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 35,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Sound Shore Management": {
+      "quality_score": 0.673,
+      "concentration_score": 0.842,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 40,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Muhlenkamp & Co": {
+      "quality_score": 0.692,
+      "concentration_score": 0.905,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 28,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Donald Smith & Co": {
+      "quality_score": 0.632,
+      "concentration_score": 0.705,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 66,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Renaissance Technologies (Quant)": {
+      "quality_score": 0.0,
+      "concentration_score": 0.0,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 500,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Lone Pine Capital (Mandel)": {
+      "quality_score": 0.402,
+      "concentration_score": 0.874,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 34,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Abrams Capital Management": {
+      "quality_score": 0.718,
+      "concentration_score": 0.995,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 11,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Duke University": {
+      "quality_score": 0.58,
+      "concentration_score": 1.0,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 0,
+      "quarters_used": 2,
+      "is_bootstrapped": true
+    },
     "H&H International Investment (Li Lu)": {
       "quality_score": 0.987,
       "concentration_score": 0.958,
@@ -116379,6 +116118,78 @@
       "quarters_used": 1,
       "is_bootstrapped": true
     },
+    "Arbiter Partners Capital Management": {
+      "quality_score": 0.533,
+      "concentration_score": 0.842,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 40,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Thiel Macro (Thiel)": {
+      "quality_score": 0.44,
+      "concentration_score": 1.0,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 8,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Alphabet Inc": {
+      "quality_score": 0.272,
+      "concentration_score": 0.905,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 28,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Oaktree Capital Management (Marks)": {
+      "quality_score": 0.656,
+      "concentration_score": 0.321,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 139,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Pershing Square Inc": {
+      "quality_score": 0.574,
+      "concentration_score": 0.979,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 14,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Harris Associates (Oakmark)": {
+      "quality_score": 0.622,
+      "concentration_score": 0.205,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 161,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "TCI Fund Management (Hohn)": {
+      "quality_score": 0.858,
+      "concentration_score": 0.995,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 11,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Situational Awareness LP": {
+      "quality_score": 0.352,
+      "concentration_score": 0.932,
+      "turnover_score": 0.008,
+      "avg_turnover_pct": 59.5,
+      "position_count": 23,
+      "quarters_used": 3,
+      "is_bootstrapped": false
+    },
     "D1 Capital (Sundheim)": {
       "quality_score": 0.336,
       "concentration_score": 0.763,
@@ -116387,6 +116198,195 @@
       "position_count": 55,
       "quarters_used": 3,
       "is_bootstrapped": false
+    },
+    "Baupost Group (Klarman)": {
+      "quality_score": 0.979,
+      "concentration_score": 0.932,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 23,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Lountzis Asset Management": {
+      "quality_score": 0.649,
+      "concentration_score": 0.763,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 55,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "TCI Fund (Chris Hohn)": {
+      "quality_score": 0.588,
+      "concentration_score": 1.0,
+      "turnover_score": 0.337,
+      "avg_turnover_pct": 39.8,
+      "position_count": 6,
+      "quarters_used": 2,
+      "is_bootstrapped": false
+    },
+    "Chou Associates Management": {
+      "quality_score": 0.687,
+      "concentration_score": 0.889,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 31,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Coatue (Laffont)": {
+      "quality_score": 0.352,
+      "concentration_score": 0.705,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 66,
+      "quarters_used": 3,
+      "is_bootstrapped": true
+    },
+    "Pershing Square (Ackman)": {
+      "quality_score": 0.818,
+      "concentration_score": 0.995,
+      "turnover_score": 0.92,
+      "avg_turnover_pct": 4.8,
+      "position_count": 11,
+      "quarters_used": 3,
+      "is_bootstrapped": false
+    },
+    "Yale University": {
+      "quality_score": 1.0,
+      "concentration_score": 1.0,
+      "turnover_score": 1.0,
+      "avg_turnover_pct": 0.0,
+      "position_count": 4,
+      "quarters_used": 3,
+      "is_bootstrapped": false
+    },
+    "Third Point (Loeb)": {
+      "quality_score": 0.529,
+      "concentration_score": 0.832,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 42,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Harvard Management Co": {
+      "quality_score": 0.721,
+      "concentration_score": 0.953,
+      "turnover_score": 0.303,
+      "avg_turnover_pct": 41.8,
+      "position_count": 19,
+      "quarters_used": 3,
+      "is_bootstrapped": false
+    },
+    "Brave Warrior Advisors (Ainslie)": {
+      "quality_score": 0.533,
+      "concentration_score": 0.842,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 40,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Tiger Global (Coleman)": {
+      "quality_score": 0.691,
+      "concentration_score": 0.811,
+      "turnover_score": 0.899,
+      "avg_turnover_pct": 6.1,
+      "position_count": 46,
+      "quarters_used": 3,
+      "is_bootstrapped": false
+    },
+    "Duke University (DUMAC)": {
+      "quality_score": 0.851,
+      "concentration_score": 0.968,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 16,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Appaloosa (Tepper)": {
+      "quality_score": 0.416,
+      "concentration_score": 0.921,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 25,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Brown University": {
+      "quality_score": 0.899,
+      "concentration_score": 1.0,
+      "turnover_score": 0.863,
+      "avg_turnover_pct": 8.2,
+      "position_count": 10,
+      "quarters_used": 3,
+      "is_bootstrapped": false
+    },
+    "Semper Augustus Investments Group": {
+      "quality_score": 0.797,
+      "concentration_score": 0.789,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 50,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Dodge & Cox": {
+      "quality_score": 0.56,
+      "concentration_score": 0.0,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 222,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Duquesne Family Office (Druckenmiller)": {
+      "quality_score": 0.454,
+      "concentration_score": 0.579,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 90,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Berkshire Hathaway (Buffett)": {
+      "quality_score": 0.97,
+      "concentration_score": 0.9,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 29,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "RV Capital (Zeller)": {
+      "quality_score": 0.855,
+      "concentration_score": 0.984,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 13,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Two Sigma Investments (Quant)": {
+      "quality_score": 0.0,
+      "concentration_score": 0.0,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 493,
+      "quarters_used": 1,
+      "is_bootstrapped": true
+    },
+    "Atreides Management": {
+      "quality_score": 0.383,
+      "concentration_score": 0.811,
+      "turnover_score": null,
+      "avg_turnover_pct": null,
+      "position_count": 46,
+      "quarters_used": 1,
+      "is_bootstrapped": true
     }
   },
   "sell_signals": []

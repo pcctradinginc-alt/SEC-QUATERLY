@@ -36,16 +36,8 @@
       "ticker": "UA"
     },
     {
-      "superseded_by": "EWZ",
-      "ticker": "EWY"
-    },
-    {
       "superseded_by": "LLYVK",
       "ticker": "LLYVA"
-    },
-    {
-      "superseded_by": "INDA",
-      "ticker": "IWM"
     },
     {
       "superseded_by": "CORZ",
@@ -66,7 +58,7 @@
     "insider": "Insider buying (Form 4)",
     "manager_quality": "Manager quality"
   },
-  "input_fingerprint": "154fae075120c97e313bbabd44bf61fc916d0076daccda2d0fc11d71bd33e76a",
+  "input_fingerprint": "092a2fa5c704cbbd400a77e3c3722442b7d122465055ba8240ab523bf1fce64d",
   "ranking": [
     {
       "alpha_score_legacy": 44.2,
@@ -34136,12 +34128,6 @@
           "Highest-quality buyer: Duquesne Family Office (Druckenmiller) (quality 0.45)"
         ]
       },
-      "same_issuer_alternates": [
-        {
-          "signal_score": 48.4,
-          "ticker": "EWY"
-        }
-      ],
       "signal_score": 50.2,
       "ticker": "EWZ",
       "why": {
@@ -36705,12 +36691,6 @@
           "Highest-quality buyer: Duke University (DUMAC) (quality 0.85)"
         ]
       },
-      "same_issuer_alternates": [
-        {
-          "signal_score": 36.5,
-          "ticker": "IWM"
-        }
-      ],
       "signal_score": 49.2,
       "ticker": "INDA",
       "why": {
@@ -38691,7 +38671,7 @@
         "pct_change": -6.5
       },
       "price_penalty": 0.0,
-      "rank": null,
+      "rank": 212,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -38719,7 +38699,6 @@
         ]
       },
       "signal_score": 48.4,
-      "superseded_by": "EWZ",
       "ticker": "EWY",
       "why": {
         "bullets": [
@@ -38807,7 +38786,7 @@
         "pct_change": 15.6
       },
       "price_penalty": 7.5,
-      "rank": 212,
+      "rank": 213,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -39166,7 +39145,7 @@
         "pct_change": 36.8
       },
       "price_penalty": 15.0,
-      "rank": 213,
+      "rank": 214,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -39326,7 +39305,7 @@
         "pct_change": 22.4
       },
       "price_penalty": 7.5,
-      "rank": 214,
+      "rank": 215,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -39463,7 +39442,7 @@
         "pct_change": 33.4
       },
       "price_penalty": 15.0,
-      "rank": 215,
+      "rank": 216,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -39596,7 +39575,7 @@
         "pct_change": -15.0
       },
       "price_penalty": 0.0,
-      "rank": 216,
+      "rank": 217,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -39727,7 +39706,7 @@
         "pct_change": -43.0
       },
       "price_penalty": 0.0,
-      "rank": 217,
+      "rank": 218,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -39991,7 +39970,7 @@
         "pct_change": 27.7
       },
       "price_penalty": 15.0,
-      "rank": 218,
+      "rank": 219,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -40221,7 +40200,7 @@
         "pct_change": 13.2
       },
       "price_penalty": 0.0,
-      "rank": 219,
+      "rank": 220,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -40457,7 +40436,7 @@
         "pct_change": 3.6
       },
       "price_penalty": 0.0,
-      "rank": 220,
+      "rank": 221,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -40571,7 +40550,7 @@
         "pct_change": -7.6
       },
       "price_penalty": 0.0,
-      "rank": 221,
+      "rank": 222,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -40701,7 +40680,7 @@
         "pct_change": -42.0
       },
       "price_penalty": 0.0,
-      "rank": 222,
+      "rank": 223,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -40816,7 +40795,7 @@
         "pct_change": -13.6
       },
       "price_penalty": 0.0,
-      "rank": 223,
+      "rank": 224,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -40946,7 +40925,7 @@
         "pct_change": 12.1
       },
       "price_penalty": 0.0,
-      "rank": 224,
+      "rank": 225,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -41061,7 +41040,7 @@
         "pct_change": 4.4
       },
       "price_penalty": 0.0,
-      "rank": 225,
+      "rank": 226,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -41175,7 +41154,7 @@
         "pct_change": -6.5
       },
       "price_penalty": 0.0,
-      "rank": 226,
+      "rank": 227,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -41287,7 +41266,7 @@
         "pct_change": -9.5
       },
       "price_penalty": 0.0,
-      "rank": 227,
+      "rank": 228,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -41399,7 +41378,7 @@
         "pct_change": -17.3
       },
       "price_penalty": 0.0,
-      "rank": 228,
+      "rank": 229,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -41513,7 +41492,7 @@
         "pct_change": -20.1
       },
       "price_penalty": 0.0,
-      "rank": 229,
+      "rank": 230,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -41628,7 +41607,7 @@
         "pct_change": 7.9
       },
       "price_penalty": 0.0,
-      "rank": 230,
+      "rank": 231,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -41742,7 +41721,7 @@
         "pct_change": -12.3
       },
       "price_penalty": 0.0,
-      "rank": 231,
+      "rank": 232,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -41969,7 +41948,7 @@
         "pct_change": 2.9
       },
       "price_penalty": 0.0,
-      "rank": 232,
+      "rank": 233,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -42084,7 +42063,7 @@
         "pct_change": 9.4
       },
       "price_penalty": 0.0,
-      "rank": 233,
+      "rank": 234,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -42312,7 +42291,7 @@
         "pct_change": -17.5
       },
       "price_penalty": 0.0,
-      "rank": 234,
+      "rank": 235,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -42427,7 +42406,7 @@
         "pct_change": 6.4
       },
       "price_penalty": 0.0,
-      "rank": 235,
+      "rank": 236,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -42542,7 +42521,7 @@
         "pct_change": 7.8
       },
       "price_penalty": 0.0,
-      "rank": 236,
+      "rank": 237,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -42675,7 +42654,7 @@
         "pct_change": 35.9
       },
       "price_penalty": 15.0,
-      "rank": 237,
+      "rank": 238,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -42807,7 +42786,7 @@
         "pct_change": -2.3
       },
       "price_penalty": 0.0,
-      "rank": 238,
+      "rank": 239,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -42938,7 +42917,7 @@
         "pct_change": 10.1
       },
       "price_penalty": 0.0,
-      "rank": 239,
+      "rank": 240,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -43054,7 +43033,7 @@
         "pct_change": -24.5
       },
       "price_penalty": 0.0,
-      "rank": 240,
+      "rank": 241,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -43182,7 +43161,7 @@
         "pct_change": 9.0
       },
       "price_penalty": 0.0,
-      "rank": 241,
+      "rank": 242,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -43298,7 +43277,7 @@
         "pct_change": -2.9
       },
       "price_penalty": 0.0,
-      "rank": 242,
+      "rank": 243,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -43413,7 +43392,7 @@
         "pct_change": -45.3
       },
       "price_penalty": 0.0,
-      "rank": 243,
+      "rank": 244,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -43543,7 +43522,7 @@
         "pct_change": -14.1
       },
       "price_penalty": 0.0,
-      "rank": 244,
+      "rank": 245,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -43658,7 +43637,7 @@
         "pct_change": -31.8
       },
       "price_penalty": 0.0,
-      "rank": 245,
+      "rank": 246,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -43772,7 +43751,7 @@
         "pct_change": 8.7
       },
       "price_penalty": 0.0,
-      "rank": 246,
+      "rank": 247,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -43887,7 +43866,7 @@
         "pct_change": -18.2
       },
       "price_penalty": 0.0,
-      "rank": 247,
+      "rank": 248,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -44001,7 +43980,7 @@
         "pct_change": -10.0
       },
       "price_penalty": 0.0,
-      "rank": 248,
+      "rank": 249,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -44117,7 +44096,7 @@
         "pct_change": -3.3
       },
       "price_penalty": 0.0,
-      "rank": 249,
+      "rank": 250,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -44247,7 +44226,7 @@
         "pct_change": 13.7
       },
       "price_penalty": 0.0,
-      "rank": 250,
+      "rank": 251,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -44366,7 +44345,7 @@
         "pct_change": 18.4
       },
       "price_penalty": 7.5,
-      "rank": 251,
+      "rank": 252,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -44482,7 +44461,7 @@
         "pct_change": -26.2
       },
       "price_penalty": 0.0,
-      "rank": 252,
+      "rank": 253,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -44610,7 +44589,7 @@
         "pct_change": -22.7
       },
       "price_penalty": 0.0,
-      "rank": 253,
+      "rank": 254,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -44726,7 +44705,7 @@
         "pct_change": -14.4
       },
       "price_penalty": 0.0,
-      "rank": 254,
+      "rank": 255,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -44840,7 +44819,7 @@
         "pct_change": -41.4
       },
       "price_penalty": 0.0,
-      "rank": 255,
+      "rank": 256,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -44985,7 +44964,7 @@
         "pct_change": 17.0
       },
       "price_penalty": 7.5,
-      "rank": 256,
+      "rank": 257,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -45102,7 +45081,7 @@
         "pct_change": -33.5
       },
       "price_penalty": 0.0,
-      "rank": 257,
+      "rank": 258,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -45215,7 +45194,7 @@
         "pct_change": 5.1
       },
       "price_penalty": 0.0,
-      "rank": 258,
+      "rank": 259,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -45343,7 +45322,7 @@
         "pct_change": 9.8
       },
       "price_penalty": 0.0,
-      "rank": 259,
+      "rank": 260,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -45604,7 +45583,7 @@
         "pct_change": -3.6
       },
       "price_penalty": 0.0,
-      "rank": 260,
+      "rank": 261,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -45736,7 +45715,7 @@
         "pct_change": -12.1
       },
       "price_penalty": 0.0,
-      "rank": 261,
+      "rank": 262,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -45868,7 +45847,7 @@
         "pct_change": -0.0
       },
       "price_penalty": 0.0,
-      "rank": 262,
+      "rank": 263,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -46016,7 +45995,7 @@
         "pct_change": 27.4
       },
       "price_penalty": 15.0,
-      "rank": 263,
+      "rank": 264,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -46133,7 +46112,7 @@
         "pct_change": NaN
       },
       "price_penalty": 0.0,
-      "rank": 264,
+      "rank": 265,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -46488,7 +46467,7 @@
         "pct_change": -10.8
       },
       "price_penalty": 0.0,
-      "rank": 265,
+      "rank": 266,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -46601,7 +46580,7 @@
         "pct_change": -50.1
       },
       "price_penalty": 0.0,
-      "rank": 266,
+      "rank": 267,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -46836,7 +46815,7 @@
         "pct_change": 1.1
       },
       "price_penalty": 0.0,
-      "rank": 267,
+      "rank": 268,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -46952,7 +46931,7 @@
         "pct_change": 24.6
       },
       "price_penalty": 7.5,
-      "rank": 268,
+      "rank": 269,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -47066,7 +47045,7 @@
         "pct_change": -1.3
       },
       "price_penalty": 0.0,
-      "rank": 269,
+      "rank": 270,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -47312,7 +47291,7 @@
         "pct_change": -11.7
       },
       "price_penalty": 0.0,
-      "rank": 270,
+      "rank": 271,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -47541,7 +47520,7 @@
         "pct_change": -12.7
       },
       "price_penalty": 0.0,
-      "rank": 271,
+      "rank": 272,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -47669,7 +47648,7 @@
         "pct_change": -0.9
       },
       "price_penalty": 0.0,
-      "rank": 272,
+      "rank": 273,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -47800,7 +47779,7 @@
         "pct_change": 2.5
       },
       "price_penalty": 0.0,
-      "rank": 273,
+      "rank": 274,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -47931,7 +47910,7 @@
         "pct_change": 8.1
       },
       "price_penalty": 0.0,
-      "rank": 274,
+      "rank": 275,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -48046,7 +48025,7 @@
         "pct_change": -2.8
       },
       "price_penalty": 0.0,
-      "rank": 275,
+      "rank": 276,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -48161,7 +48140,7 @@
         "pct_change": 15.7
       },
       "price_penalty": 7.5,
-      "rank": 276,
+      "rank": 277,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -48291,7 +48270,7 @@
         "pct_change": 9.4
       },
       "price_penalty": 0.0,
-      "rank": 277,
+      "rank": 278,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -48426,7 +48405,7 @@
         "pct_change": 26.9
       },
       "price_penalty": 15.0,
-      "rank": 278,
+      "rank": 279,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -48559,7 +48538,7 @@
         "pct_change": -0.1
       },
       "price_penalty": 0.0,
-      "rank": 279,
+      "rank": 280,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -48676,7 +48655,7 @@
         "pct_change": 11.7
       },
       "price_penalty": 0.0,
-      "rank": 280,
+      "rank": 281,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -48791,7 +48770,7 @@
         "pct_change": 8.5
       },
       "price_penalty": 0.0,
-      "rank": 281,
+      "rank": 282,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -48920,7 +48899,7 @@
         "pct_change": 11.9
       },
       "price_penalty": 0.0,
-      "rank": 282,
+      "rank": 283,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -49034,7 +49013,7 @@
         "pct_change": 9.0
       },
       "price_penalty": 0.0,
-      "rank": 283,
+      "rank": 284,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -49167,7 +49146,7 @@
         "pct_change": 33.1
       },
       "price_penalty": 15.0,
-      "rank": 284,
+      "rank": 285,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -49406,7 +49385,7 @@
         "pct_change": -29.9
       },
       "price_penalty": 0.0,
-      "rank": 285,
+      "rank": 286,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -49554,7 +49533,7 @@
         "pct_change": 28.1
       },
       "price_penalty": 15.0,
-      "rank": 286,
+      "rank": 287,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -49689,7 +49668,7 @@
         "pct_change": 15.7
       },
       "price_penalty": 7.5,
-      "rank": 287,
+      "rank": 288,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -49823,7 +49802,7 @@
         "pct_change": 22.3
       },
       "price_penalty": 7.5,
-      "rank": 288,
+      "rank": 289,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -49938,7 +49917,7 @@
         "pct_change": 9.5
       },
       "price_penalty": 0.0,
-      "rank": 289,
+      "rank": 290,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -50050,7 +50029,7 @@
         "pct_change": -3.3
       },
       "price_penalty": 0.0,
-      "rank": 290,
+      "rank": 291,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -50163,7 +50142,7 @@
         "pct_change": -33.2
       },
       "price_penalty": 0.0,
-      "rank": 291,
+      "rank": 292,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -50291,7 +50270,7 @@
         "pct_change": 10.1
       },
       "price_penalty": 0.0,
-      "rank": 292,
+      "rank": 293,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -50406,7 +50385,7 @@
         "pct_change": 11.6
       },
       "price_penalty": 0.0,
-      "rank": 293,
+      "rank": 294,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -50551,7 +50530,7 @@
         "pct_change": 18.0
       },
       "price_penalty": 7.5,
-      "rank": 294,
+      "rank": 295,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -50687,7 +50666,7 @@
         "pct_change": 27.1
       },
       "price_penalty": 15.0,
-      "rank": 295,
+      "rank": 296,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -50819,7 +50798,7 @@
         "pct_change": -0.9
       },
       "price_penalty": 0.0,
-      "rank": 296,
+      "rank": 297,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -51046,7 +51025,7 @@
         "pct_change": 13.4
       },
       "price_penalty": 0.0,
-      "rank": 297,
+      "rank": 298,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -51158,7 +51137,7 @@
         "pct_change": -9.2
       },
       "price_penalty": 0.0,
-      "rank": 298,
+      "rank": 299,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -51273,7 +51252,7 @@
         "pct_change": 16.6
       },
       "price_penalty": 7.5,
-      "rank": 299,
+      "rank": 300,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -51386,7 +51365,7 @@
         "pct_change": -21.1
       },
       "price_penalty": 0.0,
-      "rank": 300,
+      "rank": 301,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -51515,7 +51494,7 @@
         "pct_change": 21.3
       },
       "price_penalty": 7.5,
-      "rank": 301,
+      "rank": 302,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -51630,7 +51609,7 @@
         "pct_change": 6.2
       },
       "price_penalty": 0.0,
-      "rank": 302,
+      "rank": 303,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -51743,7 +51722,7 @@
         "pct_change": -27.5
       },
       "price_penalty": 0.0,
-      "rank": 303,
+      "rank": 304,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -51856,7 +51835,7 @@
         "pct_change": -17.9
       },
       "price_penalty": 0.0,
-      "rank": 304,
+      "rank": 305,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -51984,7 +51963,7 @@
         "pct_change": 4.9
       },
       "price_penalty": 0.0,
-      "rank": 305,
+      "rank": 306,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -52099,7 +52078,7 @@
         "pct_change": 4.2
       },
       "price_penalty": 0.0,
-      "rank": 306,
+      "rank": 307,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -52211,7 +52190,7 @@
         "pct_change": 7.9
       },
       "price_penalty": 0.0,
-      "rank": 307,
+      "rank": 308,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -52323,7 +52302,7 @@
         "pct_change": -15.5
       },
       "price_penalty": 0.0,
-      "rank": 308,
+      "rank": 309,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -52435,7 +52414,7 @@
         "pct_change": -2.0
       },
       "price_penalty": 0.0,
-      "rank": 309,
+      "rank": 310,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -52548,7 +52527,7 @@
         "pct_change": -3.6
       },
       "price_penalty": 0.0,
-      "rank": 310,
+      "rank": 311,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -52660,7 +52639,7 @@
         "pct_change": -2.7
       },
       "price_penalty": 0.0,
-      "rank": 311,
+      "rank": 312,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -52773,7 +52752,7 @@
         "pct_change": 2.7
       },
       "price_penalty": 0.0,
-      "rank": 312,
+      "rank": 313,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -52887,7 +52866,7 @@
         "pct_change": -34.6
       },
       "price_penalty": 0.0,
-      "rank": 313,
+      "rank": 314,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -53123,7 +53102,7 @@
         "pct_change": -29.3
       },
       "price_penalty": 0.0,
-      "rank": 314,
+      "rank": 315,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -53237,7 +53216,7 @@
         "pct_change": -28.8
       },
       "price_penalty": 0.0,
-      "rank": 315,
+      "rank": 316,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -53352,7 +53331,7 @@
         "pct_change": 11.5
       },
       "price_penalty": 0.0,
-      "rank": 316,
+      "rank": 317,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -53481,7 +53460,7 @@
         "pct_change": -3.5
       },
       "price_penalty": 0.0,
-      "rank": 317,
+      "rank": 318,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -53598,7 +53577,7 @@
         "pct_change": 32.3
       },
       "price_penalty": 15.0,
-      "rank": 318,
+      "rank": 319,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -53962,7 +53941,7 @@
         "pct_change": 35.0
       },
       "price_penalty": 15.0,
-      "rank": 319,
+      "rank": 320,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -54197,7 +54176,7 @@
         "pct_change": -7.8
       },
       "price_penalty": 0.0,
-      "rank": 320,
+      "rank": 321,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -54311,7 +54290,7 @@
         "pct_change": 24.3
       },
       "price_penalty": 7.5,
-      "rank": 321,
+      "rank": 322,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -54427,7 +54406,7 @@
         "pct_change": 53.8
       },
       "price_penalty": 15.0,
-      "rank": 322,
+      "rank": 323,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -54540,7 +54519,7 @@
         "pct_change": 13.5
       },
       "price_penalty": 0.0,
-      "rank": 323,
+      "rank": 324,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -54653,7 +54632,7 @@
         "pct_change": -0.1
       },
       "price_penalty": 0.0,
-      "rank": 324,
+      "rank": 325,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -54767,7 +54746,7 @@
         "pct_change": -6.7
       },
       "price_penalty": 0.0,
-      "rank": 325,
+      "rank": 326,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -54881,7 +54860,7 @@
         "pct_change": 9.4
       },
       "price_penalty": 0.0,
-      "rank": 326,
+      "rank": 327,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -55108,7 +55087,7 @@
         "pct_change": -18.7
       },
       "price_penalty": 0.0,
-      "rank": 327,
+      "rank": 328,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -55223,7 +55202,7 @@
         "pct_change": -28.9
       },
       "price_penalty": 0.0,
-      "rank": 328,
+      "rank": 329,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -55336,7 +55315,7 @@
         "pct_change": -4.7
       },
       "price_penalty": 0.0,
-      "rank": 329,
+      "rank": 330,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -55467,7 +55446,7 @@
         "pct_change": 64.8
       },
       "price_penalty": 15.0,
-      "rank": 330,
+      "rank": 331,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -55582,7 +55561,7 @@
         "pct_change": -4.4
       },
       "price_penalty": 0.0,
-      "rank": 331,
+      "rank": 332,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -55694,7 +55673,7 @@
         "pct_change": 0.5
       },
       "price_penalty": 0.0,
-      "rank": 332,
+      "rank": 333,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -55826,7 +55805,7 @@
         "pct_change": 30.9
       },
       "price_penalty": 15.0,
-      "rank": 333,
+      "rank": 334,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -55962,7 +55941,7 @@
         "pct_change": 63.2
       },
       "price_penalty": 15.0,
-      "rank": 334,
+      "rank": 335,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -56077,7 +56056,7 @@
         "pct_change": -13.2
       },
       "price_penalty": 0.0,
-      "rank": 335,
+      "rank": 336,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -56189,7 +56168,7 @@
         "pct_change": -6.6
       },
       "price_penalty": 0.0,
-      "rank": 336,
+      "rank": 337,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -56302,7 +56281,7 @@
         "pct_change": 2.3
       },
       "price_penalty": 0.0,
-      "rank": 337,
+      "rank": 338,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -56415,7 +56394,7 @@
         "pct_change": -19.2
       },
       "price_penalty": 0.0,
-      "rank": 338,
+      "rank": 339,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -56543,7 +56522,7 @@
         "pct_change": 4.7
       },
       "price_penalty": 0.0,
-      "rank": 339,
+      "rank": 340,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -56658,7 +56637,7 @@
         "pct_change": -26.9
       },
       "price_penalty": 0.0,
-      "rank": 340,
+      "rank": 341,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -56770,7 +56749,7 @@
         "pct_change": -16.2
       },
       "price_penalty": 0.0,
-      "rank": 341,
+      "rank": 342,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -56882,7 +56861,7 @@
         "pct_change": 1.5
       },
       "price_penalty": 0.0,
-      "rank": 342,
+      "rank": 343,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -56995,7 +56974,7 @@
         "pct_change": 12.1
       },
       "price_penalty": 0.0,
-      "rank": 343,
+      "rank": 344,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -57108,7 +57087,7 @@
         "pct_change": 13.2
       },
       "price_penalty": 0.0,
-      "rank": 344,
+      "rank": 345,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -57220,7 +57199,7 @@
         "pct_change": 2.7
       },
       "price_penalty": 0.0,
-      "rank": 345,
+      "rank": 346,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -57333,7 +57312,7 @@
         "pct_change": 4.0
       },
       "price_penalty": 0.0,
-      "rank": 346,
+      "rank": 347,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -57462,7 +57441,7 @@
         "pct_change": -22.0
       },
       "price_penalty": 0.0,
-      "rank": 347,
+      "rank": 348,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -57576,7 +57555,7 @@
         "pct_change": 9.2
       },
       "price_penalty": 0.0,
-      "rank": 348,
+      "rank": 349,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -57690,7 +57669,7 @@
         "pct_change": -2.0
       },
       "price_penalty": 0.0,
-      "rank": 349,
+      "rank": 350,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -58262,7 +58241,7 @@
         "pct_change": 15.1
       },
       "price_penalty": 7.5,
-      "rank": 350,
+      "rank": 351,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -58375,7 +58354,7 @@
         "pct_change": -5.5
       },
       "price_penalty": 0.0,
-      "rank": 351,
+      "rank": 352,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -58602,7 +58581,7 @@
         "pct_change": 8.9
       },
       "price_penalty": 0.0,
-      "rank": 352,
+      "rank": 353,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -58716,7 +58695,7 @@
         "pct_change": -16.1
       },
       "price_penalty": 0.0,
-      "rank": 353,
+      "rank": 354,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -58830,7 +58809,7 @@
         "pct_change": 11.9
       },
       "price_penalty": 0.0,
-      "rank": 354,
+      "rank": 355,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -58944,7 +58923,7 @@
         "pct_change": -5.8
       },
       "price_penalty": 0.0,
-      "rank": 355,
+      "rank": 356,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -59072,7 +59051,7 @@
         "pct_change": 12.9
       },
       "price_penalty": 0.0,
-      "rank": 356,
+      "rank": 357,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -59202,7 +59181,7 @@
         "pct_change": -33.9
       },
       "price_penalty": 0.0,
-      "rank": 357,
+      "rank": 358,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -59316,7 +59295,7 @@
         "pct_change": -7.7
       },
       "price_penalty": 0.0,
-      "rank": 358,
+      "rank": 359,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -59549,7 +59528,7 @@
         "pct_change": -31.6
       },
       "price_penalty": 0.0,
-      "rank": 359,
+      "rank": 360,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -59661,7 +59640,7 @@
         "pct_change": 8.9
       },
       "price_penalty": 0.0,
-      "rank": 360,
+      "rank": 361,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -59773,7 +59752,7 @@
         "pct_change": -12.8
       },
       "price_penalty": 0.0,
-      "rank": 361,
+      "rank": 362,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -60109,7 +60088,7 @@
         "pct_change": 5.5
       },
       "price_penalty": 0.0,
-      "rank": 362,
+      "rank": 363,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -60221,7 +60200,7 @@
         "pct_change": -4.8
       },
       "price_penalty": 0.0,
-      "rank": 363,
+      "rank": 364,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -60448,7 +60427,7 @@
         "pct_change": 22.3
       },
       "price_penalty": 7.5,
-      "rank": 364,
+      "rank": 365,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -60562,7 +60541,7 @@
         "pct_change": 7.8
       },
       "price_penalty": 0.0,
-      "rank": 365,
+      "rank": 366,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -60674,7 +60653,7 @@
         "pct_change": NaN
       },
       "price_penalty": 0.0,
-      "rank": 366,
+      "rank": 367,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -60786,7 +60765,7 @@
         "pct_change": -8.5
       },
       "price_penalty": 0.0,
-      "rank": 367,
+      "rank": 368,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -60918,7 +60897,7 @@
         "pct_change": 27.6
       },
       "price_penalty": 15.0,
-      "rank": 368,
+      "rank": 369,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -61048,7 +61027,7 @@
         "pct_change": -38.6
       },
       "price_penalty": 0.0,
-      "rank": 369,
+      "rank": 370,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -61162,7 +61141,7 @@
         "pct_change": 6.5
       },
       "price_penalty": 0.0,
-      "rank": 370,
+      "rank": 371,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -61275,7 +61254,7 @@
         "pct_change": -29.3
       },
       "price_penalty": 0.0,
-      "rank": 371,
+      "rank": 372,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -61388,7 +61367,7 @@
         "pct_change": -20.4
       },
       "price_penalty": 0.0,
-      "rank": 372,
+      "rank": 373,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -61500,7 +61479,7 @@
         "pct_change": -9.5
       },
       "price_penalty": 0.0,
-      "rank": 373,
+      "rank": 374,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -61612,7 +61591,7 @@
         "pct_change": 8.4
       },
       "price_penalty": 0.0,
-      "rank": 374,
+      "rank": 375,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -61724,7 +61703,7 @@
         "pct_change": 2.8
       },
       "price_penalty": 0.0,
-      "rank": 375,
+      "rank": 376,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -61839,7 +61818,7 @@
         "pct_change": 50.5
       },
       "price_penalty": 15.0,
-      "rank": 376,
+      "rank": 377,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -62176,7 +62155,7 @@
         "pct_change": 13.0
       },
       "price_penalty": 0.0,
-      "rank": 377,
+      "rank": 378,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -62288,7 +62267,7 @@
         "pct_change": 10.6
       },
       "price_penalty": 0.0,
-      "rank": 378,
+      "rank": 379,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -62403,7 +62382,7 @@
         "pct_change": 44.9
       },
       "price_penalty": 15.0,
-      "rank": 379,
+      "rank": 380,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -62517,7 +62496,7 @@
         "pct_change": 9.0
       },
       "price_penalty": 0.0,
-      "rank": 380,
+      "rank": 381,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -62742,7 +62721,7 @@
         "pct_change": 7.5
       },
       "price_penalty": 0.0,
-      "rank": 381,
+      "rank": 382,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -62854,7 +62833,7 @@
         "pct_change": 12.2
       },
       "price_penalty": 0.0,
-      "rank": 382,
+      "rank": 383,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -62967,7 +62946,7 @@
         "pct_change": -4.0
       },
       "price_penalty": 0.0,
-      "rank": 383,
+      "rank": 384,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -63080,7 +63059,7 @@
         "pct_change": -8.1
       },
       "price_penalty": 0.0,
-      "rank": 384,
+      "rank": 385,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -63192,7 +63171,7 @@
         "pct_change": -27.0
       },
       "price_penalty": 0.0,
-      "rank": 385,
+      "rank": 386,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -63305,7 +63284,7 @@
         "pct_change": 14.4
       },
       "price_penalty": 0.0,
-      "rank": 386,
+      "rank": 387,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -63419,7 +63398,7 @@
         "pct_change": -2.5
       },
       "price_penalty": 0.0,
-      "rank": 387,
+      "rank": 388,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -63532,7 +63511,7 @@
         "pct_change": 3.8
       },
       "price_penalty": 0.0,
-      "rank": 388,
+      "rank": 389,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -63660,7 +63639,7 @@
         "pct_change": 7.6
       },
       "price_penalty": 0.0,
-      "rank": 389,
+      "rank": 390,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -63776,7 +63755,7 @@
         "pct_change": 6.9
       },
       "price_penalty": 0.0,
-      "rank": 390,
+      "rank": 391,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -63890,7 +63869,7 @@
         "pct_change": 8.1
       },
       "price_penalty": 0.0,
-      "rank": 391,
+      "rank": 392,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -64003,7 +63982,7 @@
         "pct_change": 7.1
       },
       "price_penalty": 0.0,
-      "rank": 392,
+      "rank": 393,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -64116,7 +64095,7 @@
         "pct_change": -43.9
       },
       "price_penalty": 0.0,
-      "rank": 393,
+      "rank": 394,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -64230,7 +64209,7 @@
         "pct_change": -18.3
       },
       "price_penalty": 0.0,
-      "rank": 394,
+      "rank": 395,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -64343,7 +64322,7 @@
         "pct_change": 0.4
       },
       "price_penalty": 0.0,
-      "rank": 395,
+      "rank": 396,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -64455,7 +64434,7 @@
         "pct_change": -26.8
       },
       "price_penalty": 0.0,
-      "rank": 396,
+      "rank": 397,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -64568,7 +64547,7 @@
         "pct_change": 14.8
       },
       "price_penalty": 0.0,
-      "rank": 397,
+      "rank": 398,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -64681,7 +64660,7 @@
         "pct_change": -13.0
       },
       "price_penalty": 0.0,
-      "rank": 398,
+      "rank": 399,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -64793,7 +64772,7 @@
         "pct_change": -18.1
       },
       "price_penalty": 0.0,
-      "rank": 399,
+      "rank": 400,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -64906,7 +64885,7 @@
         "pct_change": -9.8
       },
       "price_penalty": 0.0,
-      "rank": 400,
+      "rank": 401,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -65021,7 +65000,7 @@
         "pct_change": 31.6
       },
       "price_penalty": 15.0,
-      "rank": 401,
+      "rank": 402,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -65134,7 +65113,7 @@
         "pct_change": 7.2
       },
       "price_penalty": 0.0,
-      "rank": 402,
+      "rank": 403,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -65246,7 +65225,7 @@
         "pct_change": -5.1
       },
       "price_penalty": 0.0,
-      "rank": 403,
+      "rank": 404,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -65822,7 +65801,7 @@
         "pct_change": 35.7
       },
       "price_penalty": 15.0,
-      "rank": 404,
+      "rank": 405,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -65936,7 +65915,7 @@
         "pct_change": -1.5
       },
       "price_penalty": 0.0,
-      "rank": null,
+      "rank": 406,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -65964,7 +65943,6 @@
         ]
       },
       "signal_score": 36.5,
-      "superseded_by": "INDA",
       "ticker": "IWM",
       "why": {
         "bullets": [
@@ -66164,7 +66142,7 @@
         "pct_change": 16.1
       },
       "price_penalty": 7.5,
-      "rank": 405,
+      "rank": 407,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -66297,7 +66275,7 @@
         "pct_change": 84.6
       },
       "price_penalty": 15.0,
-      "rank": 406,
+      "rank": 408,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -66413,7 +66391,7 @@
         "pct_change": 6.2
       },
       "price_penalty": 0.0,
-      "rank": 407,
+      "rank": 409,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -66545,7 +66523,7 @@
         "pct_change": 30.0
       },
       "price_penalty": 15.0,
-      "rank": 408,
+      "rank": 410,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -66662,7 +66640,7 @@
         "pct_change": 24.9
       },
       "price_penalty": 7.5,
-      "rank": 409,
+      "rank": 411,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -66776,7 +66754,7 @@
         "pct_change": 0.4
       },
       "price_penalty": 0.0,
-      "rank": 410,
+      "rank": 412,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -66909,7 +66887,7 @@
         "pct_change": 31.0
       },
       "price_penalty": 15.0,
-      "rank": 411,
+      "rank": 413,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -67026,7 +67004,7 @@
         "pct_change": -17.6
       },
       "price_penalty": 0.0,
-      "rank": 412,
+      "rank": 414,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -67140,7 +67118,7 @@
         "pct_change": 12.3
       },
       "price_penalty": 0.0,
-      "rank": 413,
+      "rank": 415,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -67257,7 +67235,7 @@
         "pct_change": 38.6
       },
       "price_penalty": 15.0,
-      "rank": 414,
+      "rank": 416,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -67371,7 +67349,7 @@
         "pct_change": 3.1
       },
       "price_penalty": 0.0,
-      "rank": 415,
+      "rank": 417,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -67483,7 +67461,7 @@
         "pct_change": -37.9
       },
       "price_penalty": 0.0,
-      "rank": 416,
+      "rank": 418,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -67595,7 +67573,7 @@
         "pct_change": -1.4
       },
       "price_penalty": 0.0,
-      "rank": 417,
+      "rank": 419,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -67708,7 +67686,7 @@
         "pct_change": -10.3
       },
       "price_penalty": 0.0,
-      "rank": 418,
+      "rank": 420,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -67839,7 +67817,7 @@
         "pct_change": 20.7
       },
       "price_penalty": 7.5,
-      "rank": 419,
+      "rank": 421,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -67955,7 +67933,7 @@
         "pct_change": 7.7
       },
       "price_penalty": 0.0,
-      "rank": 420,
+      "rank": 422,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -68067,7 +68045,7 @@
         "pct_change": -21.9
       },
       "price_penalty": 0.0,
-      "rank": 421,
+      "rank": 423,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -68180,7 +68158,7 @@
         "pct_change": -5.5
       },
       "price_penalty": 0.0,
-      "rank": 422,
+      "rank": 424,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -68293,7 +68271,7 @@
         "pct_change": 5.5
       },
       "price_penalty": 0.0,
-      "rank": 423,
+      "rank": 425,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -68405,7 +68383,7 @@
         "pct_change": 12.9
       },
       "price_penalty": 0.0,
-      "rank": 424,
+      "rank": 426,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -68517,7 +68495,7 @@
         "pct_change": 6.4
       },
       "price_penalty": 0.0,
-      "rank": 425,
+      "rank": 427,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -68629,7 +68607,7 @@
         "pct_change": 8.0
       },
       "price_penalty": 0.0,
-      "rank": 426,
+      "rank": 428,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -68741,7 +68719,7 @@
         "pct_change": 4.3
       },
       "price_penalty": 0.0,
-      "rank": 427,
+      "rank": 429,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -68853,7 +68831,7 @@
         "pct_change": 2.7
       },
       "price_penalty": 0.0,
-      "rank": 428,
+      "rank": 430,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -68965,7 +68943,7 @@
         "pct_change": 6.9
       },
       "price_penalty": 0.0,
-      "rank": 429,
+      "rank": 431,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -69189,7 +69167,7 @@
         "pct_change": -11.1
       },
       "price_penalty": 0.0,
-      "rank": 430,
+      "rank": 432,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -69302,7 +69280,7 @@
         "pct_change": -7.1
       },
       "price_penalty": 0.0,
-      "rank": 431,
+      "rank": 433,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -69975,7 +69953,7 @@
         "pct_change": -20.7
       },
       "price_penalty": 0.0,
-      "rank": 432,
+      "rank": 434,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -70199,7 +70177,7 @@
         "pct_change": 10.0
       },
       "price_penalty": 0.0,
-      "rank": 433,
+      "rank": 435,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -70311,7 +70289,7 @@
         "pct_change": -19.9
       },
       "price_penalty": 0.0,
-      "rank": 434,
+      "rank": 436,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -70535,7 +70513,7 @@
         "pct_change": 7.1
       },
       "price_penalty": 0.0,
-      "rank": 435,
+      "rank": 437,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -70984,7 +70962,7 @@
         "pct_change": 20.0
       },
       "price_penalty": 7.5,
-      "rank": 436,
+      "rank": 438,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -71097,7 +71075,7 @@
         "pct_change": -13.1
       },
       "price_penalty": 0.0,
-      "rank": 437,
+      "rank": 439,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -71434,7 +71412,7 @@
         "pct_change": 18.9
       },
       "price_penalty": 7.5,
-      "rank": 438,
+      "rank": 440,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -71771,7 +71749,7 @@
         "pct_change": 13.4
       },
       "price_penalty": 0.0,
-      "rank": 439,
+      "rank": 441,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -71996,7 +71974,7 @@
         "pct_change": 24.3
       },
       "price_penalty": 7.5,
-      "rank": 440,
+      "rank": 442,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -72110,7 +72088,7 @@
         "pct_change": 7.7
       },
       "price_penalty": 0.0,
-      "rank": 441,
+      "rank": 443,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -72223,7 +72201,7 @@
         "pct_change": -0.4
       },
       "price_penalty": 0.0,
-      "rank": 442,
+      "rank": 444,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -72335,7 +72313,7 @@
         "pct_change": 0.1
       },
       "price_penalty": 0.0,
-      "rank": 443,
+      "rank": 445,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -72448,7 +72426,7 @@
         "pct_change": 22.0
       },
       "price_penalty": 7.5,
-      "rank": 444,
+      "rank": 446,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -72562,7 +72540,7 @@
         "pct_change": 10.9
       },
       "price_penalty": 0.0,
-      "rank": 445,
+      "rank": 447,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -72788,7 +72766,7 @@
         "pct_change": -0.4
       },
       "price_penalty": 0.0,
-      "rank": 446,
+      "rank": 448,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -72902,7 +72880,7 @@
         "pct_change": 11.7
       },
       "price_penalty": 0.0,
-      "rank": 447,
+      "rank": 449,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -73016,7 +72994,7 @@
         "pct_change": 20.4
       },
       "price_penalty": 7.5,
-      "rank": 448,
+      "rank": 450,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -73129,7 +73107,7 @@
         "pct_change": -2.9
       },
       "price_penalty": 0.0,
-      "rank": 449,
+      "rank": 451,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -73241,7 +73219,7 @@
         "pct_change": -31.9
       },
       "price_penalty": 0.0,
-      "rank": 450,
+      "rank": 452,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -73354,7 +73332,7 @@
         "pct_change": 3.6
       },
       "price_penalty": 0.0,
-      "rank": 451,
+      "rank": 453,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -73468,7 +73446,7 @@
         "pct_change": -2.6
       },
       "price_penalty": 0.0,
-      "rank": 452,
+      "rank": 454,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -73582,7 +73560,7 @@
         "pct_change": 3.7
       },
       "price_penalty": 0.0,
-      "rank": 453,
+      "rank": 455,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -73695,7 +73673,7 @@
         "pct_change": 0.9
       },
       "price_penalty": 0.0,
-      "rank": 454,
+      "rank": 456,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -73808,7 +73786,7 @@
         "pct_change": 11.4
       },
       "price_penalty": 0.0,
-      "rank": 455,
+      "rank": 457,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -73922,7 +73900,7 @@
         "pct_change": -0.4
       },
       "price_penalty": 0.0,
-      "rank": 456,
+      "rank": 458,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -74036,7 +74014,7 @@
         "pct_change": -8.4
       },
       "price_penalty": 0.0,
-      "rank": 457,
+      "rank": 459,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -74152,7 +74130,7 @@
         "pct_change": 29.3
       },
       "price_penalty": 15.0,
-      "rank": 458,
+      "rank": 460,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -74268,7 +74246,7 @@
         "pct_change": 37.3
       },
       "price_penalty": 15.0,
-      "rank": 459,
+      "rank": 461,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -74384,7 +74362,7 @@
         "pct_change": 40.4
       },
       "price_penalty": 15.0,
-      "rank": 460,
+      "rank": 462,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -74498,7 +74476,7 @@
         "pct_change": -8.1
       },
       "price_penalty": 0.0,
-      "rank": 461,
+      "rank": 463,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -74726,7 +74704,7 @@
         "pct_change": -1.6
       },
       "price_penalty": 0.0,
-      "rank": 462,
+      "rank": 464,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -74840,7 +74818,7 @@
         "pct_change": -13.8
       },
       "price_penalty": 0.0,
-      "rank": 463,
+      "rank": 465,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -74968,7 +74946,7 @@
         "pct_change": -9.8
       },
       "price_penalty": 0.0,
-      "rank": 464,
+      "rank": 466,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -75100,7 +75078,7 @@
         "pct_change": 21.5
       },
       "price_penalty": 7.5,
-      "rank": 465,
+      "rank": 467,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -75217,7 +75195,7 @@
         "pct_change": 12.0
       },
       "price_penalty": 0.0,
-      "rank": 466,
+      "rank": 468,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -75331,7 +75309,7 @@
         "pct_change": 1.6
       },
       "price_penalty": 0.0,
-      "rank": 467,
+      "rank": 469,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -75445,7 +75423,7 @@
         "pct_change": 3.7
       },
       "price_penalty": 0.0,
-      "rank": 468,
+      "rank": 470,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -75559,7 +75537,7 @@
         "pct_change": 3.2
       },
       "price_penalty": 0.0,
-      "rank": 469,
+      "rank": 471,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -75673,7 +75651,7 @@
         "pct_change": -3.2
       },
       "price_penalty": 0.0,
-      "rank": 470,
+      "rank": 472,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -75787,7 +75765,7 @@
         "pct_change": -12.5
       },
       "price_penalty": 0.0,
-      "rank": 471,
+      "rank": 473,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -75901,7 +75879,7 @@
         "pct_change": -12.9
       },
       "price_penalty": 0.0,
-      "rank": 472,
+      "rank": 474,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -76016,7 +75994,7 @@
         "pct_change": 15.9
       },
       "price_penalty": 7.5,
-      "rank": 473,
+      "rank": 475,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -76131,7 +76109,7 @@
         "pct_change": -7.7
       },
       "price_penalty": 0.0,
-      "rank": 474,
+      "rank": 476,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -76245,7 +76223,7 @@
         "pct_change": 20.5
       },
       "price_penalty": 7.5,
-      "rank": 475,
+      "rank": 477,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -76359,7 +76337,7 @@
         "pct_change": 21.3
       },
       "price_penalty": 7.5,
-      "rank": 476,
+      "rank": 478,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -76473,7 +76451,7 @@
         "pct_change": 8.7
       },
       "price_penalty": 0.0,
-      "rank": 477,
+      "rank": 479,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -76701,7 +76679,7 @@
         "pct_change": 19.9
       },
       "price_penalty": 7.5,
-      "rank": 478,
+      "rank": 480,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -76815,7 +76793,7 @@
         "pct_change": 18.6
       },
       "price_penalty": 7.5,
-      "rank": 479,
+      "rank": 481,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -76930,7 +76908,7 @@
         "pct_change": 19.6
       },
       "price_penalty": 7.5,
-      "rank": 480,
+      "rank": 482,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -77044,7 +77022,7 @@
         "pct_change": 5.6
       },
       "price_penalty": 0.0,
-      "rank": 481,
+      "rank": 483,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -77156,7 +77134,7 @@
         "pct_change": -22.8
       },
       "price_penalty": 0.0,
-      "rank": 482,
+      "rank": 484,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -77268,7 +77246,7 @@
         "pct_change": 1.7
       },
       "price_penalty": 0.0,
-      "rank": 483,
+      "rank": 485,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -77380,7 +77358,7 @@
         "pct_change": -6.1
       },
       "price_penalty": 0.0,
-      "rank": 484,
+      "rank": 486,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -77493,7 +77471,7 @@
         "pct_change": 16.3
       },
       "price_penalty": 7.5,
-      "rank": 485,
+      "rank": 487,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -77607,7 +77585,7 @@
         "pct_change": 24.2
       },
       "price_penalty": 7.5,
-      "rank": 486,
+      "rank": 488,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -77720,7 +77698,7 @@
         "pct_change": -18.5
       },
       "price_penalty": 0.0,
-      "rank": 487,
+      "rank": 489,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -77832,7 +77810,7 @@
         "pct_change": -5.3
       },
       "price_penalty": 0.0,
-      "rank": 488,
+      "rank": 490,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -77944,7 +77922,7 @@
         "pct_change": -11.3
       },
       "price_penalty": 0.0,
-      "rank": 489,
+      "rank": 491,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -78056,7 +78034,7 @@
         "pct_change": -11.0
       },
       "price_penalty": 0.0,
-      "rank": 490,
+      "rank": 492,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -78168,7 +78146,7 @@
         "pct_change": -27.6
       },
       "price_penalty": 0.0,
-      "rank": 491,
+      "rank": 493,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -78280,7 +78258,7 @@
         "pct_change": -8.6
       },
       "price_penalty": 0.0,
-      "rank": 492,
+      "rank": 494,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -78392,7 +78370,7 @@
         "pct_change": 6.1
       },
       "price_penalty": 0.0,
-      "rank": 493,
+      "rank": 495,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -78522,7 +78500,7 @@
         "pct_change": 32.9
       },
       "price_penalty": 15.0,
-      "rank": 494,
+      "rank": 496,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -78640,7 +78618,7 @@
         "pct_change": 15.1
       },
       "price_penalty": 7.5,
-      "rank": 495,
+      "rank": 497,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -78754,7 +78732,7 @@
         "pct_change": 3.3
       },
       "price_penalty": 0.0,
-      "rank": 496,
+      "rank": 498,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -78866,7 +78844,7 @@
         "pct_change": -2.9
       },
       "price_penalty": 0.0,
-      "rank": 497,
+      "rank": 499,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -78978,7 +78956,7 @@
         "pct_change": -34.9
       },
       "price_penalty": 0.0,
-      "rank": 498,
+      "rank": 500,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -79091,7 +79069,7 @@
         "pct_change": 21.4
       },
       "price_penalty": 7.5,
-      "rank": 499,
+      "rank": 501,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -79204,7 +79182,7 @@
         "pct_change": -11.6
       },
       "price_penalty": 0.0,
-      "rank": 500,
+      "rank": 502,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -79316,7 +79294,7 @@
         "pct_change": 7.6
       },
       "price_penalty": 0.0,
-      "rank": 501,
+      "rank": 503,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -79428,7 +79406,7 @@
         "pct_change": -0.1
       },
       "price_penalty": 0.0,
-      "rank": 502,
+      "rank": 504,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -79661,7 +79639,7 @@
         "pct_change": 8.4
       },
       "price_penalty": 0.0,
-      "rank": 503,
+      "rank": 505,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -79788,7 +79766,7 @@
         "pct_change": 14.7
       },
       "price_penalty": 0.0,
-      "rank": 504,
+      "rank": 506,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -80017,7 +79995,7 @@
         "pct_change": -7.6
       },
       "price_penalty": 0.0,
-      "rank": 505,
+      "rank": 507,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -80132,7 +80110,7 @@
         "pct_change": 19.5
       },
       "price_penalty": 7.5,
-      "rank": 506,
+      "rank": 508,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -80475,7 +80453,7 @@
         "pct_change": -6.1
       },
       "price_penalty": 0.0,
-      "rank": 507,
+      "rank": 509,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -80590,7 +80568,7 @@
         "pct_change": 25.1
       },
       "price_penalty": 15.0,
-      "rank": 508,
+      "rank": 510,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -80704,7 +80682,7 @@
         "pct_change": -4.0
       },
       "price_penalty": 0.0,
-      "rank": 509,
+      "rank": 511,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -80931,7 +80909,7 @@
         "pct_change": 12.1
       },
       "price_penalty": 0.0,
-      "rank": 510,
+      "rank": 512,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -81161,7 +81139,7 @@
         "pct_change": 49.4
       },
       "price_penalty": 15.0,
-      "rank": 511,
+      "rank": 513,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -81275,7 +81253,7 @@
         "pct_change": -16.2
       },
       "price_penalty": 0.0,
-      "rank": 512,
+      "rank": 514,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -81503,7 +81481,7 @@
         "pct_change": 40.3
       },
       "price_penalty": 15.0,
-      "rank": 513,
+      "rank": 515,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -81732,7 +81710,7 @@
         "pct_change": -9.8
       },
       "price_penalty": 0.0,
-      "rank": 514,
+      "rank": 516,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -81846,7 +81824,7 @@
         "pct_change": NaN
       },
       "price_penalty": 0.0,
-      "rank": 515,
+      "rank": 517,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -81961,7 +81939,7 @@
         "pct_change": 20.6
       },
       "price_penalty": 7.5,
-      "rank": 516,
+      "rank": 518,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -82191,7 +82169,7 @@
         "pct_change": 52.3
       },
       "price_penalty": 15.0,
-      "rank": 517,
+      "rank": 519,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -82323,7 +82301,7 @@
         "pct_change": 30.0
       },
       "price_penalty": 15.0,
-      "rank": 518,
+      "rank": 520,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -82440,7 +82418,7 @@
         "pct_change": 16.3
       },
       "price_penalty": 7.5,
-      "rank": 519,
+      "rank": 521,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -82553,7 +82531,7 @@
         "pct_change": -12.8
       },
       "price_penalty": 0.0,
-      "rank": 520,
+      "rank": 522,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -82682,7 +82660,7 @@
         "pct_change": 32.5
       },
       "price_penalty": 15.0,
-      "rank": 521,
+      "rank": 523,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -82813,7 +82791,7 @@
         "pct_change": 17.3
       },
       "price_penalty": 7.5,
-      "rank": 522,
+      "rank": 524,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -82929,7 +82907,7 @@
         "pct_change": 36.2
       },
       "price_penalty": 15.0,
-      "rank": 523,
+      "rank": 525,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -83043,7 +83021,7 @@
         "pct_change": 17.0
       },
       "price_penalty": 7.5,
-      "rank": 524,
+      "rank": 526,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -83156,7 +83134,7 @@
         "pct_change": -39.5
       },
       "price_penalty": 0.0,
-      "rank": 525,
+      "rank": 527,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -83269,7 +83247,7 @@
         "pct_change": 15.7
       },
       "price_penalty": 7.5,
-      "rank": 526,
+      "rank": 528,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -83383,7 +83361,7 @@
         "pct_change": 21.4
       },
       "price_penalty": 7.5,
-      "rank": 527,
+      "rank": 529,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -83498,7 +83476,7 @@
         "pct_change": 22.9
       },
       "price_penalty": 7.5,
-      "rank": 528,
+      "rank": 530,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -83613,7 +83591,7 @@
         "pct_change": 61.8
       },
       "price_penalty": 15.0,
-      "rank": 529,
+      "rank": 531,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -83728,7 +83706,7 @@
         "pct_change": 17.7
       },
       "price_penalty": 7.5,
-      "rank": 530,
+      "rank": 532,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -83842,7 +83820,7 @@
         "pct_change": -11.7
       },
       "price_penalty": 0.0,
-      "rank": 531,
+      "rank": 533,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -83955,7 +83933,7 @@
         "pct_change": 24.5
       },
       "price_penalty": 7.5,
-      "rank": 532,
+      "rank": 534,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -84069,7 +84047,7 @@
         "pct_change": 42.9
       },
       "price_penalty": 15.0,
-      "rank": 533,
+      "rank": 535,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -84183,7 +84161,7 @@
         "pct_change": 16.1
       },
       "price_penalty": 7.5,
-      "rank": 534,
+      "rank": 536,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -84525,7 +84503,7 @@
         "pct_change": 6.6
       },
       "price_penalty": 0.0,
-      "rank": 535,
+      "rank": 537,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -84753,7 +84731,7 @@
         "pct_change": 1.0
       },
       "price_penalty": 0.0,
-      "rank": 536,
+      "rank": 538,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -84867,7 +84845,7 @@
         "pct_change": -8.5
       },
       "price_penalty": 0.0,
-      "rank": 537,
+      "rank": 539,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -85096,7 +85074,7 @@
         "pct_change": 45.8
       },
       "price_penalty": 15.0,
-      "rank": 538,
+      "rank": 540,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -85210,7 +85188,7 @@
         "pct_change": 32.1
       },
       "price_penalty": 15.0,
-      "rank": 539,
+      "rank": 541,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -85325,7 +85303,7 @@
         "pct_change": 21.2
       },
       "price_penalty": 7.5,
-      "rank": 540,
+      "rank": 542,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -85441,7 +85419,7 @@
         "pct_change": 42.8
       },
       "price_penalty": 15.0,
-      "rank": 541,
+      "rank": 543,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -85556,7 +85534,7 @@
         "pct_change": 35.8
       },
       "price_penalty": 15.0,
-      "rank": 542,
+      "rank": 544,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -85671,7 +85649,7 @@
         "pct_change": 20.2
       },
       "price_penalty": 7.5,
-      "rank": 543,
+      "rank": 545,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -85897,7 +85875,7 @@
         "pct_change": -0.8
       },
       "price_penalty": 0.0,
-      "rank": 544,
+      "rank": 546,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -86121,7 +86099,7 @@
         "pct_change": -24.8
       },
       "price_penalty": 0.0,
-      "rank": 545,
+      "rank": 547,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -86233,7 +86211,7 @@
         "pct_change": -7.7
       },
       "price_penalty": 0.0,
-      "rank": 546,
+      "rank": 548,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -86458,7 +86436,7 @@
         "pct_change": 6.2
       },
       "price_penalty": 0.0,
-      "rank": 547,
+      "rank": 549,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -86570,7 +86548,7 @@
         "pct_change": -9.4
       },
       "price_penalty": 0.0,
-      "rank": 548,
+      "rank": 550,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -86682,7 +86660,7 @@
         "pct_change": -5.7
       },
       "price_penalty": 0.0,
-      "rank": 549,
+      "rank": 551,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -86794,7 +86772,7 @@
         "pct_change": -6.1
       },
       "price_penalty": 0.0,
-      "rank": 550,
+      "rank": 552,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -86907,7 +86885,7 @@
         "pct_change": 30.1
       },
       "price_penalty": 15.0,
-      "rank": 551,
+      "rank": 553,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -87021,7 +86999,7 @@
         "pct_change": 23.2
       },
       "price_penalty": 7.5,
-      "rank": 552,
+      "rank": 554,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -87136,7 +87114,7 @@
         "pct_change": 27.5
       },
       "price_penalty": 15.0,
-      "rank": 553,
+      "rank": 555,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -87251,7 +87229,7 @@
         "pct_change": 24.0
       },
       "price_penalty": 7.5,
-      "rank": 554,
+      "rank": 556,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -87366,7 +87344,7 @@
         "pct_change": 26.0
       },
       "price_penalty": 15.0,
-      "rank": 555,
+      "rank": 557,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -87487,7 +87465,7 @@
         "pct_change": 29.0
       },
       "price_penalty": 15.0,
-      "rank": 556,
+      "rank": 558,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -87601,7 +87579,7 @@
         "pct_change": 35.3
       },
       "price_penalty": 15.0,
-      "rank": 557,
+      "rank": 559,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -87715,7 +87693,7 @@
         "pct_change": 37.0
       },
       "price_penalty": 15.0,
-      "rank": 558,
+      "rank": 560,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -87830,7 +87808,7 @@
         "pct_change": 27.2
       },
       "price_penalty": 15.0,
-      "rank": 559,
+      "rank": 561,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -87945,7 +87923,7 @@
         "pct_change": 25.9
       },
       "price_penalty": 15.0,
-      "rank": 560,
+      "rank": 562,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -88059,7 +88037,7 @@
         "pct_change": 27.8
       },
       "price_penalty": 15.0,
-      "rank": 561,
+      "rank": 563,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -88174,7 +88152,7 @@
         "pct_change": 26.2
       },
       "price_penalty": 15.0,
-      "rank": 562,
+      "rank": 564,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -88290,7 +88268,7 @@
         "pct_change": 51.2
       },
       "price_penalty": 15.0,
-      "rank": 563,
+      "rank": 565,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -88406,7 +88384,7 @@
         "pct_change": 28.4
       },
       "price_penalty": 15.0,
-      "rank": 564,
+      "rank": 566,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -88522,7 +88500,7 @@
         "pct_change": 27.7
       },
       "price_penalty": 15.0,
-      "rank": 565,
+      "rank": 567,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -88637,7 +88615,7 @@
         "pct_change": 40.7
       },
       "price_penalty": 15.0,
-      "rank": 566,
+      "rank": 568,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -88866,7 +88844,7 @@
         "pct_change": 28.0
       },
       "price_penalty": 15.0,
-      "rank": 567,
+      "rank": 569,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -88980,7 +88958,7 @@
         "pct_change": 26.3
       },
       "price_penalty": 15.0,
-      "rank": 568,
+      "rank": 570,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"
@@ -89094,7 +89072,7 @@
         "pct_change": 30.8
       },
       "price_penalty": 15.0,
-      "rank": 569,
+      "rank": 571,
       "reasons": {
         "accumulation": [
           "First quarter of buying \u2013 no multi-quarter build yet"

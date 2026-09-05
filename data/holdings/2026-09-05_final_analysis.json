@@ -235,15 +235,15 @@
         ]
       },
       "commentary": {
-        "ticker": "ELV",
-        "why_strongest": "Baupost (Klarman) opened a 9.1% portfolio position\u2014a top-3 allocation for the manager\u2014alongside three other quality buyers including Harris Associates and Sound Shore. Insiders added $1.4M in open-market purchases, confirming management alignment. Price has risen 5% post-quarter with low crowding, suggesting early-stage conviction.",
         "insider_read": "Officers and directors purchased $1,368,280 across two open-market trades, confirming management confidence in the healthcare consolidation thesis.",
         "option_note": "No suitable call option found; liquidity constraints prevent expression of the signal through equity derivatives.",
         "risks": [
           "New position concentration in Baupost may reflect sector rotation rather than company-specific strength.",
           "Healthcare regulatory headwinds could undermine any pricing power assumptions."
         ],
-        "verdict": "UNUSUALLY_STRONG"
+        "ticker": "ELV",
+        "verdict": "UNUSUALLY_STRONG",
+        "why_strongest": "Baupost (Klarman) opened a 9.1% portfolio position\u2014a top-3 allocation for the manager\u2014alongside three other quality buyers including Harris Associates and Sound Shore. Insiders added $1.4M in open-market purchases, confirming management alignment. Price has risen 5% post-quarter with low crowding, suggesting early-stage conviction."
       },
       "option": {
         "ticker": "ELV",
@@ -543,15 +543,15 @@
         ]
       },
       "commentary": {
-        "ticker": "INTC",
-        "why_strongest": "SoftBank opened a massive 66.8% portfolio position (top 3 weighting) while eight independent buyers including NVIDIA and Coatue initiated positions. CEO purchased nearly $10M at market, the largest insider commitment in the cohort. Despite -31% post-quarter pullback, insider conviction and crowded accumulation argue signal persists.",
         "insider_read": "Officer purchased $9,999,985 in open-market trades post-quarter, demonstrating direct bet on turnaround credibility despite stock weakness.",
         "option_note": "Jan 2027 110 call at delta 0.456 captures upside from foundry/AI push with 132 days to reversion; 2382 volume supports position hedging.",
         "risks": [
           "Massive SoftBank entry at 66.8% may reflect liquidity/index-driven positioning rather than fundamental conviction.",
           "Geopolitical chip export restrictions and foundry timing uncertainty remain unresolved."
         ],
-        "verdict": "UNUSUALLY_STRONG"
+        "ticker": "INTC",
+        "verdict": "UNUSUALLY_STRONG",
+        "why_strongest": "SoftBank opened a massive 66.8% portfolio position (top 3 weighting) while eight independent buyers including NVIDIA and Coatue initiated positions. CEO purchased nearly $10M at market, the largest insider commitment in the cohort. Despite -31% post-quarter pullback, insider conviction and crowded accumulation argue signal persists."
       },
       "option": {
         "ticker": "INTC",
@@ -963,15 +963,15 @@
         ]
       },
       "commentary": {
-        "ticker": "BRK/B",
-        "why_strongest": "Ten independent NEW buyers led by Li Lu entities (H&H, Himalaya) at 24.2% and 15.0% weights, plus Gates Foundation Trust at 21.4%\u2014all top-3 allocations by elite-quality managers. However, insiders were substantial net sellers ($36.3M net), creating friction with the 13F signal despite strong consensus.",
         "insider_read": "Net insider selling of $36.3M since quarter-end contradicts the enthusiastic institutional buying, suggesting potential valuation or risk concerns from those closest to operations.",
         "option_note": "Jan 2027 520 call (delta 0.461) tracks upside with muted liquidity (OI 7580); tight spreads favor larger positions.",
         "risks": [
           "Insider net selling is a meaningful divergence from institutional conviction and warrants scrutiny of executive optionality.",
           "HIGH crowding label (43.0) signals consensus could reverse on valuation reset."
         ],
-        "verdict": "STRONG"
+        "ticker": "BRK/B",
+        "verdict": "STRONG",
+        "why_strongest": "Ten independent NEW buyers led by Li Lu entities (H&H, Himalaya) at 24.2% and 15.0% weights, plus Gates Foundation Trust at 21.4%\u2014all top-3 allocations by elite-quality managers. However, insiders were substantial net sellers ($36.3M net), creating friction with the 13F signal despite strong consensus."
       },
       "option": {
         "ticker": "BRK/B",
@@ -1539,15 +1539,15 @@
         ]
       },
       "commentary": {
-        "ticker": "BAC",
-        "why_strongest": "Berkshire Hathaway opened a 9.2% position (top 5 weighting) alongside high-quality value managers (Chou, Harris, Sound Shore). Net insider activity near zero and no adverse Form 4 signal. Price +11% post-quarter with low crowding, consistent with a recovery narrative in rates-sensitive financials.",
         "insider_read": "Insiders showed flat net activity ($160K buys vs $161K sells), indicating neither enthusiasm nor concern from management.",
         "option_note": "Jan 2027 65 call (delta 0.459) at $2.96 mid reflects rally conviction; 518 volume and tight 3% spread enable cost-effective sector hedging.",
         "risks": [
           "Berkshire's role may reflect macro allocation to financial stability rather than BAC-specific thesis.",
           "Interest rate reversal or recession fears could unwind bank multiples rapidly."
         ],
-        "verdict": "STRONG"
+        "ticker": "BAC",
+        "verdict": "STRONG",
+        "why_strongest": "Berkshire Hathaway opened a 9.2% position (top 5 weighting) alongside high-quality value managers (Chou, Harris, Sound Shore). Net insider activity near zero and no adverse Form 4 signal. Price +11% post-quarter with low crowding, consistent with a recovery narrative in rates-sensitive financials."
       },
       "option": {
         "ticker": "BAC",
@@ -1836,15 +1836,15 @@
         ]
       },
       "commentary": {
-        "ticker": "UBER",
-        "why_strongest": "Pershing Square (Ackman) opened 15.7% position (top 3) alongside three independent buyers including Appaloosa; 4-manager consensus on mobility recovery. Despite insiders netting -$451M in sales, fund purchases total 46.5% of new buyer positions, arguing the market-neutral view overcomes insider hedging flows.",
         "insider_read": "Insiders netted $451.6M in sales against $20M buys, reflecting equity compensation vesting or portfolio rebalancing rather than directional conviction.",
         "option_note": "Jan 2027 82.5 call (delta 0.429) captures upside at $4.83 mid with tight 3.1% spread; 75 volume suitable for tactical exposure.",
         "risks": [
           "Massive insider selling ($471M) is a red flag for executive confidence, despite strong fund accumulation.",
           "Regulatory pressure on driver benefits and pricing power remain downside catalysts."
         ],
-        "verdict": "STRONG"
+        "ticker": "UBER",
+        "verdict": "STRONG",
+        "why_strongest": "Pershing Square (Ackman) opened 15.7% position (top 3) alongside three independent buyers including Appaloosa; 4-manager consensus on mobility recovery. Despite insiders netting -$451M in sales, fund purchases total 46.5% of new buyer positions, arguing the market-neutral view overcomes insider hedging flows."
       },
       "option": {
         "ticker": "UBER",
@@ -2271,15 +2271,15 @@
         ]
       },
       "commentary": {
-        "ticker": "V",
-        "why_strongest": "Eight independent NEW buyers led by TCI Fund Management (19.8%, top 3 allocation, quality 0.86) and ValueAct Holdings (14.1%, quality 0.99). Baupost, Tiger Global, and SurgoCap round out elite consensus. Zero insider buys but no sales either; price +10% post-quarter with low crowding and strong IV.",
         "insider_read": "No insider purchase activity, and $37M in insider sales post-quarter, suggesting insiders are not confirming the institutional conviction signal.",
         "option_note": "Jan 2027 390 call (delta 0.446) at $15.28 mid expresses upside; 6 volume and 6.9% spread limit liquidity but support structural convexity.",
         "risks": [
           "Absence of insider buying weakens signal conviction despite elite institutional consensus.",
           "Payments regulatory scrutiny and cross-border FX headwinds could cap growth."
         ],
-        "verdict": "STRONG"
+        "ticker": "V",
+        "verdict": "STRONG",
+        "why_strongest": "Eight independent NEW buyers led by TCI Fund Management (19.8%, top 3 allocation, quality 0.86) and ValueAct Holdings (14.1%, quality 0.99). Baupost, Tiger Global, and SurgoCap round out elite consensus. Zero insider buys but no sales either; price +10% post-quarter with low crowding and strong IV."
       },
       "option": {
         "ticker": "V",
@@ -2518,15 +2518,15 @@
         ]
       },
       "commentary": {
-        "ticker": "KHC",
-        "why_strongest": "Fairfax Financial (Watsa) opened a 12.8% top-3 position, joined by Berkshire and Chou. No insider purchases but no meaningful sales either. Price +7% post-quarter; highest manager_quality score (91.3) among top 10 and low crowding suggest stable conviction among value-oriented operators.",
         "insider_read": "No insider purchase or sale activity since quarter-end, indicating neutral stance from management despite three quality buyers building positions.",
         "option_note": "No suitable call option found due to poor liquidity and wide spreads in KHC derivatives, limiting hedging utility.",
         "risks": [
           "Absence of insider buying is a notable gap for a turnaround story backed by quality value managers.",
           "Commodity price inflation and retail demand volatility remain structural headwinds."
         ],
-        "verdict": "STRONG"
+        "ticker": "KHC",
+        "verdict": "STRONG",
+        "why_strongest": "Fairfax Financial (Watsa) opened a 12.8% top-3 position, joined by Berkshire and Chou. No insider purchases but no meaningful sales either. Price +7% post-quarter; highest manager_quality score (91.3) among top 10 and low crowding suggest stable conviction among value-oriented operators."
       },
       "option": {
         "ticker": "KHC",
@@ -2749,15 +2749,15 @@
         ]
       },
       "commentary": {
-        "ticker": "QSR",
-        "why_strongest": "Pershing Square (Ackman) opened 12.2% position (top 5 weighting) with Baupost (9.0%, top 3) providing quality co-conviction. Price +10% post-quarter despite insiders selling $5.2M, and crowding is low. Consensus among two elite operators suggests restructuring and turnaround thesis has legs.",
         "insider_read": "Insiders sold $5.2M post-quarter with no offsetting purchases, suggesting skepticism toward the activist restructuring narrative from those running operations.",
         "option_note": "No suitable call option found; thin derivatives market prevents efficient synthetic expression of the signal.",
         "risks": [
           "Insider selling undermines the activist thesis and may signal execution or timing risks.",
           "Consumer spending slowdown or franchise tension could derail turnaround momentum."
         ],
-        "verdict": "STRONG"
+        "ticker": "QSR",
+        "verdict": "STRONG",
+        "why_strongest": "Pershing Square (Ackman) opened 12.2% position (top 5 weighting) with Baupost (9.0%, top 3) providing quality co-conviction. Price +10% post-quarter despite insiders selling $5.2M, and crowding is low. Consensus among two elite operators suggests restructuring and turnaround thesis has legs."
       },
       "option": {
         "ticker": "QSR",
@@ -3163,15 +3163,15 @@
         ]
       },
       "commentary": {
-        "ticker": "CVNA",
-        "why_strongest": "RV Capital (Zeller) opened a massive 30.3% portfolio position (top 3) alongside five independent buyers including Lone Pine and Viking Global. Insiders bought $1.5M despite $27.6M in concurrent sales, a mixed but non-zero signal. Price +13% post-quarter with low crowding reflects recovery narrative in used-car retail.",
         "insider_read": "Insiders netted $26M in sales but one officer/director purchased $1.5M, creating ambiguity; likely reflects vesting and rebalancing rather than directional conviction.",
         "option_note": "Jan 2027 82 call (delta 0.484) at $8.40 mid captures upside with 6% spread and 2817 OI; suitable for bullish positioning.",
         "risks": [
           "Net insider selling of $26M despite fund enthusiasm suggests management uncertainty on valuation sustainability.",
           "Auto credit cycle downturn and used inventory dynamics could reverse Carvana's margin recovery."
         ],
-        "verdict": "STRONG"
+        "ticker": "CVNA",
+        "verdict": "STRONG",
+        "why_strongest": "RV Capital (Zeller) opened a massive 30.3% portfolio position (top 3) alongside five independent buyers including Lone Pine and Viking Global. Insiders bought $1.5M despite $27.6M in concurrent sales, a mixed but non-zero signal. Price +13% post-quarter with low crowding reflects recovery narrative in used-car retail."
       },
       "option": {
         "ticker": "CVNA",
@@ -3417,15 +3417,15 @@
         ]
       },
       "commentary": {
-        "ticker": "PDD",
-        "why_strongest": "Himalaya Capital Management (Li Lu) opened a 22.2% portfolio position (top 3, quality 1.00) alongside H&H International at 10.0%, both ultra-high-conviction managers. Highest manager_quality score (99.7) in the cohort. No insider buys but minimal sales; price +8% post-quarter with freshness 93.8 (newest entry) and low crowding.",
         "insider_read": "No insider purchases since quarter-end; $140K in insider sales post-quarter suggests management remains neutral or cautious despite Li Lu's conviction.",
         "option_note": "Jan 2027 95 call (delta 0.309) at $2.89 mid tracks upside; 7.6% spread reflects thin liquidity but 2975 OI supports structural interest.",
         "risks": [
           "Concentration risk: only two buyers comprise the entire signal; lack of diversified consensus.",
           "China regulatory risk and e-commerce competitive intensity could undermine PDD's marketplace moat."
         ],
-        "verdict": "STRONG"
+        "ticker": "PDD",
+        "verdict": "STRONG",
+        "why_strongest": "Himalaya Capital Management (Li Lu) opened a 22.2% portfolio position (top 3, quality 1.00) alongside H&H International at 10.0%, both ultra-high-conviction managers. Highest manager_quality score (99.7) in the cohort. No insider buys but minimal sales; price +8% post-quarter with freshness 93.8 (newest entry) and low crowding."
       },
       "option": {
         "ticker": "PDD",
@@ -3484,21 +3484,15 @@
   "market_context": "Q2 2026 filings show a wave of high-conviction new positions by elite managers across financials, tech, and consumer, with Berkshire, Baupost, and Li Lu's vehicles leading accumulations. Insider purchases confirm conviction in at least half the cohort, though large insider sales at UBER and CVNA signal potential rebalancing concerns.",
   "commentary_source": "claude-haiku-4-5",
   "llm": {
-    "spent_usd": 0.0188,
+    "spent_usd": 0.0,
     "budget_usd": 1.5,
-    "api_calls": 1,
-    "cache_hits": 0,
+    "api_calls": 0,
+    "cache_hits": 1,
     "escalations": 0,
     "route": [
       {
         "tier": "haiku",
-        "ok": true,
-        "why": "ok",
-        "cost_usd": 0.01877,
-        "input_tokens": 5558,
-        "output_tokens": 2643,
-        "cache_read": 0,
-        "cache_write": 0
+        "cached": true
       }
     ]
   },
@@ -3520,7 +3514,7 @@
     "open_interest": "open interest \u2265 500",
     "iv": "implied volatility \u2264 70%"
   },
-  "input_fingerprint": "154fae075120c97e313bbabd44bf61fc916d0076daccda2d0fc11d71bd33e76a",
+  "input_fingerprint": "092a2fa5c704cbbd400a77e3c3722442b7d122465055ba8240ab523bf1fce64d",
   "ranking_fingerprint": "8ccd7e307712014837bc2b6e60b8960e76ef66ac0fc91d50e24e6967157a9c8f",
   "sell_signals": [],
   "filer_count": 52,
