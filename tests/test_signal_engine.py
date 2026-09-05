@@ -19,7 +19,7 @@ TODAY = date(2026, 9, 5)
 
 def _agg(ticker, filers, **kw):
     base = {
-        "ticker": ticker, "name": f"{ticker} Inc", "filers": filers, "alpha_score": 50.0,
+        "ticker": ticker, "name": kw.pop("name", f"{ticker} Inc"), "filers": filers, "alpha_score": 50.0,
         "flags": [], "crowding_label": "LOW", "crowding_penalty": 0.0,
         "post_filing_perf": {}, "cluster_count": len(filers), "cluster_funds": [],
     }
@@ -136,6 +136,36 @@ def test_tie_break_is_alphabetical():
          "scored_flat": [], "mq_signals": {}}
     r = se.compute_signals(s, {}, TODAY)
     assert [x["ticker"] for x in r["ranking"]] == ["AAA", "ZZZ"]
+
+
+def test_share_classes_collapse_to_one_slot():
+    """BRK/A and BRK/B are one issuer and must not take two Top-10 slots."""
+    s = {"aggregated": [
+            _agg("BRK/A", [_filer("Fund A", 9.0, q=0.9)], name="BERKSHIRE HATHAWAY INC DEL"),
+            _agg("BRK/B", [_filer("Fund A", 8.0, q=0.9)], name="BERKSHIRE HATHAWAY INC DEL"),
+            _agg("GOOGL", [_filer("Fund B", 7.0, q=0.8)], name="ALPHABET INC CL A"),
+            _agg("GOOG",  [_filer("Fund B", 6.0, q=0.8)], name="ALPHABET INC CL C"),
+            _agg("META",  [_filer("Fund C", 5.0, q=0.8)], name="META PLATFORMS INC"),
+         ], "scored_flat": [], "mq_signals": {}}
+    r = se.compute_signals(s, {}, TODAY)
+    tickers = [x["ticker"] for x in r["top10"]]
+    assert tickers == ["BRK/A", "GOOGL", "META"]          # higher-scoring class kept
+    assert [x["rank"] for x in r["top10"]] == [1, 2, 3]    # ranks stay sequential
+    folded = {x["ticker"]: x["superseded_by"] for x in r["excluded_same_issuer"]}
+    assert folded == {"BRK/B": "BRK/A", "GOOG": "GOOGL"}
+    brk = next(x for x in r["top10"] if x["ticker"] == "BRK/A")
+    assert brk["same_issuer_alternates"] == [{"ticker": "BRK/B", "signal_score": brk["same_issuer_alternates"][0]["signal_score"]}]
+
+
+def test_issuer_key_does_not_overmerge():
+    k = se.issuer_key
+    assert k({"name": "BERKSHIRE HATHAWAY INC DEL", "ticker": "BRK/A"}) == \
+           k({"name": "BERKSHIRE HATHAWAY INC DEL", "ticker": "BRK/B"})
+    assert k({"name": "ALPHABET INC CL A", "ticker": "GOOGL"}) == \
+           k({"name": "ALPHABET INC CL C", "ticker": "GOOG"})
+    assert k({"name": "META PLATFORMS INC", "ticker": "META"}) != \
+           k({"name": "MICROSOFT CORP", "ticker": "MSFT"})
+    assert k({"name": "", "ticker": "ELV"}) == "ELV"       # falls back to ticker
 
 
 def test_json_roundtrip_stable():

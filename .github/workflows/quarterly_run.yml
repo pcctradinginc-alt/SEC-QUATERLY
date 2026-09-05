@@ -24,6 +24,10 @@ jobs:
   analyze:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    # Every step must agree on "today": each script keys its data files on the
+    # current date, so a per-step timezone would break the hand-off near midnight.
+    env:
+      TZ: Europe/Berlin
 
     steps:
       - name: Checkout repository
@@ -43,13 +47,11 @@ jobs:
         env:
           FORCE_RUN: ${{ github.event.inputs.force_run }}
           TARGET_DATE: ${{ github.event.inputs.target_date }}
-          TZ: Europe/Berlin
         run: python src/date_check.py
 
       - name: 1 · Fetch SEC 13F filings
         if: steps.date_check.outputs.should_run == 'true'
         env:
-          TZ: Europe/Berlin
           OPENFIGI_API_KEY: ${{ secrets.OPENFIGI_API_KEY }}
         run: python src/fetch_filings.py
 

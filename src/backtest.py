@@ -120,7 +120,7 @@ def run() -> dict:
             rows.append({
                 "report_date":      report_date,
                 "ticker":           ticker,
-                "company":          stock.get("company_name", ""),
+                "company":          stock.get("company_name") or stock.get("name", ""),
                 "signal_score":     stock.get("signal_score", stock.get("conviction_score")),
                 "primary_flag":     stock.get("grade") or stock.get("primary_flag", ""),
                 "insider_score":    (stock.get("factors") or {}).get("insider"),

@@ -443,9 +443,13 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
             "exited_positions": exited_positions,
         }
 
+        # NOTE: the SEC switched the 13F <value> column from thousands to whole
+        # dollars in 2023, so `value_usd_thousands` / `reported_aum_k` actually
+        # hold dollars for current filings. Portfolio weights are ratios and are
+        # unaffected; only absolute displays need the /1e9 below.
         print(f"  ✅ {filer_name}: {len(positions)} positions, "
               f"{len(exited_positions)} exits, "
-              f"AUM ${reported_aum/1e6:,.1f}B (13F reported, long-only)")
+              f"AUM ${reported_aum/1e9:,.1f}B (13F reported, long-only)")
 
     _flag_possible_corporate_actions(parsed_filers)
 

@@ -69,6 +69,18 @@ def test_contract_fields():
     assert "Delta" in r["rule_rationale"]
 
 
+def test_deep_open_interest_waives_the_volume_floor():
+    """Volume resets each morning; deep OI still counts as liquid (and OI is never waived)."""
+    thin_volume_deep_oi = contract("DEEP", vol=5, oi=30000)
+    assert osel.check_contract(osel._flatten(thin_volume_deep_oi), TODAY) == []
+
+    thin_volume_thin_oi = contract("THIN", vol=5, oi=600)
+    assert osel.check_contract(osel._flatten(thin_volume_thin_oi), TODAY) == ["volume"]
+
+    no_oi_high_volume = contract("NOOI", vol=5000, oi=100)
+    assert osel.check_contract(osel._flatten(no_oi_high_volume), TODAY) == ["open_interest"]
+
+
 def test_flat_shape_accepted():
     flat = {"symbol": "F", "option_type": "call", "strike": 100.0,
             "expiration_date": (TODAY + timedelta(days=100)).isoformat(),

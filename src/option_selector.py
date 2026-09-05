@@ -25,14 +25,15 @@ from datetime import date
 from config import (
     NO_SUITABLE_OPTION, OPTION_DELTA_MAX, OPTION_DELTA_MIN, OPTION_DELTA_TARGET,
     OPTION_MAX_DAYS, OPTION_MAX_IV, OPTION_MAX_SPREAD_PCT, OPTION_MIN_DAYS,
-    OPTION_MIN_OPEN_INT, OPTION_MIN_VOLUME,
+    OPTION_MIN_OPEN_INT, OPTION_MIN_VOLUME, OPTION_OI_WAIVES_VOLUME,
 )
 
 FILTERS_DESCRIPTION = {
     "expiry_days":   f"{OPTION_MIN_DAYS}–{OPTION_MAX_DAYS} days to expiration",
     "delta":         f"{OPTION_DELTA_MIN:.2f}–{OPTION_DELTA_MAX:.2f} call delta (target {OPTION_DELTA_TARGET:.2f})",
     "spread":        f"bid-ask spread ≤ {OPTION_MAX_SPREAD_PCT:.0f}% of mid",
-    "volume":        f"volume ≥ {OPTION_MIN_VOLUME}",
+    "volume":        (f"volume ≥ {OPTION_MIN_VOLUME} "
+                      f"(waived when open interest ≥ {OPTION_OI_WAIVES_VOLUME:,})"),
     "open_interest": f"open interest ≥ {OPTION_MIN_OPEN_INT}",
     "iv":            f"implied volatility ≤ {OPTION_MAX_IV:.0%}",
 }
@@ -71,10 +72,17 @@ def check_contract(opt: dict, today: date) -> list[str]:
         if (ask - bid) / mid * 100.0 > OPTION_MAX_SPREAD_PCT:
             fails.append("spread")
 
-    if int(opt.get("volume") or 0) < OPTION_MIN_VOLUME:
-        fails.append("volume")
-    if int(opt.get("open_interest") or 0) < OPTION_MIN_OPEN_INT:
+    # Open interest is the session-independent liquidity measure and is always
+    # enforced. Daily volume is a counter that resets each morning, so a chain
+    # pulled early in the session under-reports it for every strike (the
+    # scheduled run fires 30 minutes after the US open). A contract carrying
+    # deep open interest is liquid regardless of that partial-session count,
+    # so its volume floor is waived - deterministically, from the data alone.
+    oi = int(opt.get("open_interest") or 0)
+    if oi < OPTION_MIN_OPEN_INT:
         fails.append("open_interest")
+    if int(opt.get("volume") or 0) < OPTION_MIN_VOLUME and oi < OPTION_OI_WAIVES_VOLUME:
+        fails.append("volume")
 
     iv = opt.get("implied_volatility")
     try:

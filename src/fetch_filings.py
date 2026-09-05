@@ -113,29 +113,42 @@ def get_filing_files(cik: str, accession: str) -> list[dict]:
     return []
 
 
+# The cover page is never the holdings table. Everything else is a candidate.
+_COVER_DOC_NAMES = ("primary_doc.xml", "primarydoc.xml")
+
+
 def find_infotable_filename(items: list[dict]) -> str | None:
-    """Find the information table XML from list of filing files."""
-    # Pass 1: name contains 'informationtable'
-    for item in items:
-        name = item.get("name", "").lower()
-        if "informationtable" in name and name.endswith(".xml"):
-            return item["name"]
+    """
+    Find the information-table XML among a filing's files.
 
-    # Pass 2: any xml that isn't the primary/cover/summary doc
-    skip_keywords = ["primary", "cover", "summary", "header", "form13f"]
-    for item in items:
-        name = item.get("name", "").lower()
-        if name.endswith(".xml") and not any(k in name for k in skip_keywords):
-            return item["name"]
+    Filers name this file inconsistently: `informationtable.xml`,
+    `form13fInfoTable.xml`, `Form13FInfoTable.xml`,
+    `form13f-1786738348_infotable.xml`, ... The common substring is
+    "infotable", so that is matched first (case-insensitively).
 
-    # Pass 3: second xml file (first is usually primary doc)
-    xml_files = [i["name"] for i in items if i.get("name","").lower().endswith(".xml")]
-    if len(xml_files) >= 2:
-        return xml_files[1]
-    if len(xml_files) == 1:
-        return xml_files[0]
+    The cover page (`primary_doc.xml`) is excluded at every step: it parses
+    as valid XML but contains no <infoTable> entries, so selecting it makes
+    the filer silently drop out of the run with zero holdings.
+    """
+    xml_files = [
+        i["name"] for i in items
+        if i.get("name", "").lower().endswith(".xml")
+        and i["name"].lower() not in _COVER_DOC_NAMES
+    ]
 
-    return None
+    # Pass 1: the usual naming - "infotable" covers "informationtable" too
+    for name in xml_files:
+        if "infotable" in name.lower() or "informationtable" in name.lower():
+            return name
+
+    # Pass 2: any remaining XML that is not a cover/summary/header document
+    skip_keywords = ("cover", "summary", "header")
+    for name in xml_files:
+        if not any(k in name.lower() for k in skip_keywords):
+            return name
+
+    # Pass 3: whatever XML is left (cover page already excluded above)
+    return xml_files[0] if xml_files else None
 
 
 def download_infotable(filing_meta: dict) -> str | None:
@@ -152,6 +165,8 @@ def download_infotable(filing_meta: dict) -> str | None:
             "informationtable.xml",
             f"{acc_nodash}-informationtable.xml",
             "form13fInfoTable.xml",
+            "Form13FInfoTable.xml",
+            "Form13fInfoTable.xml",
             "infotable.xml",
         ]
         for candidate in candidates:
@@ -302,7 +317,8 @@ def _build_sec_name_map() -> dict[str, str]:
     Returns {normalised_name: ticker} for ~10k US-listed companies.
     Used as fallback when OpenFIGI CUSIP mapping fails.
     """
-    url = "https://data.sec.gov/files/company_tickers.json"
+    # NOTE: this file is served from www.sec.gov - data.sec.gov returns 404.
+    url = "https://www.sec.gov/files/company_tickers.json"
     try:
         resp = edgar_get(url)
         data = resp.json()
@@ -463,6 +479,8 @@ def run():
 
         holdings = parse_infotable(xml_text)
         if not holdings:
+            print(f"  ⚠️  {name}: downloaded XML contained no <infoTable> rows - "
+                  f"wrong document selected? Filer contributes NOTHING to this run.")
             all_data[name] = {"error": "no_holdings_parsed", "cik": cik, "meta": filing_meta}
             continue
 
@@ -530,6 +548,12 @@ def run():
     filers_ok = sum(1 for v in all_data.values() if "holdings" in v)
     print(f"\n✅ Saved to {output_path}")
     print(f"   Filers with data: {filers_ok} / {len(FILERS)}")
+
+    dropped = {n: v.get("error") for n, v in all_data.items() if "holdings" not in v}
+    if dropped:
+        print("   Filers with NO data:")
+        for n, err in sorted(dropped.items()):
+            print(f"     - {n}: {err}")
 
     missing = len(FILERS) - filers_ok
     if missing > len(FILERS) * 0.3:

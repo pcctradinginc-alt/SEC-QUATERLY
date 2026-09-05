@@ -257,6 +257,7 @@ def stock_card(s: dict) -> str:
         {pill(s['grade'].replace('_', ' '), grade_color(s['grade']))}
         {pill(f"Crowding {s.get('crowding_label') or '–'}", INK2)}
         {pill(f"{s['filer_count']} buyer{'s' if s['filer_count'] != 1 else ''}", INK2)}
+        {pill("also " + ", ".join(a["ticker"] for a in s["same_issuer_alternates"]), INK2) if s.get("same_issuer_alternates") else ""}
         {pill(f"Verdict: {verdict.replace('_', ' ').title()}", PURPLE) if verdict else ''}
         {perf_pill}
       </div>

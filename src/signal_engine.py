@@ -32,6 +32,7 @@ available.
 
 import hashlib
 import json
+import re
 import sys
 from datetime import date
 
@@ -65,6 +66,28 @@ def _is_option_eligible_ticker(t: str) -> bool:
     if not t or len(t) > 6:
         return False
     return t[0].isalpha()
+
+
+_ISSUER_SUFFIX_RE = re.compile(
+    r"\b(INC|CORP|CORPORATION|CO|COMPANY|LTD|LIMITED|LLC|LP|PLC|NV|SA|AG|"
+    r"HOLDINGS?|GROUP|TRUST|CLASS|CL|SER|SERIES|COM|NEW|DEL|THE)\b")
+
+
+def issuer_key(row: dict) -> str:
+    """
+    Collapses share classes of one issuer onto a single key so BRK/A and BRK/B
+    (or GOOG and GOOGL) cannot occupy two Top-10 slots with the same signal.
+    Uses the normalised issuer name, falling back to the ticker root.
+    """
+    name = _ISSUER_SUFFIX_RE.sub("", (row.get("name") or "").upper())
+    name = re.sub(r"[^A-Z0-9 ]", " ", name)
+    name = " ".join(name.split())
+    # After the class words are stripped a bare share-class letter can remain
+    # ("ALPHABET A" vs "ALPHABET C"); drop it so both classes collapse.
+    name = re.sub(r" [ABCK]$", "", name)
+    if name:
+        return name
+    return (row.get("ticker") or "").split("/")[0].upper()
 
 
 def _grade(score: float) -> str:
@@ -306,11 +329,26 @@ def compute_signals(scores: dict, insider_by_ticker: dict[str, dict], today: dat
         r["overall_rank"] = i          # position among every scored name (incl. CUSIP-only rows)
 
     eligible = [r for r in rows if r["option_eligible"]]
-    for i, r in enumerate(eligible, 1):
+
+    # One issuer occupies one slot: keep its highest-scoring share class and
+    # record the ones that were folded into it.
+    deduped: list[dict] = []
+    seen: dict[str, dict] = {}
+    for r in eligible:                                   # already score-sorted
+        key = issuer_key(r)
+        if key in seen:
+            seen[key].setdefault("same_issuer_alternates", []).append(
+                {"ticker": r["ticker"], "signal_score": r["signal_score"]})
+            r["superseded_by"] = seen[key]["ticker"]
+            continue
+        seen[key] = r
+        deduped.append(r)
+
+    for i, r in enumerate(deduped, 1):
         r["rank"] = i                  # position among tradeable tickers – this is the reported rank
     for r in rows:
         r.setdefault("rank", None)
-    top = eligible[:TOP_N]
+    top = deduped[:TOP_N]
 
     fingerprint_src = json.dumps(
         {"aggregated": aggregated, "mq": mq_signals,
@@ -328,6 +366,10 @@ def compute_signals(scores: dict, insider_by_ticker: dict[str, dict], today: dat
         "ranking_fingerprint": hashlib.sha256(
             json.dumps([(r["ticker"], r["signal_score"]) for r in rows]).encode()).hexdigest(),
         "excluded_no_ticker": [r["ticker"] for r in rows if not r["option_eligible"]][:20],
+        "excluded_same_issuer": [
+            {"ticker": r["ticker"], "superseded_by": r["superseded_by"]}
+            for r in rows if r.get("superseded_by")
+        ],
     }
 
 

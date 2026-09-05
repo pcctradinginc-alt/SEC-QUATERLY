@@ -39,11 +39,11 @@ FILERS = {
     "Gates Foundation Trust":         "0001166559",
     "Harvard Management Co":          "0001082621",
     "Brown University":               "0001664741",
-    "Duke University":                "0001439873",
+    "Duke University (DUMAC)":        "0001584258",  # was 0001439873 = Duke Univ. 13G-only filer
     "Scion Asset Management (Burry)": "0001649339",  # was mislabeled "TCI Fund (Chris Hohn)"
     "Pershing Square (Ackman)":       "0001336528",
     "Tiger Global (Coleman)":         "0001167483",
-    "Coatue (Laffont)":               "0001766502",
+    "Coatue (Laffont)":               "0001135730",  # was 0001766502 = Chewy, Inc. (mislabeled)
     "D1 Capital (Sundheim)":          "0001747057",
     "Viking Global (Halvorsen)":      "0001103804",
     "AQR Capital (Asness)":           "0001167557",
@@ -101,7 +101,7 @@ FILER_QUALITY: dict[str, float] = {
     "Harvard Management Co":      1.3,
     "Gates Foundation Trust":     1.3,
     "Brown University":           1.2,
-    "Duke University":            1.2,
+    "Duke University (DUMAC)":    1.2,
     "TCI Fund Management (Hohn)": 1.2,
     "Viking Global (Halvorsen)":  1.1,
     "AQR Capital (Asness)":       1.0,
@@ -275,7 +275,12 @@ OPTION_DELTA_MAX       = 0.70
 OPTION_DELTA_TARGET    = 0.45   # selection prefers delta closest to this
 OPTION_MAX_SPREAD_PCT  = 8.0    # (ask - bid) / mid
 OPTION_MIN_VOLUME      = 300    # today's contract volume
-OPTION_MIN_OPEN_INT    = 500    # open interest
+OPTION_MIN_OPEN_INT    = 500    # open interest (always enforced)
+# Daily volume resets every morning, so a chain pulled soon after the open
+# under-reports it for every strike. A contract with at least this much open
+# interest is treated as liquid even if today's volume is still below the
+# floor above; open interest itself is never waived.
+OPTION_OI_WAIVES_VOLUME = 2500
 OPTION_MAX_IV          = 0.70   # skip overpriced premium (IV > 70%)
 NO_SUITABLE_OPTION     = "NO_SUITABLE_OPTION_FOUND"
 

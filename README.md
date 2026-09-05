@@ -102,9 +102,16 @@ Predefined filters in `config.py` – a contract must pass **all** of them:
 | Days to expiration | 90–180 |
 | Call delta | 0.30–0.70 (target 0.45) |
 | Bid-ask spread | ≤ 8 % of mid |
-| Volume | ≥ 300 |
-| Open interest | ≥ 500 |
+| Volume | ≥ 300 (waived when open interest ≥ 2,500) |
+| Open interest | ≥ 500 (never waived) |
 | Implied volatility | ≤ 70 % |
+
+Daily volume is a counter that resets every morning, and the scheduled run
+fires 30 minutes after the US open, so a chain pulled then under-reports volume
+for every strike. Open interest is session-independent, so a contract carrying
+deep open interest clears the volume floor on its own; open interest itself is
+never waived. The waiver is a function of the data, not of wall-clock time, so
+the selection stays deterministic.
 
 Among eligible contracts the pick minimises a deterministic cost (distance to
 target delta, spread, distance from the middle of the expiry window, minus a
@@ -192,9 +199,16 @@ reports/<date>_report.html                  the e-mailed report
 52 filers, all CIKs verified against `https://data.sec.gov/submissions/CIK{cik}.json`
 (see `config.FILERS`). NVIDIA Corp and Alphabet Inc file 13F for strategic
 corporate stakes rather than a stock-picking mandate; their static quality prior
-is set lower. The CIK once labeled "TCI Fund (Chris Hohn)" resolves to Scion
-Asset Management (Burry) on EDGAR and is labeled accordingly; TCI Fund
-Management Ltd has its own entry.
+is set lower.
+
+**CIK corrections** (a wrong CIK silently yields a wrong or empty portfolio, so
+each was re-verified against the EDGAR submissions feed):
+
+| Entry | Was | Now | Why |
+|---|---|---|---|
+| Coatue (Laffont) | `0001766502` | `0001135730` | the old CIK is **Chewy, Inc.**, not Coatue Management LLC |
+| Duke University (DUMAC) | `0001439873` | `0001584258` | the old CIK files only SC 13G; the endowment's 13F filer is DUMAC, Inc. |
+| Scion Asset Management (Burry) | labeled "TCI Fund (Chris Hohn)" | `0001649339` | mislabeled entry; TCI Fund Management Ltd has its own row |
 
 ---
 
@@ -205,6 +219,8 @@ Management Ltd has its own entry.
 | 13F data is up to 45 days old and shows no shorts, hedges or cash | freshness factor, price-action penalty, disclaimer |
 | Weights use long-only reported AUM | overstated for diversified managers – noted in the report |
 | Only the 40 top pre-ranked tickers get the Form 4 look-up | a name outside that pool cannot enter the Top 10 on insider strength alone |
+| Share classes of one issuer share a Top-10 slot | the higher-scoring class is kept; the other is listed as an alternate |
+| A filer absent from the prior quarter makes all its positions look NEW | expected once after the universe is expanded; self-corrects next quarter |
 | Crowding is a proxy (hotel list + tracked-fund cluster) | no market-wide ownership feed is wired up |
 | Manager quality blends toward a static prior until enough quarters exist | fully data-driven after 8 quarters |
 | Option quotes are delayed snapshots | verify before trading |
