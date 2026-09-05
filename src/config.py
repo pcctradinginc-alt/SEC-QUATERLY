@@ -10,8 +10,10 @@ from pathlib import Path
 import os
 BASE_DIR    = Path(__file__).parent.parent
 # SEC_DATA_DIR / SEC_REPORTS_DIR let tests and local dry-runs write elsewhere.
-DATA_DIR    = Path(os.environ.get("SEC_DATA_DIR",    BASE_DIR / "data" / "holdings"))
-REPORTS_DIR = Path(os.environ.get("SEC_REPORTS_DIR", BASE_DIR / "reports"))
+# `or` (not a get() default): an env var defined but empty must fall back too,
+# otherwise Path("") silently becomes the current directory.
+DATA_DIR    = Path(os.environ.get("SEC_DATA_DIR")    or BASE_DIR / "data" / "holdings")
+REPORTS_DIR = Path(os.environ.get("SEC_REPORTS_DIR") or BASE_DIR / "reports")
 
 
 def run_date() -> str:

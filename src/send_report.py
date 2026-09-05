@@ -434,12 +434,28 @@ def _generate_html_report(a: dict) -> str:
 
 # ── e-mail ────────────────────────────────────────────────────────────────────
 
+def resolve_recipient(env: dict | None = None) -> str:
+    """
+    REPORT_RECIPIENT is optional. GitHub Actions still defines the variable for
+    an unset secret, as the EMPTY STRING - and os.environ.get() returns that
+    empty value instead of the default, which sends the report to "" and gets a
+    555 from Gmail. Fall back on any blank/whitespace value, not just a missing key.
+    """
+    env = os.environ if env is None else env
+    return (env.get("REPORT_RECIPIENT") or "").strip() or (env.get("GMAIL_ADDRESS") or "").strip()
+
+
 def send_gmail(html_content: str, today_str: str) -> None:
-    gmail_address  = os.environ.get("GMAIL_ADDRESS", "")
-    gmail_password = os.environ.get("GMAIL_APP_PASSWORD", "")
+    gmail_address  = os.environ.get("GMAIL_ADDRESS", "").strip()
+    gmail_password = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
     if not gmail_address or not gmail_password:
         raise ValueError("GMAIL_ADDRESS and GMAIL_APP_PASSWORD must be set")
-    recipient = os.environ.get("REPORT_RECIPIENT", gmail_address)
+    recipient = resolve_recipient()
+    if "@" not in recipient:
+        raise ValueError(
+            f"Refusing to send: resolved recipient {recipient!r} is not an e-mail address "
+            "(set REPORT_RECIPIENT, or leave it unset to use GMAIL_ADDRESS)"
+        )
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = REPORT_SUBJECT.format(date=today_str)
