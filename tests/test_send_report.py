@@ -31,6 +31,16 @@ def test_send_refuses_a_non_address(monkeypatch):
         sr.send_gmail("<p>x</p>", "2026-09-05")
 
 
+def test_truncated_issuer_name_is_cleaned():
+    """13F filers hand-type the issuer name; Elevance arrives truncated mid-phrase."""
+    c = sr.clean_issuer_name
+    assert c("ELEVANCE HEALTH INC FORMERLY") == "ELEVANCE HEALTH INC"
+    assert c("ACME INC FKA") == "ACME INC"
+    assert c("BERKSHIRE HATHAWAY INC DEL") == "BERKSHIRE HATHAWAY INC DEL"
+    assert c("KRAFT HEINZ CO") == "KRAFT HEINZ CO"
+    assert c(None) == ""
+
+
 def test_send_requires_credentials(monkeypatch):
     monkeypatch.setenv("GMAIL_ADDRESS", "")
     monkeypatch.setenv("GMAIL_APP_PASSWORD", "")

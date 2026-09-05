@@ -53,6 +53,18 @@ def esc(x) -> str:
     return html.escape(str(x if x is not None else ""))
 
 
+_DANGLING_SUFFIX_RE = re.compile(r"[\s,]+(FORMERLY|FKA|F/K/A)\s*$", re.I)
+
+
+def clean_issuer_name(name: str) -> str:
+    """
+    13F filers type the issuer name by hand and often truncate it: Elevance
+    arrives as "ELEVANCE HEALTH INC FORMERLY" (from "... FORMERLY ANTHEM INC").
+    Drop a trailing "formerly" that names nothing; leave everything else alone.
+    """
+    return _DANGLING_SUFFIX_RE.sub("", (name or "").strip()).strip()
+
+
 def grade_color(grade: str) -> str:
     return {"VERY_STRONG": GREEN, "STRONG": BLUE, "MODERATE": ORANGE, "WEAK": INK3}.get(grade, INK3)
 
@@ -110,7 +122,7 @@ def summary_table(top: list[dict]) -> str:
         <tr>
           <td class="r" style="padding:10px 0;font-size:13px;color:{INK3};width:28px">{s['rank']}</td>
           <td class="r" style="padding:10px 6px;font-size:14px;font-weight:600;color:{INK}">{esc(s['ticker'])}
-            <div style="font-size:11px;color:{INK3};font-weight:400">{esc(s['name'][:34])}</div></td>
+            <div style="font-size:11px;color:{INK3};font-weight:400">{esc(clean_issuer_name(s['name'])[:34])}</div></td>
           <td class="r" style="padding:10px 6px;font-size:15px;font-weight:600;color:{grade_color(s['grade'])};text-align:right">{s['signal_score']:.0f}</td>
           <td class="r" style="padding:10px 6px;font-size:12px;text-align:center">{ins_html}</td>
           <td class="r" style="padding:10px 0 10px 6px;text-align:right;word-break:break-all">{opt}</td>
@@ -285,7 +297,7 @@ def stock_card(s: dict) -> str:
         <td style="vertical-align:top">
           <div style="font-size:12px;color:{INK3}">No. {s['rank']}</div>
           <div style="font-size:26px;font-weight:700;color:{INK};letter-spacing:-.02em;margin-top:2px">{esc(s['ticker'])}</div>
-          <div style="font-size:13px;color:{INK2};margin-top:2px">{esc(s['name'])}</div>
+          <div style="font-size:13px;color:{INK2};margin-top:2px">{esc(clean_issuer_name(s['name']))}</div>
         </td>
         <td style="vertical-align:top;text-align:right;white-space:nowrap">
           <div style="font-size:34px;font-weight:700;color:{grade_color(s['grade'])};letter-spacing:-.03em;line-height:1">{s['signal_score']:.0f}</div>

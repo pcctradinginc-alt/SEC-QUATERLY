@@ -205,7 +205,7 @@ data/holdings/<date>_scores.json            alpha components, crowding, sell sig
 data/holdings/<date>_signals.json           ★ SIGNAL SCORE ranking + Top 10 + fingerprints
 data/holdings/<date>_options.json           selected Call / NO_SUITABLE_OPTION_FOUND per stock
 data/holdings/<date>_final_analysis.json    Top 10 + commentary + option + LLM route
-data/insider_cache/                         Form 4 look-ups per ticker/window
+data/insider_cache/                         Form 4 look-ups per ticker/window (git-ignored: raw EDGAR cache)
 data/llm_cache/                             content-hash LLM cache + usage ledger
 reports/<date>_report.html                  the e-mailed report
 ```
