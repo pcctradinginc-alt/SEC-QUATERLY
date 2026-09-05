@@ -49,6 +49,47 @@ FORM4 = """<?xml version="1.0"?>
 </ownershipDocument>"""
 
 
+FORM4_FOREIGN_ISSUER = FORM4.replace(
+    "<issuerCik>0000000001</issuerCik>", "<issuerCik>0000000099</issuerCik>"
+).replace("<issuerTradingSymbol>TST</issuerTradingSymbol>",
+          "<issuerTradingSymbol>OTHER</issuerTradingSymbol>")
+
+FORM4_PREFERRED = FORM4.replace("<value>Common Stock</value>",
+                                "<value>Preferred Stock, Series DD</value>")
+
+
+def test_issuer_is_parsed():
+    """An issuer's EDGAR feed also holds Form 4s the company filed as an insider
+    of a DIFFERENT issuer - Uber's Aurora sale, Berkshire's DaVita sale."""
+    p = ia.parse_form4(FORM4)
+    assert p["issuer"]["cik"] == "0000000001"
+    assert p["issuer"]["symbol"] == "TST"
+    assert ia.parse_form4(FORM4_FOREIGN_ISSUER)["issuer"]["cik"] == "0000000099"
+
+
+def test_non_common_securities_are_excluded():
+    assert ia.is_common_stock("Common Stock")
+    assert ia.is_common_stock("Class A Common Stock")
+    assert ia.is_common_stock("ADSs")
+    assert not ia.is_common_stock("Preferred Stock, Series DD")
+    assert not ia.is_common_stock("Mandatory Redeemable Preferred Shares, Series D")
+    assert not ia.is_common_stock("Warrants")
+    assert not ia.is_common_stock("6.375% Senior Notes")
+
+    s = ia.summarize_form4s(
+        [{"filing_date": "2026-08-22", "accession": "a", **ia.parse_form4(FORM4_PREFERRED)}],
+        since="2026-06-30")
+    assert s["buy_count"] == 0
+    assert s["skipped_securities"] == {"Preferred Stock, Series DD": 2}
+
+
+def test_net_stance():
+    buy_only = ia.summarize_form4s(
+        [{"filing_date": "2026-08-22", "accession": "a", **ia.parse_form4(FORM4)}], "2026-06-30")
+    assert buy_only["net_stance"] == "NET_BUYING"
+    assert ia.summarize_form4s([], "2026-06-30")["net_stance"] == "NO_ACTIVITY"
+
+
 def test_parse_and_window():
     p = ia.parse_form4(FORM4)
     assert p["owners"][0]["is_officer"] and p["owners"][0]["title"] == "Chief Executive Officer"

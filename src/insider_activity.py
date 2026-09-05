@@ -164,6 +164,7 @@ def _num(s: str) -> float:
 def parse_form4(xml_text: str) -> dict:
     """
     Returns {
+      issuer: {cik, name, symbol},
       owners: [{name, is_director, is_officer, is_ten_pct, title}],
       transactions: [{date, code, acquired, shares, price, value_usd, security}]
     }
@@ -173,7 +174,13 @@ def parse_form4(xml_text: str) -> dict:
     try:
         root = ET.fromstring(xml_text)
     except ET.ParseError:
-        return {"owners": [], "transactions": []}
+        return {"issuer": {}, "owners": [], "transactions": []}
+
+    issuer = {
+        "cik":    (root.findtext("issuer/issuerCik") or "").strip().zfill(10),
+        "name":   (root.findtext("issuer/issuerName") or "").strip(),
+        "symbol": (root.findtext("issuer/issuerTradingSymbol") or "").strip().upper(),
+    }
 
     owners = []
     for ro in root.findall("reportingOwner"):
@@ -203,7 +210,31 @@ def parse_form4(xml_text: str) -> dict:
             "security":  _val(tx, "securityTitle"),
         })
 
-    return {"owners": owners, "transactions": txs}
+    return {"issuer": issuer, "owners": owners, "transactions": txs}
+
+
+# ── Security-title filter ─────────────────────────────────────────────────────
+
+# A Form 4's non-derivative table can report preferred stock, warrants, units,
+# notes or rights alongside ordinary shares. Only the security the signal is
+# actually about counts; anything else is a different instrument at a different
+# price (Bank of America's "Preferred Stock, Series DD" was scored as a common
+# -stock insider buy before this filter existed).
+_NON_COMMON_MARKERS = (
+    "PREFERRED", "WARRANT", "NOTE", "DEBENTURE", "UNIT", "RIGHT", "BOND",
+    "CONVERTIBLE", "TRUST PREF", "DEPOSITARY SHARE", "SUBORDINATED",
+)
+_COMMON_MARKERS = ("COMMON", "ORDINARY", "ADS", "AMERICAN DEPOSITARY", "SHARES OF BENEFICIAL")
+
+
+def is_common_stock(security_title: str) -> bool:
+    """True when the reported security is the ordinary tradable share class."""
+    t = (security_title or "").upper()
+    if not t:
+        return True                      # untitled rows: assume the common line
+    if any(m in t for m in _NON_COMMON_MARKERS):
+        return False
+    return any(m in t for m in _COMMON_MARKERS) or "STOCK" in t
 
 
 # ── Aggregation & scoring ─────────────────────────────────────────────────────
@@ -215,6 +246,7 @@ def summarize_form4s(parsed_filings: list[dict], since: str) -> dict:
     with transaction dates strictly after `since`.
     """
     buys, sells = [], []
+    skipped_securities: dict[str, int] = {}
     for f in parsed_filings:
         owner_names = [o["name"] for o in f["owners"]] or ["(unknown)"]
         officer = any(o["is_officer"] for o in f["owners"])
@@ -223,6 +255,10 @@ def summarize_form4s(parsed_filings: list[dict], since: str) -> dict:
         title = next((o["title"] for o in f["owners"] if o["title"]), "")
         for tx in f["transactions"]:
             if tx["date"] and tx["date"] <= since:
+                continue
+            if not is_common_stock(tx.get("security", "")):
+                key = tx.get("security") or "(untitled)"
+                skipped_securities[key] = skipped_securities.get(key, 0) + 1
                 continue
             row = {
                 "insider":     "; ".join(owner_names),
@@ -235,6 +271,7 @@ def summarize_form4s(parsed_filings: list[dict], since: str) -> dict:
                 "shares":      tx["shares"],
                 "price":       tx["price"],
                 "value_usd":   tx["value_usd"],
+                "security":    tx.get("security", ""),
             }
             if tx["code"] == "P" and tx["acquired"]:
                 buys.append(row)
@@ -247,7 +284,19 @@ def summarize_form4s(parsed_filings: list[dict], since: str) -> dict:
     sig_buys = [b for b in buys if b["value_usd"] >= INSIDER_MIN_PURCHASE_USD]
     buy_value  = round(sum(b["value_usd"] for b in buys), 2)
     sell_value = round(sum(s["value_usd"] for s in sells), 2)
+
+    if not buys and not sells:
+        stance = "NO_ACTIVITY"
+    elif buy_value > sell_value:
+        stance = "NET_BUYING"
+    elif sell_value > buy_value:
+        stance = "NET_SELLING"
+    else:
+        stance = "BALANCED"
+
     return {
+        "net_stance":          stance,
+        "skipped_securities":  dict(sorted(skipped_securities.items())),
         "buy_count":            len(buys),
         "significant_buy_count": len(sig_buys),
         "distinct_buyers":      sorted({b["insider"] for b in sig_buys}),
@@ -309,7 +358,9 @@ def fetch_insider_activity(ticker: str, since: str, until: str | None = None) ->
     """
     until = until or date.today().isoformat()
     safe_t = re.sub(r"[^A-Z0-9]", "_", ticker.upper())
-    cache_path = INSIDER_CACHE_DIR / f"{safe_t}_{since}_{until}.json"
+    # v2: issuer verification + common-stock-only filter. The v1 snapshots hold
+    # other issuers' transactions, so they must not be reused.
+    cache_path = INSIDER_CACHE_DIR / f"{safe_t}_{since}_{until}_v2.json"
     if cache_path.exists():
         cached = json.load(open(cache_path))
         # Always re-derive the score from the cached raw summary so a change to
@@ -334,15 +385,26 @@ def fetch_insider_activity(ticker: str, since: str, until: str | None = None) ->
     result["cik"] = cik
 
     filings = list_form4_filings(cik, since, until)
-    parsed = []
+    parsed, foreign = [], {}
     for f in filings:
         xml_text = fetch_form4_xml(cik, f)
         if not xml_text:
             continue
         p = parse_form4(xml_text)
+        # An issuer's EDGAR feed also carries Form 4s the COMPANY ITSELF filed as
+        # an insider (10% owner) of a DIFFERENT issuer. Uber's sale of Aurora
+        # Innovation shares and Berkshire's sale of DaVita shares were being
+        # scored as insider selling in UBER and BRK/B. Keep only filings whose
+        # <issuer> is the company we are actually scoring.
+        issuer_cik = (p.get("issuer") or {}).get("cik", "")
+        if issuer_cik and issuer_cik != cik:
+            label = (p["issuer"].get("symbol") or p["issuer"].get("name") or issuer_cik)
+            foreign[label] = foreign.get(label, 0) + 1
+            continue
         parsed.append({**f, **p})
 
-    result["form4_count"] = len(parsed)
+    result["form4_count"]        = len(parsed)
+    result["foreign_issuer_skipped"] = dict(sorted(foreign.items()))
     summary = summarize_form4s(parsed, since)
     score, reasons = insider_score(summary)
     result.update({"summary": summary, "score": score, "reasons": reasons})

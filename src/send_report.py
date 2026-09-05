@@ -99,8 +99,13 @@ def summary_table(top: list[dict]) -> str:
         else:
             opt = f'<span style="color:{INK3};font-size:11px">no Call</span>'
         ins = s["factors"].get("insider", 0)
-        ins_html = (f'<span style="color:{GREEN};font-weight:600">{ins:.0f}</span>' if ins > 0
-                    else f'<span style="color:{INK3}">–</span>')
+        stance = ((s.get("insider") or {}).get("summary") or {}).get("net_stance")
+        if stance == "NET_BUYING":
+            ins_html = f'<span style="color:{GREEN};font-weight:600">{ins:.0f}</span>'
+        elif stance == "NET_SELLING":
+            ins_html = f'<span style="color:{ORANGE}">{ins:.0f} sell</span>'
+        else:
+            ins_html = f'<span style="color:{INK3}">–</span>' 
         rows += f"""
         <tr>
           <td class="r" style="padding:10px 0;font-size:13px;color:{INK3};width:28px">{s['rank']}</td>
@@ -144,15 +149,28 @@ def buyers_table(filers: list[dict]) -> str:
 
 
 def insider_block(s: dict) -> str:
-    ins = s.get("insider") or {}
+    ins  = s.get("insider") or {}
     summ = ins.get("summary") or {}
-    buy_val = summ.get("buy_value_usd", 0) or 0
+    buy_val  = summ.get("buy_value_usd", 0) or 0
     sell_val = summ.get("sell_value_usd", 0) or 0
+    stance   = summ.get("net_stance")
     read = (s.get("commentary") or {}).get("insider_read", "")
-    if buy_val > 0:
-        head_color, head = GREEN, f"Insider buying confirmed · ${buy_val:,.0f}"
-    elif sell_val > 0:
-        head_color, head = ORANGE, f"No insider purchases · ${sell_val:,.0f} sold"
+
+    # The headline must state the NET stance. Reporting "insider buying
+    # confirmed" for a name whose insiders sold more than they bought reads as
+    # confirmation of the 13F signal when the data says the opposite.
+    if stance == "NET_BUYING":
+        head_color = GREEN
+        head = f"Net insider buying · ${buy_val:,.0f} bought"
+        if sell_val:
+            head += f" vs ${sell_val:,.0f} sold"
+    elif stance == "NET_SELLING":
+        head_color = ORANGE
+        head = f"Net insider selling · ${sell_val:,.0f} sold"
+        head += f" vs ${buy_val:,.0f} bought" if buy_val else " · no purchases"
+    elif stance == "BALANCED":
+        head_color = INK2
+        head = f"Insider buying and selling balanced · ${buy_val:,.0f} each way"
     elif ins.get("error"):
         head_color, head = INK3, "Insider data unavailable"
     else:
@@ -161,14 +179,36 @@ def insider_block(s: dict) -> str:
     rows = ""
     for b in (summ.get("buys") or [])[-4:][::-1]:
         rows += (f'<div style="font-size:12px;color:{INK2};margin-top:4px">'
-                 f'{esc(b["date"])} · {esc(b["insider"][:40])} ({esc(b["role"][:28])}) · '
-                 f'{b["shares"]:,.0f} sh @ ${b["price"]:,.2f} = <span style="color:{INK};font-weight:600">${b["value_usd"]:,.0f}</span></div>')
+                 f'<span style="color:{GREEN};font-weight:600">BUY</span> {esc(b["date"])} · '
+                 f'{esc(b["insider"][:38])} ({esc(b["role"][:26])}) · '
+                 f'{b["shares"]:,.0f} sh @ ${b["price"]:,.2f} = '
+                 f'<span style="color:{INK};font-weight:600">${b["value_usd"]:,.0f}</span></div>')
+    for x in (summ.get("sells") or [])[-2:][::-1]:
+        rows += (f'<div style="font-size:12px;color:{INK2};margin-top:4px">'
+                 f'<span style="color:{ORANGE};font-weight:600">SELL</span> {esc(x["date"])} · '
+                 f'{esc(x["insider"][:38])} ({esc(x["role"][:26])}) · '
+                 f'{x["shares"]:,.0f} sh @ ${x["price"]:,.2f} = ${x["value_usd"]:,.0f}</div>')
+
+    # Transparency: say when filings were excluded, and why.
+    notes = []
+    foreign = ins.get("foreign_issuer_skipped") or {}
+    if foreign:
+        notes.append(f"{sum(foreign.values())} filing(s) excluded: this company reporting as an "
+                     f"insider of {', '.join(sorted(foreign)[:4])}, not trades in its own stock")
+    skipped = summ.get("skipped_securities") or {}
+    if skipped:
+        notes.append(f"{sum(skipped.values())} non-common-stock line(s) excluded "
+                     f"({', '.join(sorted(skipped)[:2])})")
+    notes_html = "".join(
+        f'<div style="font-size:11px;color:{INK3};margin-top:6px">{esc(n)}</div>' for n in notes)
+
     return f"""
     <div style="border:1px solid {LINE};border-radius:12px;padding:14px 16px;margin-top:14px">
-      <div class="k2">SEC Form 4 · since {esc(ins.get('since', 'quarter-end'))}</div>
+      <div class="k2">SEC Form 4 · common stock · since {esc(ins.get('since', 'quarter-end'))}</div>
       <div style="font-size:14px;font-weight:600;color:{head_color};margin-top:4px">{esc(head)}</div>
       {rows}
       {f'<div style="font-size:12px;color:{INK2};margin-top:8px">{esc(read)}</div>' if read else ''}
+      {notes_html}
     </div>"""
 
 
@@ -369,7 +409,8 @@ def _generate_html_report(a: dict) -> str:
     top = a.get("top10", [])
     today_str = a["date"]
     cards = "".join(stock_card(s) for s in top)
-    n_ins = sum(1 for s in top if (s["factors"].get("insider") or 0) > 0)
+    n_ins = sum(1 for s in top
+                if ((s.get("insider") or {}).get("summary") or {}).get("net_stance") == "NET_BUYING")
     n_opt = sum(1 for s in top if (s.get("option") or {}).get("contract"))
     evaluated = any((s.get("option") or {}).get("status") != "NOT_EVALUATED" for s in top)
     opt_line = f"{n_opt} of 10 with a qualifying Call" if evaluated else "options not evaluated"
@@ -408,7 +449,7 @@ def _generate_html_report(a: dict) -> str:
     <div style="font-size:11px;color:{INK3};text-transform:uppercase;letter-spacing:.12em">SEC 13F Signal Engine</div>
     <div class="hero" style="font-size:38px;font-weight:700;letter-spacing:-.03em;line-height:1.1;color:{INK};margin-top:8px">Top 10 institutional signals</div>
     <div style="font-size:15px;color:{INK2};margin-top:10px;line-height:1.5">
-      {esc(today_str)} · {a.get('filer_count', '')} tracked filers · {n_ins} of 10 with confirming insider buys · {opt_line}
+      {esc(today_str)} · {a.get('filer_count', '')} tracked filers · {n_ins} of {len(top)} with net insider buying · {opt_line}
     </div>
   </div>
 

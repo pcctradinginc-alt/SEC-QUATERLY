@@ -86,6 +86,22 @@ table:
 * code **S** + disposed → open-market sale
 * grants, exercises, gifts and derivative rows are ignored
 
+Two filters keep the numbers about the right company and the right security:
+
+* **Issuer verification.** A company's EDGAR feed also carries Form 4s that the
+  company itself filed as an insider (10 % owner) of a *different* issuer. The
+  `<issuer>` CIK in each filing must match the ticker being scored. Without this,
+  Uber's sale of Aurora Innovation shares was counted as $471.6 M of insider
+  selling in UBER, and Berkshire's sale of DaVita shares as $36.5 M of selling
+  in BRK/B.
+* **Common stock only.** The non-derivative table can also report preferred
+  stock, warrants, units and notes. Bank of America's "Preferred Stock,
+  Series DD" was scored as a common-stock insider buy before this filter.
+
+The summary carries a `net_stance` (`NET_BUYING` / `NET_SELLING` / `BALANCED` /
+`NO_ACTIVITY`), and the report headline states that stance rather than the gross
+purchase total, so a net seller is never labelled as confirming the 13F signal.
+
 Only the top `SIGNAL_CANDIDATE_POOL` (40) pre-ranked tickers are looked up to
 bound EDGAR traffic; results are cached per (ticker, window) under
 `data/insider_cache/` and the score is re-derived from the cached raw summary
@@ -128,7 +144,9 @@ report. There is no relaxed fallback.
 * **Routing** – `config.LLM_TASK_ROUTES` maps each task to an ordered list of
   tiers: `claude-haiku-4-5` → `claude-sonnet-5` → `claude-opus-5`.
 * **Cascading** – the cheapest tier runs first; its structured output is
-  validated (ticker set, lengths, enum values, no advice language). Only on a
+  validated (ticker set, lengths, enum values, no advice language, and no claim
+  that contradicts the Form 4 totals - every dollar figure in the narrative must
+  match a computed total, and text may not deny sales that happened). Only on a
   validation failure or API error does the router escalate one tier. Opus 5 is
   the quality anchor at the top of the cascade.
 * **One batched call** – all ten stocks (context, thesis, insider read, risks,

@@ -16,6 +16,7 @@ Cost design
 """
 
 import json
+import re
 import sys
 from datetime import date
 
@@ -32,6 +33,9 @@ Ground rules:
 - 13F data shows long US equity positions with up to a 45-day lag; weights use long-only reported AUM and are overstated for diversified managers. Say "increased its reported long position", never "is bullish".
 - Form 4 open-market purchases (code P) since the quarter-end are the only insider confirmation used. If buy value is 0, say plainly that no insider confirmation exists yet.
 - Be willing to call a setup routine. Never inflate. No investment advice language ("buy", "should").
+- Use ONLY the figures given. Never compute new percentages, sums or aggregates, and never round a figure into a different number: if sales are $451,600,000 write $451.6M, never $471M.
+- State the insider picture exactly as the net stance says. If sales are above zero you may not write that there were no sales; if purchases are zero you may not write that insiders bought.
+- Trade counts are given. Do not guess how many trades there were.
 - Keep each field within its length limit. Plain text, no markdown.
 
 Score model (weights out of 100): {json.dumps(SIGNAL_WEIGHTS)}.
@@ -49,9 +53,16 @@ def _fmt_stock(s: dict, opt: dict | None) -> str:
     )
     perf = s.get("post_filing_perf") or {}
     perf_txt = (f"{perf['pct_change']:+.0f}% since quarter-end" if perf.get("pct_change") is not None else "n/a")
-    ins_txt = (f"buys ${ins.get('buy_value_usd', 0):,.0f} by {len(ins.get('distinct_buyers', []))} insiders"
-               f" (officer/director: {'yes' if ins.get('officer_or_director_buyers') else 'no'}),"
-               f" sells ${ins.get('sell_value_usd', 0):,.0f}") if ins else "no Form 4 activity"
+    if ins:
+        ins_txt = (
+            f"net stance {ins.get('net_stance', '?')}; "
+            f"purchases ${ins.get('buy_value_usd', 0):,.0f} in {ins.get('buy_count', 0)} trade(s) "
+            f"by {len(ins.get('distinct_buyers', []))} insider(s) "
+            f"(officer/director involved: {'yes' if ins.get('officer_or_director_buyers') else 'no'}); "
+            f"sales ${ins.get('sell_value_usd', 0):,.0f} in {ins.get('sell_count', 0)} trade(s)"
+        )
+    else:
+        ins_txt = "no Form 4 common-stock activity"
     if opt and opt.get("status") == "OK":
         c = opt["contract"]
         opt_txt = (f"{c['symbol']} strike {c['strike']} exp {c['expiration']} ({c['dte']}d) delta {c['delta']} "
@@ -115,7 +126,45 @@ TOOL = {
 }
 
 
-def make_validator(expected_tickers: list[str]):
+_NO_SALES_CLAIMS = (
+    "no sales", "no insider sales", "no selling", "nor sales", "no offsetting sales",
+    "without sales", "no meaningful sales", "minimal sales", "no insider selling",
+)
+_BOUGHT_CLAIMS = ("insiders bought", "insiders purchased", "insiders added", "insider buying confirmed")
+
+
+def _money_figures(text: str) -> list[float]:
+    """Every $ amount in the text, normalised to dollars ($1.4M -> 1_400_000)."""
+    out = []
+    for num, suffix in re.findall(r"\$\s*([\d,]+(?:\.\d+)?)\s*([KMB]?)", text or "", re.I):
+        try:
+            v = float(num.replace(",", ""))
+        except ValueError:
+            continue
+        out.append(v * {"k": 1e3, "m": 1e6, "b": 1e9}.get(suffix.lower(), 1.0))
+    return out
+
+
+def _insider_facts_ok(text: str, ins: dict) -> tuple[bool, str]:
+    """Reject narrative that contradicts the deterministic Form 4 numbers."""
+    low = (text or "").lower()
+    buy, sell = ins.get("buy_value_usd", 0) or 0, ins.get("sell_value_usd", 0) or 0
+
+    if sell > 0 and any(c in low for c in _NO_SALES_CLAIMS):
+        return False, f"claims no insider sales but ${sell:,.0f} was sold"
+    if buy == 0 and any(c in low for c in _BOUGHT_CLAIMS):
+        return False, "claims insider buying but purchases are zero"
+
+    allowed = [buy, sell, abs(buy - sell), 0.0]
+    for v in _money_figures(text):
+        if not any(abs(v - a) <= max(a * 0.02, 1.0) for a in allowed):
+            return False, f"dollar figure ${v:,.0f} matches no Form 4 total"
+    return True, "ok"
+
+
+def make_validator(expected_tickers: list[str], insider_by_ticker: dict[str, dict] | None = None):
+    insider_by_ticker = insider_by_ticker or {}
+
     def validate(data: dict) -> tuple[bool, str]:
         if not isinstance(data, dict):
             return False, "not an object"
@@ -137,6 +186,13 @@ def make_validator(expected_tickers: list[str]):
             low = str(s.get("why_strongest", "")).lower()
             if any(w in low for w in (" should buy", "strong buy", "must buy")):
                 return False, f"{s.get('ticker')}: advice language"
+
+            ins = insider_by_ticker.get(str(s.get("ticker", "")).upper())
+            if ins is not None:
+                for field in ("insider_read", "why_strongest"):
+                    ok, why = _insider_facts_ok(str(s.get(field, "")), ins)
+                    if not ok:
+                        return False, f"{s.get('ticker')}: {field} {why}"
         mc = str(data.get("market_context", ""))
         if len(mc) < 20 or len(mc.split()) > 90:
             return False, "market_context length"
@@ -189,13 +245,16 @@ def run(today_str: str | None = None) -> dict:
 
     top = signals["top10"]
     tickers = [s["ticker"] for s in top]
+    insider_summaries = {
+        s["ticker"].upper(): ((s.get("insider") or {}).get("summary") or {}) for s in top
+    }
 
     commentary, meta = llm_router.route(
         task="explain_signals",
         system=SYSTEM_PROMPT,
         user=build_user_prompt(signals, options),
         tool=TOOL,
-        validator=make_validator(tickers),
+        validator=make_validator(tickers, insider_summaries),
         max_tokens=6000,
     )
     if commentary is None:
