@@ -1,0 +1,50 @@
+{
+ "cik": "0001069157",
+ "error": null,
+ "form4_count": 2,
+ "reasons": [
+  "Insiders were net sellers ($1,458,735 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -1458735.0,
+  "officer_or_director_buyers": [],
+  "sell_count": 2,
+  "sell_value_usd": 1458735.0,
+  "sells": [
+   {
+    "accession": "0001235499-26-000008",
+    "date": "2026-08-06",
+    "filing_date": "2026-08-06",
+    "insider": "KRAUSE DOUGLAS PAUL",
+    "is_director": false,
+    "is_officer": true,
+    "price": 132.3715,
+    "role": "Vice Chairman",
+    "shares": 10000.0,
+    "value_usd": 1323715.0
+   },
+   {
+    "accession": "0001235502-26-000006",
+    "date": "2026-08-12",
+    "filing_date": "2026-08-12",
+    "insider": "LIU JACK C",
+    "is_director": true,
+    "is_officer": false,
+    "price": 135.02,
+    "role": "Director",
+    "shares": 1000.0,
+    "value_usd": 135020.0
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "EWBC",
+ "until": "2026-09-05"
+}

@@ -1,0 +1,146 @@
+{
+ "cik": "0001018724",
+ "error": null,
+ "form4_count": 13,
+ "reasons": [
+  "Insiders were net sellers ($365,022,213 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -365022212.63,
+  "officer_or_director_buyers": [],
+  "sell_count": 27,
+  "sell_value_usd": 365022212.63,
+  "sells": [
+   {
+    "accession": "0001639902-26-000008",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Olsavsky Brian T",
+    "is_director": false,
+    "is_officer": true,
+    "price": 260.31,
+    "role": "Senior Vice President and CFO",
+    "shares": 6172.0,
+    "value_usd": 1606633.32
+   },
+   {
+    "accession": "0001936006-26-000022",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Herrington Douglas J",
+    "is_director": false,
+    "is_officer": true,
+    "price": 257.7656,
+    "role": "CEO Worldwide Amazon Stores",
+    "shares": 1825.0,
+    "value_usd": 470422.22
+   },
+   {
+    "accession": "0001936006-26-000022",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Herrington Douglas J",
+    "is_director": false,
+    "is_officer": true,
+    "price": 258.5805,
+    "role": "CEO Worldwide Amazon Stores",
+    "shares": 2125.0,
+    "value_usd": 549483.56
+   },
+   {
+    "accession": "0001936006-26-000022",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Herrington Douglas J",
+    "is_director": false,
+    "is_officer": true,
+    "price": 260.3251,
+    "role": "CEO Worldwide Amazon Stores",
+    "shares": 2412.0,
+    "value_usd": 627904.14
+   },
+   {
+    "accession": "0002024813-26-000010",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Garman Matthew S",
+    "is_director": false,
+    "is_officer": true,
+    "price": 257.5954,
+    "role": "CEO Amazon Web Services",
+    "shares": 2159.0,
+    "value_usd": 556148.47
+   },
+   {
+    "accession": "0002024813-26-000010",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Garman Matthew S",
+    "is_director": false,
+    "is_officer": true,
+    "price": 258.6595,
+    "role": "CEO Amazon Web Services",
+    "shares": 5191.0,
+    "value_usd": 1342701.46
+   },
+   {
+    "accession": "0002024813-26-000010",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Garman Matthew S",
+    "is_director": false,
+    "is_officer": true,
+    "price": 259.5702,
+    "role": "CEO Amazon Web Services",
+    "shares": 5240.0,
+    "value_usd": 1360147.85
+   },
+   {
+    "accession": "0002024813-26-000010",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Garman Matthew S",
+    "is_director": false,
+    "is_officer": true,
+    "price": 260.3396,
+    "role": "CEO Amazon Web Services",
+    "shares": 1951.0,
+    "value_usd": 507922.56
+   },
+   {
+    "accession": "0001557979-26-000008",
+    "date": "2026-08-24",
+    "filing_date": "2026-08-25",
+    "insider": "Zapolsky David",
+    "is_director": false,
+    "is_officer": true,
+    "price": 259.77,
+    "role": "Senior Vice President",
+    "shares": 9258.0,
+    "value_usd": 2404950.66
+   },
+   {
+    "accession": "0001936006-26-000024",
+    "date": "2026-09-01",
+    "filing_date": "2026-09-03",
+    "insider": "Herrington Douglas J",
+    "is_director": false,
+    "is_officer": true,
+    "price": 254.77,
+    "role": "CEO Worldwide Amazon Stores",
+    "shares": 1000.0,
+    "value_usd": 254770.0
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "AMZN",
+ "until": "2026-09-05"
+}

@@ -1,0 +1,80 @@
+{
+ "cik": "0001067983",
+ "error": null,
+ "form4_count": 6,
+ "reasons": [
+  "Insiders were net sellers ($36,263,221 net sold) since quarter-end",
+  "$250,072 of open-market insider purchases since quarter-end",
+  "1 distinct insider bought (officer/director involved)"
+ ],
+ "score": 20.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 3,
+  "buy_value_usd": 250072.03,
+  "buys": [
+   {
+    "accession": "0001193125-26-349574",
+    "date": "2026-08-12",
+    "filing_date": "2026-08-13",
+    "insider": "O'Sullivan Michael J.",
+    "is_director": false,
+    "is_officer": true,
+    "price": 510.64,
+    "role": "See Remarks",
+    "shares": 45.0,
+    "value_usd": 22978.8
+   },
+   {
+    "accession": "0001193125-26-349574",
+    "date": "2026-08-12",
+    "filing_date": "2026-08-13",
+    "insider": "O'Sullivan Michael J.",
+    "is_director": false,
+    "is_officer": true,
+    "price": 512.52,
+    "role": "See Remarks",
+    "shares": 400.0,
+    "value_usd": 205008.0
+   },
+   {
+    "accession": "0001193125-26-349574",
+    "date": "2026-08-12",
+    "filing_date": "2026-08-13",
+    "insider": "O'Sullivan Michael J.",
+    "is_director": false,
+    "is_officer": true,
+    "price": 513.61,
+    "role": "See Remarks",
+    "shares": 43.0,
+    "value_usd": 22085.23
+   }
+  ],
+  "distinct_buyers": [
+   "O'Sullivan Michael J."
+  ],
+  "net_value_usd": -36263221.01,
+  "officer_or_director_buyers": [
+   "O'Sullivan Michael J."
+  ],
+  "sell_count": 1,
+  "sell_value_usd": 36513293.04,
+  "sells": [
+   {
+    "accession": "0001193125-26-333151",
+    "date": "2026-07-31",
+    "filing_date": "2026-08-04",
+    "insider": "BERKSHIRE HATHAWAY INC; BUFFETT WARREN E",
+    "is_director": false,
+    "is_officer": false,
+    "price": 199.548,
+    "role": "10% owner",
+    "shares": 182980.0,
+    "value_usd": 36513293.04
+   }
+  ],
+  "significant_buy_count": 1
+ },
+ "ticker": "BRK/A",
+ "until": "2026-09-05"
+}

@@ -1,0 +1,50 @@
+{
+ "cik": "0001834584",
+ "error": null,
+ "form4_count": 2,
+ "reasons": [
+  "Insiders were net sellers ($3,196,842 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -3196841.73,
+  "officer_or_director_buyers": [],
+  "sell_count": 2,
+  "sell_value_usd": 3196841.73,
+  "sells": [
+   {
+    "accession": "0001628280-26-055752",
+    "date": "2026-08-10",
+    "filing_date": "2026-08-11",
+    "insider": "Lee Jonathan D.",
+    "is_director": false,
+    "is_officer": true,
+    "price": 16.102,
+    "role": "Chief Accounting Officer",
+    "shares": 5519.0,
+    "value_usd": 88866.94
+   },
+   {
+    "accession": "0001628280-26-055757",
+    "date": "2026-08-10",
+    "filing_date": "2026-08-11",
+    "insider": "Rogers Harold",
+    "is_director": false,
+    "is_officer": true,
+    "price": 16.1781,
+    "role": "See Remarks",
+    "shares": 192110.0,
+    "value_usd": 3107974.79
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "CPNG",
+ "until": "2026-09-05"
+}

@@ -1,0 +1,54 @@
+{
+ "cik": "0001543151",
+ "error": null,
+ "form4_count": 16,
+ "reasons": [
+  "Insiders were net sellers ($451,600,000 net sold) since quarter-end",
+  "$20,000,000 of open-market insider purchases since quarter-end",
+  "1 distinct insider bought"
+ ],
+ "score": 20.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 1,
+  "buy_value_usd": 20000000.0,
+  "buys": [
+   {
+    "accession": "0001552781-26-000376",
+    "date": "2026-07-02",
+    "filing_date": "2026-07-02",
+    "insider": "Uber Technologies, Inc",
+    "is_director": false,
+    "is_officer": false,
+    "price": 25.0,
+    "role": "10% owner",
+    "shares": 800000.0,
+    "value_usd": 20000000.0
+   }
+  ],
+  "distinct_buyers": [
+   "Uber Technologies, Inc"
+  ],
+  "net_value_usd": -451600000.0,
+  "officer_or_director_buyers": [],
+  "sell_count": 1,
+  "sell_value_usd": 471600000.0,
+  "sells": [
+   {
+    "accession": "0001552781-26-000454",
+    "date": "2026-08-17",
+    "filing_date": "2026-08-19",
+    "insider": "Uber Technologies, Inc",
+    "is_director": false,
+    "is_officer": false,
+    "price": 6.55,
+    "role": "10% owner",
+    "shares": 72000000.0,
+    "value_usd": 471600000.0
+   }
+  ],
+  "significant_buy_count": 1
+ },
+ "ticker": "UBER",
+ "until": "2026-09-05"
+}

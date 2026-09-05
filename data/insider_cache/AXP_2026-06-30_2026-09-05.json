@@ -1,0 +1,38 @@
+{
+ "cik": "0000004962",
+ "error": null,
+ "form4_count": 9,
+ "reasons": [
+  "Insiders were net sellers ($2,972,920 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -2972919.51,
+  "officer_or_director_buyers": [],
+  "sell_count": 1,
+  "sell_value_usd": 2972919.51,
+  "sells": [
+   {
+    "accession": "0000004962-26-000348",
+    "date": "2026-08-18",
+    "filing_date": "2026-08-19",
+    "insider": "Herena Monique",
+    "is_director": false,
+    "is_officer": true,
+    "price": 337.41,
+    "role": "Chief Colleague Exp. Officer",
+    "shares": 8811.0,
+    "value_usd": 2972919.51
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "AXP",
+ "until": "2026-09-05"
+}

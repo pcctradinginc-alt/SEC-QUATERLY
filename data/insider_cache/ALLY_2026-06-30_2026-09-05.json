@@ -1,0 +1,38 @@
+{
+ "cik": "0000040729",
+ "error": null,
+ "form4_count": 5,
+ "reasons": [
+  "Insiders were net sellers ($221,168 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -221168.0,
+  "officer_or_director_buyers": [],
+  "sell_count": 1,
+  "sell_value_usd": 221168.0,
+  "sells": [
+   {
+    "accession": "0002045848-26-000007",
+    "date": "2026-08-04",
+    "filing_date": "2026-08-05",
+    "insider": "Richard Stephanie N",
+    "is_director": false,
+    "is_officer": true,
+    "price": 44.2336,
+    "role": "Chief Risk Officer",
+    "shares": 5000.0,
+    "value_usd": 221168.0
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "ALLY",
+ "until": "2026-09-05"
+}

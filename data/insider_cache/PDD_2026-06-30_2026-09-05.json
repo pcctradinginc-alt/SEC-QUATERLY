@@ -1,0 +1,38 @@
+{
+ "cik": "0001737806",
+ "error": null,
+ "form4_count": 5,
+ "reasons": [
+  "Insiders were net sellers ($140,151 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -140151.0,
+  "officer_or_director_buyers": [],
+  "sell_count": 1,
+  "sell_value_usd": 140151.0,
+  "sells": [
+   {
+    "accession": "0001104659-26-105483",
+    "date": "2026-09-03",
+    "filing_date": "2026-09-04",
+    "insider": "Kam Anthony Ping Leung",
+    "is_director": true,
+    "is_officer": false,
+    "price": 82.2,
+    "role": "Director",
+    "shares": 1705.0,
+    "value_usd": 140151.0
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "PDD",
+ "until": "2026-09-05"
+}

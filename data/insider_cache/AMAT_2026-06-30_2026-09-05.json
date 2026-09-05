@@ -1,0 +1,38 @@
+{
+ "cik": "0000006951",
+ "error": null,
+ "form4_count": 4,
+ "reasons": [
+  "Insiders were net sellers ($3,594,376 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -3594375.75,
+  "officer_or_director_buyers": [],
+  "sell_count": 1,
+  "sell_value_usd": 3594375.75,
+  "sells": [
+   {
+    "accession": "0001628280-26-059277",
+    "date": "2026-08-25",
+    "filing_date": "2026-08-27",
+    "insider": "Hill Brice",
+    "is_director": false,
+    "is_officer": true,
+    "price": 479.2501,
+    "role": "SVP, CFO",
+    "shares": 7500.0,
+    "value_usd": 3594375.75
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "AMAT",
+ "until": "2026-09-05"
+}

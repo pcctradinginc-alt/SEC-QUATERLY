@@ -1,0 +1,146 @@
+{
+ "cik": "0002021728",
+ "error": null,
+ "form4_count": 26,
+ "reasons": [
+  "Insiders were net sellers ($245,287,581 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -245287581.22,
+  "officer_or_director_buyers": [],
+  "sell_count": 138,
+  "sell_value_usd": 245287581.22,
+  "sells": [
+   {
+    "accession": "0001628280-26-058961",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Feldman Andrew D.",
+    "is_director": true,
+    "is_officer": true,
+    "price": 199.33,
+    "role": "CEO, President",
+    "shares": 66237.0,
+    "value_usd": 13203021.21
+   },
+   {
+    "accession": "0001628280-26-058961",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Feldman Andrew D.",
+    "is_director": true,
+    "is_officer": true,
+    "price": 200.13,
+    "role": "CEO, President",
+    "shares": 33575.0,
+    "value_usd": 6719364.75
+   },
+   {
+    "accession": "0001628280-26-058961",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Feldman Andrew D.",
+    "is_director": true,
+    "is_officer": true,
+    "price": 201.12,
+    "role": "CEO, President",
+    "shares": 8832.0,
+    "value_usd": 1776291.84
+   },
+   {
+    "accession": "0001628280-26-058961",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Feldman Andrew D.",
+    "is_director": true,
+    "is_officer": true,
+    "price": 202.28,
+    "role": "CEO, President",
+    "shares": 6699.0,
+    "value_usd": 1355073.72
+   },
+   {
+    "accession": "0001628280-26-058961",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Feldman Andrew D.",
+    "is_director": true,
+    "is_officer": true,
+    "price": 203.37,
+    "role": "CEO, President",
+    "shares": 12092.0,
+    "value_usd": 2459150.04
+   },
+   {
+    "accession": "0001628280-26-058961",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Feldman Andrew D.",
+    "is_director": true,
+    "is_officer": true,
+    "price": 204.44,
+    "role": "CEO, President",
+    "shares": 4800.0,
+    "value_usd": 981312.0
+   },
+   {
+    "accession": "0001628280-26-058961",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Feldman Andrew D.",
+    "is_director": true,
+    "is_officer": true,
+    "price": 205.32,
+    "role": "CEO, President",
+    "shares": 1600.0,
+    "value_usd": 328512.0
+   },
+   {
+    "accession": "0001628280-26-058961",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Feldman Andrew D.",
+    "is_director": true,
+    "is_officer": true,
+    "price": 207.28,
+    "role": "CEO, President",
+    "shares": 1400.0,
+    "value_usd": 290192.0
+   },
+   {
+    "accession": "0001628280-26-058961",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Feldman Andrew D.",
+    "is_director": true,
+    "is_officer": true,
+    "price": 208.86,
+    "role": "CEO, President",
+    "shares": 4594.0,
+    "value_usd": 959502.84
+   },
+   {
+    "accession": "0001628280-26-058961",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "Feldman Andrew D.",
+    "is_director": true,
+    "is_officer": true,
+    "price": 210.21,
+    "role": "CEO, President",
+    "shares": 6.0,
+    "value_usd": 1261.26
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "CBRS",
+ "until": "2026-09-05"
+}

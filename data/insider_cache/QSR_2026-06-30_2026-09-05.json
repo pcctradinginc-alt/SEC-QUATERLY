@@ -1,0 +1,38 @@
+{
+ "cik": "0001618756",
+ "error": null,
+ "form4_count": 13,
+ "reasons": [
+  "Insiders were net sellers ($5,166,048 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -5166048.0,
+  "officer_or_director_buyers": [],
+  "sell_count": 1,
+  "sell_value_usd": 5166048.0,
+  "sells": [
+   {
+    "accession": "0001804729-26-000020",
+    "date": "2026-08-21",
+    "filing_date": "2026-08-25",
+    "insider": "CURTIS THOMAS BENJAMIN",
+    "is_director": false,
+    "is_officer": true,
+    "price": 80.7195,
+    "role": "Pres., BK US & CA",
+    "shares": 64000.0,
+    "value_usd": 5166048.0
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "QSR",
+ "until": "2026-09-05"
+}

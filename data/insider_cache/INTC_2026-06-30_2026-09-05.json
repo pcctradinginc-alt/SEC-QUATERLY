@@ -1,0 +1,42 @@
+{
+ "cik": "0000050863",
+ "error": null,
+ "form4_count": 3,
+ "reasons": [
+  "$9,999,985 of open-market insider purchases since quarter-end",
+  "1 distinct insider bought (officer/director involved)"
+ ],
+ "score": 80.0,
+ "since": "2026-06-30",
+ "summary": {
+  "buy_count": 1,
+  "buy_value_usd": 9999985.0,
+  "buys": [
+   {
+    "accession": "0000050863-26-000177",
+    "date": "2026-08-11",
+    "filing_date": "2026-08-14",
+    "insider": "TAN LIP BU",
+    "is_director": true,
+    "is_officer": true,
+    "price": 95.0,
+    "role": "CEO",
+    "shares": 105263.0,
+    "value_usd": 9999985.0
+   }
+  ],
+  "distinct_buyers": [
+   "TAN LIP BU"
+  ],
+  "net_value_usd": 9999985.0,
+  "officer_or_director_buyers": [
+   "TAN LIP BU"
+  ],
+  "sell_count": 0,
+  "sell_value_usd": 0,
+  "sells": [],
+  "significant_buy_count": 1
+ },
+ "ticker": "INTC",
+ "until": "2026-09-05"
+}
