@@ -1,0 +1,93 @@
+{
+ "cik": "0001397187",
+ "error": null,
+ "form4_count": 40,
+ "reasons": [
+  "$1,994,952 of open-market insider purchases since quarter-end",
+  "2 distinct insiders bought (officer/director involved)"
+ ],
+ "score": 89.9,
+ "since": "2025-09-30",
+ "summary": {
+  "buy_count": 3,
+  "buy_value_usd": 1994952.12,
+  "buys": [
+   {
+    "accession": "0001397187-26-000038",
+    "date": "2026-03-20",
+    "filing_date": "2026-03-23",
+    "insider": "Bergh Charles V",
+    "is_director": true,
+    "is_officer": false,
+    "price": 164.2,
+    "role": "Director",
+    "shares": 6090.0,
+    "value_usd": 999978.0
+   },
+   {
+    "accession": "0001397187-26-000065",
+    "date": "2026-04-01",
+    "filing_date": "2026-04-03",
+    "insider": "MAESTRINI ANDRE",
+    "is_director": false,
+    "is_officer": true,
+    "price": 151.02,
+    "role": "Pres, CCO & Interim Co-CEO",
+    "shares": 3275.0,
+    "value_usd": 494590.5
+   },
+   {
+    "accession": "0001397187-26-000086",
+    "date": "2026-06-15",
+    "filing_date": "2026-06-16",
+    "insider": "Bergh Charles V",
+    "is_director": true,
+    "is_officer": false,
+    "price": 117.0488,
+    "role": "Director",
+    "shares": 4275.0,
+    "value_usd": 500383.62
+   }
+  ],
+  "distinct_buyers": [
+   "Bergh Charles V",
+   "MAESTRINI ANDRE"
+  ],
+  "net_value_usd": 1332988.66,
+  "officer_or_director_buyers": [
+   "Bergh Charles V",
+   "MAESTRINI ANDRE"
+  ],
+  "sell_count": 2,
+  "sell_value_usd": 661963.46,
+  "sells": [
+   {
+    "accession": "0001397187-26-000002",
+    "date": "2025-12-30",
+    "filing_date": "2026-01-02",
+    "insider": "FRANK MEGHAN",
+    "is_director": false,
+    "is_officer": true,
+    "price": 211.37,
+    "role": "Chief Financial Officer",
+    "shares": 2658.0,
+    "value_usd": 561821.46
+   },
+   {
+    "accession": "0001397187-26-000067",
+    "date": "2026-04-08",
+    "filing_date": "2026-04-09",
+    "insider": "NEUBURGER NICOLE",
+    "is_director": false,
+    "is_officer": true,
+    "price": 161.0,
+    "role": "Chief Brand Officer",
+    "shares": 622.0,
+    "value_usd": 100142.0
+   }
+  ],
+  "significant_buy_count": 3
+ },
+ "ticker": "LULU",
+ "until": "2026-09-05"
+}

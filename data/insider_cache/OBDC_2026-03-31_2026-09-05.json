@@ -1,0 +1,102 @@
+{
+ "cik": "0001655888",
+ "error": null,
+ "form4_count": 5,
+ "reasons": [
+  "$90,350 of open-market insider purchases since quarter-end",
+  "1 distinct insider bought (officer/director involved)"
+ ],
+ "score": 27.5,
+ "since": "2026-03-31",
+ "summary": {
+  "buy_count": 6,
+  "buy_value_usd": 90350.0,
+  "buys": [
+   {
+    "accession": "0001193125-26-219556",
+    "date": "2026-05-11",
+    "filing_date": "2026-05-12",
+    "insider": "Kaye Eric A.",
+    "is_director": true,
+    "is_officer": false,
+    "price": 11.21,
+    "role": "Director",
+    "shares": 1000.0,
+    "value_usd": 11210.0
+   },
+   {
+    "accession": "0001193125-26-255554",
+    "date": "2026-06-02",
+    "filing_date": "2026-06-03",
+    "insider": "Nicholson Logan",
+    "is_director": false,
+    "is_officer": true,
+    "price": 11.31,
+    "role": "President",
+    "shares": 2600.0,
+    "value_usd": 29406.0
+   },
+   {
+    "accession": "0001193125-26-255554",
+    "date": "2026-06-02",
+    "filing_date": "2026-06-03",
+    "insider": "Nicholson Logan",
+    "is_director": false,
+    "is_officer": true,
+    "price": 11.31,
+    "role": "President",
+    "shares": 400.0,
+    "value_usd": 4524.0
+   },
+   {
+    "accession": "0001193125-26-361118",
+    "date": "2026-08-20",
+    "filing_date": "2026-08-21",
+    "insider": "Nicholson Logan",
+    "is_director": false,
+    "is_officer": true,
+    "price": 11.29,
+    "role": "President",
+    "shares": 2325.0,
+    "value_usd": 26249.25
+   },
+   {
+    "accession": "0001193125-26-361118",
+    "date": "2026-08-20",
+    "filing_date": "2026-08-21",
+    "insider": "Nicholson Logan",
+    "is_director": false,
+    "is_officer": true,
+    "price": 11.29,
+    "role": "President",
+    "shares": 675.0,
+    "value_usd": 7620.75
+   },
+   {
+    "accession": "0001193125-26-376791",
+    "date": "2026-08-28",
+    "filing_date": "2026-08-31",
+    "insider": "Kaye Eric A.",
+    "is_director": true,
+    "is_officer": false,
+    "price": 11.34,
+    "role": "Director",
+    "shares": 1000.0,
+    "value_usd": 11340.0
+   }
+  ],
+  "distinct_buyers": [
+   "Nicholson Logan"
+  ],
+  "net_value_usd": 90350.0,
+  "officer_or_director_buyers": [
+   "Nicholson Logan"
+  ],
+  "sell_count": 0,
+  "sell_value_usd": 0,
+  "sells": [],
+  "significant_buy_count": 2
+ },
+ "ticker": "OBDC",
+ "until": "2026-09-05"
+}

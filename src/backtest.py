@@ -19,7 +19,7 @@ try:
 except ImportError:
     YF_AVAILABLE = False
 
-from config import DATA_DIR
+from config import DATA_DIR, run_date
 
 
 def load_all_analyses() -> list[dict]:
@@ -95,7 +95,7 @@ def check_stock_performance(ticker: str, signal_date_str: str) -> dict:
 
 
 def run() -> dict:
-    today_str = date.today().isoformat()
+    today_str = run_date()
 
     print(f"\n{'='*60}")
     print(f"Backtesting Engine – {today_str}")
@@ -109,7 +109,7 @@ def run() -> dict:
     rows = []
     for analysis in analyses:
         report_date = analysis.get("date", "")
-        for stock in analysis.get("round1_top5", []):
+        for stock in analysis.get("top10") or analysis.get("round1_top5", []):
             ticker = stock.get("ticker", "")
             if not ticker:
                 continue
@@ -121,8 +121,9 @@ def run() -> dict:
                 "report_date":      report_date,
                 "ticker":           ticker,
                 "company":          stock.get("company_name", ""),
-                "conviction_score": stock.get("conviction_score"),
-                "primary_flag":     stock.get("primary_flag", ""),
+                "signal_score":     stock.get("signal_score", stock.get("conviction_score")),
+                "primary_flag":     stock.get("grade") or stock.get("primary_flag", ""),
+                "insider_score":    (stock.get("factors") or {}).get("insider"),
                 **perf,
             })
 

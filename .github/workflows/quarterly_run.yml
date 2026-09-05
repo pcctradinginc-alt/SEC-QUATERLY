@@ -1,9 +1,9 @@
-name: SEC 13F Quarterly Analysis
+name: SEC 13F Signal Engine
 
 on:
   schedule:
-    # Run daily at 14:00 UTC (= 15:00 CET / 16:00 CEST)
-    # The Python script itself decides if today is the right date
+    # Daily at 14:00 UTC on the 14th–20th of Feb/May/Aug/Nov;
+    # date_check.py decides whether today is the actual run date.
     - cron: '0 14 14-20 2,5,8,11 *'
   workflow_dispatch:
     inputs:
@@ -15,11 +15,15 @@ on:
         description: 'Override target date (YYYY-MM-DD)'
         required: false
         default: ''
+      skip_email:
+        description: 'Build the report but do not e-mail it'
+        required: false
+        default: 'false'
 
 jobs:
   analyze:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout repository
@@ -40,66 +44,65 @@ jobs:
           FORCE_RUN: ${{ github.event.inputs.force_run }}
           TARGET_DATE: ${{ github.event.inputs.target_date }}
           TZ: Europe/Berlin
-        run: |
-          python src/date_check.py
-        continue-on-error: false
+        run: python src/date_check.py
 
-      - name: Fetch SEC 13F Filings
+      - name: 1 · Fetch SEC 13F filings
         if: steps.date_check.outputs.should_run == 'true'
         env:
           TZ: Europe/Berlin
           OPENFIGI_API_KEY: ${{ secrets.OPENFIGI_API_KEY }}
         run: python src/fetch_filings.py
 
-      - name: Parse Holdings & Calculate Deltas
+      - name: 2 · Parse holdings and quarter-over-quarter deltas
         if: steps.date_check.outputs.should_run == 'true'
         run: python src/parse_13f.py
 
-      - name: Calculate Conviction Scores
+      - name: 3 · Alpha components, crowding, sell signals
         if: steps.date_check.outputs.should_run == 'true'
         run: python src/scoring.py
 
-      - name: Claude Analysis Round 1 - Identify Top 5 (Haiku)
+      - name: 4 · Deterministic SIGNAL SCORE + Form 4 insider look-up → Top 10
         if: steps.date_check.outputs.should_run == 'true'
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python src/analyze_claude_round1.py
+        run: python src/signal_engine.py
 
-      - name: Fetch Options Data via Tradier
+      - name: 5 · Tradier Call selection (predefined filters)
         if: steps.date_check.outputs.should_run == 'true'
         env:
           TRADIER_API_KEY: ${{ secrets.TRADIER_API_KEY }}
         run: python src/options_lookup.py
 
-      - name: Claude Analysis Round 2 - Select Best Options (Sonnet)
+      - name: 6 · Commentary (cost-routed Haiku → Sonnet → Opus cascade)
         if: steps.date_check.outputs.should_run == 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: python src/analyze_claude_round2.py
+        run: python src/explain_signals.py
 
-      - name: Backtest - Track Historical Signal Performance
+      - name: 7 · Backtest past Top-10s
         if: steps.date_check.outputs.should_run == 'true'
         run: python src/backtest.py
 
-      - name: Generate & Send Report via Gmail
+      - name: 8 · Render and e-mail the report
         if: steps.date_check.outputs.should_run == 'true'
         env:
           GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-        run: python src/send_report.py
+          REPORT_RECIPIENT: ${{ secrets.REPORT_RECIPIENT }}
+        run: |
+          if [ "${{ github.event.inputs.skip_email }}" = "true" ]; then
+            python src/send_report.py --no-send
+          else
+            python src/send_report.py
+          fi
 
-      - name: Commit updated holdings data
+      - name: Commit updated data and report
         if: steps.date_check.outputs.should_run == 'true'
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add data/holdings/ reports/
-          git diff --staged --quiet || git commit -m "📊 Quarterly 13F analysis $(date +%Y-%m-%d)"
+          git add data/holdings/ data/insider_cache/ data/llm_cache/ reports/
+          git diff --staged --quiet || git commit -m "📊 Quarterly 13F signal run $(date +%Y-%m-%d)"
           git push
 
-      # ── Failure notification ──────────────────────────────────────────────────
-      # Runs only when the workflow fails AND the main pipeline was supposed to run.
-      # Uses the existing Gmail credentials so no extra services are needed.
       - name: Send failure alert
         if: failure() && steps.date_check.outputs.should_run == 'true'
         env:
@@ -107,5 +110,15 @@ jobs:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: |
           python src/notify.py \
-            "GitHub Actions – SEC 13F Pipeline" \
+            "GitHub Actions – SEC 13F Signal Engine" \
             "Workflow run ${{ github.run_id }} failed. Check: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt pytest
+      - run: python -m pytest -q tests

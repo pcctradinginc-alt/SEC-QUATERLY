@@ -1,0 +1,212 @@
+{
+ "cik": "0001046179",
+ "error": null,
+ "form4_count": 40,
+ "reasons": [
+  "$400,340 of open-market insider purchases since quarter-end",
+  "2 distinct insiders bought (officer/director involved)"
+ ],
+ "score": 46.0,
+ "since": "2026-03-31",
+ "summary": {
+  "buy_count": 23,
+  "buy_value_usd": 400340.04,
+  "buys": [
+   {
+    "accession": "0001046179-26-000513",
+    "date": "2026-08-07",
+    "filing_date": "2026-08-10",
+    "insider": "Lin Chris Horng-Dar",
+    "is_director": false,
+    "is_officer": true,
+    "price": 73.31,
+    "role": "VP and CIO",
+    "shares": 49.0,
+    "value_usd": 3592.19
+   },
+   {
+    "accession": "0001046179-26-000519",
+    "date": "2026-08-07",
+    "filing_date": "2026-08-10",
+    "insider": "Tien Bor-Zen",
+    "is_director": false,
+    "is_officer": true,
+    "price": 73.31,
+    "role": "VP",
+    "shares": 42.0,
+    "value_usd": 3079.02
+   },
+   {
+    "accession": "0001046179-26-000519",
+    "date": "2026-08-07",
+    "filing_date": "2026-08-10",
+    "insider": "Tien Bor-Zen",
+    "is_director": false,
+    "is_officer": true,
+    "price": 73.31,
+    "role": "VP",
+    "shares": 7.0,
+    "value_usd": 513.17
+   },
+   {
+    "accession": "0001046179-26-000520",
+    "date": "2026-08-07",
+    "filing_date": "2026-08-10",
+    "insider": "Wu Shien-Yang",
+    "is_director": false,
+    "is_officer": true,
+    "price": 73.31,
+    "role": "SVP",
+    "shares": 57.0,
+    "value_usd": 4178.67
+   },
+   {
+    "accession": "0001046179-26-000521",
+    "date": "2026-08-07",
+    "filing_date": "2026-08-10",
+    "insider": "Wei Che-Chia",
+    "is_director": true,
+    "is_officer": true,
+    "price": 73.31,
+    "role": "Chairman and CEO",
+    "shares": 152.0,
+    "value_usd": 11143.12
+   },
+   {
+    "accession": "0001046179-26-000522",
+    "date": "2026-08-07",
+    "filing_date": "2026-08-10",
+    "insider": "Wang Ying-Lang",
+    "is_director": false,
+    "is_officer": true,
+    "price": 73.31,
+    "role": "SVP",
+    "shares": 55.0,
+    "value_usd": 4032.05
+   },
+   {
+    "accession": "0001046179-26-000523",
+    "date": "2026-08-07",
+    "filing_date": "2026-08-10",
+    "insider": "Mii Yuh-Jier",
+    "is_director": false,
+    "is_officer": true,
+    "price": 73.31,
+    "role": "EVP and Co-COO",
+    "shares": 72.0,
+    "value_usd": 5278.32
+   },
+   {
+    "accession": "0001046179-26-000529",
+    "date": "2026-08-07",
+    "filing_date": "2026-08-10",
+    "insider": "Yoo Chue-San",
+    "is_director": false,
+    "is_officer": true,
+    "price": 73.31,
+    "role": "VP",
+    "shares": 51.0,
+    "value_usd": 3738.81
+   },
+   {
+    "accession": "0001046179-26-000530",
+    "date": "2026-08-07",
+    "filing_date": "2026-08-10",
+    "insider": "Wu Yi-Huang",
+    "is_director": false,
+    "is_officer": true,
+    "price": 73.31,
+    "role": "VP",
+    "shares": 41.0,
+    "value_usd": 3005.71
+   },
+   {
+    "accession": "0001046179-26-000531",
+    "date": "2026-08-07",
+    "filing_date": "2026-08-10",
+    "insider": "Yuan Lipen",
+    "is_director": false,
+    "is_officer": true,
+    "price": 73.31,
+    "role": "VP",
+    "shares": 42.0,
+    "value_usd": 3079.02
+   },
+   {
+    "accession": "0001046179-26-000532",
+    "date": "2026-08-07",
+    "filing_date": "2026-08-10",
+    "insider": "Zhang Kevin Xiaoqiang",
+    "is_director": false,
+    "is_officer": true,
+    "price": 73.31,
+    "role": "SVP and Deputy Co-COO",
+    "shares": 63.0,
+    "value_usd": 4618.53
+   },
+   {
+    "accession": "0001046179-26-000533",
+    "date": "2026-08-07",
+    "filing_date": "2026-08-10",
+    "insider": "Yeap Choh Fei",
+    "is_director": false,
+    "is_officer": true,
+    "price": 73.31,
+    "role": "SVP",
+    "shares": 57.0,
+    "value_usd": 4178.67
+   },
+   {
+    "accession": "0001046179-26-000543",
+    "date": "2026-08-18",
+    "filing_date": "2026-08-20",
+    "insider": "Yuan Lipen",
+    "is_director": false,
+    "is_officer": true,
+    "price": 74.5,
+    "role": "VP",
+    "shares": 1000.0,
+    "value_usd": 74500.0
+   },
+   {
+    "accession": "0001046179-26-000543",
+    "date": "2026-08-18",
+    "filing_date": "2026-08-20",
+    "insider": "Yuan Lipen",
+    "is_director": false,
+    "is_officer": true,
+    "price": 73.58,
+    "role": "VP",
+    "shares": 350.0,
+    "value_usd": 25753.0
+   },
+   {
+    "accession": "0001046179-26-000543",
+    "date": "2026-08-19",
+    "filing_date": "2026-08-20",
+    "insider": "Yuan Lipen",
+    "is_director": false,
+    "is_officer": true,
+    "price": 73.77,
+    "role": "VP",
+    "shares": 1000.0,
+    "value_usd": 73770.0
+   }
+  ],
+  "distinct_buyers": [
+   "Fang Shu-Hua",
+   "Yuan Lipen"
+  ],
+  "net_value_usd": 400340.04,
+  "officer_or_director_buyers": [
+   "Fang Shu-Hua",
+   "Yuan Lipen"
+  ],
+  "sell_count": 0,
+  "sell_value_usd": 0,
+  "sells": [],
+  "significant_buy_count": 5
+ },
+ "ticker": "TSM",
+ "until": "2026-09-05"
+}

@@ -1,0 +1,50 @@
+{
+ "cik": "0000089800",
+ "error": null,
+ "form4_count": 10,
+ "reasons": [
+  "Insiders were net sellers ($7,665,864 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-03-31",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -7665863.8,
+  "officer_or_director_buyers": [],
+  "sell_count": 2,
+  "sell_value_usd": 7665863.8,
+  "sells": [
+   {
+    "accession": "0001914220-26-000007",
+    "date": "2026-08-07",
+    "filing_date": "2026-08-11",
+    "insider": "Jorgenrud Karl J",
+    "is_director": false,
+    "is_officer": true,
+    "price": 368.3,
+    "role": "President, Glob. Industrial",
+    "shares": 7886.0,
+    "value_usd": 2904413.8
+   },
+   {
+    "accession": "0001832316-26-000007",
+    "date": "2026-08-17",
+    "filing_date": "2026-08-19",
+    "insider": "Binns Justin T",
+    "is_director": false,
+    "is_officer": true,
+    "price": 352.7,
+    "role": "President, Glob. Architectural",
+    "shares": 13500.0,
+    "value_usd": 4761450.0
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "SHW",
+ "until": "2026-09-05"
+}

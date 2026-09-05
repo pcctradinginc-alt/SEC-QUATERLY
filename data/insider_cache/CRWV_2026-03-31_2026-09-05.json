@@ -1,0 +1,146 @@
+{
+ "cik": "0001769628",
+ "error": null,
+ "form4_count": 40,
+ "reasons": [
+  "Insiders were net sellers ($743,475,065 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-03-31",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -743475064.6,
+  "officer_or_director_buyers": [],
+  "sell_count": 337,
+  "sell_value_usd": 743475064.6,
+  "sells": [
+   {
+    "accession": "0001769628-26-000414",
+    "date": "2026-08-26",
+    "filing_date": "2026-08-28",
+    "insider": "McVeety Kristen J",
+    "is_director": false,
+    "is_officer": true,
+    "price": 89.2439,
+    "role": "GC and Secretary",
+    "shares": 232.0,
+    "value_usd": 20704.58
+   },
+   {
+    "accession": "0001769628-26-000415",
+    "date": "2026-09-01",
+    "filing_date": "2026-09-03",
+    "insider": "Intrator Michael N",
+    "is_director": true,
+    "is_officer": true,
+    "price": 81.2014,
+    "role": "CEO and President",
+    "shares": 63315.0,
+    "value_usd": 5141266.64
+   },
+   {
+    "accession": "0001769628-26-000415",
+    "date": "2026-09-01",
+    "filing_date": "2026-09-03",
+    "insider": "Intrator Michael N",
+    "is_director": true,
+    "is_officer": true,
+    "price": 81.8476,
+    "role": "CEO and President",
+    "shares": 130609.0,
+    "value_usd": 10690033.19
+   },
+   {
+    "accession": "0001769628-26-000415",
+    "date": "2026-09-01",
+    "filing_date": "2026-09-03",
+    "insider": "Intrator Michael N",
+    "is_director": true,
+    "is_officer": true,
+    "price": 82.5396,
+    "role": "CEO and President",
+    "shares": 6076.0,
+    "value_usd": 501510.61
+   },
+   {
+    "accession": "0001769628-26-000415",
+    "date": "2026-09-01",
+    "filing_date": "2026-09-03",
+    "insider": "Intrator Michael N",
+    "is_director": true,
+    "is_officer": true,
+    "price": 81.2014,
+    "role": "CEO and President",
+    "shares": 34092.0,
+    "value_usd": 2768318.13
+   },
+   {
+    "accession": "0001769628-26-000415",
+    "date": "2026-09-01",
+    "filing_date": "2026-09-03",
+    "insider": "Intrator Michael N",
+    "is_director": true,
+    "is_officer": true,
+    "price": 81.8476,
+    "role": "CEO and President",
+    "shares": 70329.0,
+    "value_usd": 5756259.86
+   },
+   {
+    "accession": "0001769628-26-000415",
+    "date": "2026-09-01",
+    "filing_date": "2026-09-03",
+    "insider": "Intrator Michael N",
+    "is_director": true,
+    "is_officer": true,
+    "price": 82.5396,
+    "role": "CEO and President",
+    "shares": 3271.0,
+    "value_usd": 269987.03
+   },
+   {
+    "accession": "0001769628-26-000416",
+    "date": "2026-09-01",
+    "filing_date": "2026-09-03",
+    "insider": "McVeety Kristen J",
+    "is_director": false,
+    "is_officer": true,
+    "price": 81.1642,
+    "role": "GC and Secretary",
+    "shares": 55506.0,
+    "value_usd": 4505100.09
+   },
+   {
+    "accession": "0001769628-26-000416",
+    "date": "2026-09-01",
+    "filing_date": "2026-09-03",
+    "insider": "McVeety Kristen J",
+    "is_director": false,
+    "is_officer": true,
+    "price": 81.8457,
+    "role": "GC and Secretary",
+    "shares": 94307.0,
+    "value_usd": 7718622.43
+   },
+   {
+    "accession": "0001769628-26-000416",
+    "date": "2026-09-01",
+    "filing_date": "2026-09-03",
+    "insider": "McVeety Kristen J",
+    "is_director": false,
+    "is_officer": true,
+    "price": 82.4966,
+    "role": "GC and Secretary",
+    "shares": 6187.0,
+    "value_usd": 510406.46
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "CRWV",
+ "until": "2026-09-05"
+}

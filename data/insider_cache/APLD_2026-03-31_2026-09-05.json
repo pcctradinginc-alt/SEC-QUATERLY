@@ -1,0 +1,74 @@
+{
+ "cik": "0001144879",
+ "error": null,
+ "form4_count": 14,
+ "reasons": [
+  "Insiders were net sellers ($3,518,425 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-03-31",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -3518425.0,
+  "officer_or_director_buyers": [],
+  "sell_count": 4,
+  "sell_value_usd": 3518425.0,
+  "sells": [
+   {
+    "accession": "0001144879-26-000038",
+    "date": "2026-04-27",
+    "filing_date": "2026-04-28",
+    "insider": "MILLER DOUGLAS S",
+    "is_director": true,
+    "is_officer": false,
+    "price": 34.98,
+    "role": "Director",
+    "shares": 10000.0,
+    "value_usd": 349800.0
+   },
+   {
+    "accession": "0001166816-26-000005",
+    "date": "2026-04-28",
+    "filing_date": "2026-04-30",
+    "insider": "Nottenburg Richard N",
+    "is_director": true,
+    "is_officer": false,
+    "price": 32.0,
+    "role": "Director",
+    "shares": 12500.0,
+    "value_usd": 400000.0
+   },
+   {
+    "accession": "0001166816-26-000005",
+    "date": "2026-04-30",
+    "filing_date": "2026-04-30",
+    "insider": "Nottenburg Richard N",
+    "is_director": true,
+    "is_officer": false,
+    "price": 34.59,
+    "role": "Director",
+    "shares": 12500.0,
+    "value_usd": 432375.0
+   },
+   {
+    "accession": "0001628280-26-054432",
+    "date": "2026-08-04",
+    "filing_date": "2026-08-06",
+    "insider": "Nottenburg Richard N",
+    "is_director": true,
+    "is_officer": false,
+    "price": 31.15,
+    "role": "Director",
+    "shares": 75000.0,
+    "value_usd": 2336250.0
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "APLD",
+ "until": "2026-09-05"
+}

@@ -1,0 +1,146 @@
+{
+ "cik": "0001617640",
+ "error": null,
+ "form4_count": 20,
+ "reasons": [
+  "Insiders were net sellers ($2,929,568 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-03-31",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -2929568.32,
+  "officer_or_director_buyers": [],
+  "sell_count": 33,
+  "sell_value_usd": 2929568.32,
+  "sells": [
+   {
+    "accession": "0001628280-26-057466",
+    "date": "2026-08-13",
+    "filing_date": "2026-08-17",
+    "insider": "Hofmann Jeremy",
+    "is_director": false,
+    "is_officer": true,
+    "price": 34.2421,
+    "role": "COO & CFO",
+    "shares": 3510.0,
+    "value_usd": 120189.77
+   },
+   {
+    "accession": "0001628280-26-057467",
+    "date": "2026-08-13",
+    "filing_date": "2026-08-17",
+    "insider": "Spaulding Dan",
+    "is_director": false,
+    "is_officer": true,
+    "price": 34.2444,
+    "role": "Chief People Officer",
+    "shares": 1966.0,
+    "value_usd": 67324.49
+   },
+   {
+    "accession": "0001628280-26-057468",
+    "date": "2026-08-13",
+    "filing_date": "2026-08-17",
+    "insider": "Samuelson Errol G",
+    "is_director": false,
+    "is_officer": true,
+    "price": 34.2426,
+    "role": "Chief Industry Dev. Officer",
+    "shares": 3154.0,
+    "value_usd": 108001.16
+   },
+   {
+    "accession": "0001628280-26-057470",
+    "date": "2026-08-13",
+    "filing_date": "2026-08-17",
+    "insider": "Rock Jennifer",
+    "is_director": false,
+    "is_officer": true,
+    "price": 34.2383,
+    "role": "Chief Accounting Officer",
+    "shares": 990.0,
+    "value_usd": 33895.92
+   },
+   {
+    "accession": "0001628280-26-057471",
+    "date": "2026-08-13",
+    "filing_date": "2026-08-17",
+    "insider": "Beitel David A.",
+    "is_director": false,
+    "is_officer": true,
+    "price": 34.2439,
+    "role": "Chief Technology Officer",
+    "shares": 1798.0,
+    "value_usd": 61570.53
+   },
+   {
+    "accession": "0001628280-26-057467",
+    "date": "2026-08-14",
+    "filing_date": "2026-08-17",
+    "insider": "Spaulding Dan",
+    "is_director": false,
+    "is_officer": true,
+    "price": 35.3692,
+    "role": "Chief People Officer",
+    "shares": 3169.0,
+    "value_usd": 112084.99
+   },
+   {
+    "accession": "0001628280-26-057465",
+    "date": "2026-08-17",
+    "filing_date": "2026-08-17",
+    "insider": "Wacksman Jeremy",
+    "is_director": true,
+    "is_officer": true,
+    "price": 34.1767,
+    "role": "Chief Executive Officer",
+    "shares": 9339.0,
+    "value_usd": 319176.2
+   },
+   {
+    "accession": "0001628280-26-057466",
+    "date": "2026-08-17",
+    "filing_date": "2026-08-17",
+    "insider": "Hofmann Jeremy",
+    "is_director": false,
+    "is_officer": true,
+    "price": 34.1775,
+    "role": "COO & CFO",
+    "shares": 5661.0,
+    "value_usd": 193478.83
+   },
+   {
+    "accession": "0001628280-26-060759",
+    "date": "2026-09-03",
+    "filing_date": "2026-09-04",
+    "insider": "Cormier Thielke Claire",
+    "is_director": true,
+    "is_officer": false,
+    "price": 35.71,
+    "role": "Director",
+    "shares": 1187.0,
+    "value_usd": 42387.77
+   },
+   {
+    "accession": "0001628280-26-060762",
+    "date": "2026-09-03",
+    "filing_date": "2026-09-04",
+    "insider": "BLACHFORD ERIK C",
+    "is_director": true,
+    "is_officer": false,
+    "price": 35.71,
+    "role": "Director",
+    "shares": 792.0,
+    "value_usd": 28282.32
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "Z",
+ "until": "2026-09-05"
+}

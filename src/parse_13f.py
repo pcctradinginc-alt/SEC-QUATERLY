@@ -17,7 +17,7 @@ import sys
 from datetime import date
 from pathlib import Path
 
-from config import DATA_DIR
+from config import run_date, DATA_DIR
 
 
 def load_latest_raw(today_str: str) -> dict:
@@ -459,7 +459,7 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
 
 
 def run():
-    today_str = date.today().isoformat()
+    today_str = run_date()
 
     print(f"\n{'='*60}")
     print(f"13F Parser & Delta Calculator – {today_str}")

@@ -1,0 +1,146 @@
+{
+ "cik": "0001713445",
+ "error": null,
+ "form4_count": 40,
+ "reasons": [
+  "Insiders were net sellers ($72,126,594 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-03-31",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -72126594.42,
+  "officer_or_director_buyers": [],
+  "sell_count": 125,
+  "sell_value_usd": 72126594.42,
+  "sells": [
+   {
+    "accession": "0001827011-26-000033",
+    "date": "2026-08-14",
+    "filing_date": "2026-08-18",
+    "insider": "Huffman Steve Ladd",
+    "is_director": true,
+    "is_officer": true,
+    "price": 180.15,
+    "role": "CEO & President",
+    "shares": 2200.0,
+    "value_usd": 396330.0
+   },
+   {
+    "accession": "0001827011-26-000033",
+    "date": "2026-08-14",
+    "filing_date": "2026-08-18",
+    "insider": "Huffman Steve Ladd",
+    "is_director": true,
+    "is_officer": true,
+    "price": 181.06,
+    "role": "CEO & President",
+    "shares": 600.0,
+    "value_usd": 108636.0
+   },
+   {
+    "accession": "0001827011-26-000033",
+    "date": "2026-08-14",
+    "filing_date": "2026-08-18",
+    "insider": "Huffman Steve Ladd",
+    "is_director": true,
+    "is_officer": true,
+    "price": 182.19,
+    "role": "CEO & President",
+    "shares": 600.0,
+    "value_usd": 109314.0
+   },
+   {
+    "accession": "0001827011-26-000033",
+    "date": "2026-08-14",
+    "filing_date": "2026-08-18",
+    "insider": "Huffman Steve Ladd",
+    "is_director": true,
+    "is_officer": true,
+    "price": 182.82,
+    "role": "CEO & President",
+    "shares": 200.0,
+    "value_usd": 36564.0
+   },
+   {
+    "accession": "0001827011-26-000033",
+    "date": "2026-08-14",
+    "filing_date": "2026-08-18",
+    "insider": "Huffman Steve Ladd",
+    "is_director": true,
+    "is_officer": true,
+    "price": 184.06,
+    "role": "CEO & President",
+    "shares": 100.0,
+    "value_usd": 18406.0
+   },
+   {
+    "accession": "0001924412-26-000004",
+    "date": "2026-08-25",
+    "filing_date": "2026-08-27",
+    "insider": "Sauerberg Robert A.",
+    "is_director": true,
+    "is_officer": false,
+    "price": 159.92,
+    "role": "Director",
+    "shares": 5128.0,
+    "value_usd": 820069.76
+   },
+   {
+    "accession": "0001827011-26-000038",
+    "date": "2026-08-31",
+    "filing_date": "2026-09-02",
+    "insider": "Huffman Steve Ladd",
+    "is_director": true,
+    "is_officer": true,
+    "price": 147.66,
+    "role": "CEO & President",
+    "shares": 10200.0,
+    "value_usd": 1506132.0
+   },
+   {
+    "accession": "0001827011-26-000038",
+    "date": "2026-08-31",
+    "filing_date": "2026-09-02",
+    "insider": "Huffman Steve Ladd",
+    "is_director": true,
+    "is_officer": true,
+    "price": 148.35,
+    "role": "CEO & President",
+    "shares": 7000.0,
+    "value_usd": 1038450.0
+   },
+   {
+    "accession": "0001827011-26-000038",
+    "date": "2026-08-31",
+    "filing_date": "2026-09-02",
+    "insider": "Huffman Steve Ladd",
+    "is_director": true,
+    "is_officer": true,
+    "price": 149.59,
+    "role": "CEO & President",
+    "shares": 700.0,
+    "value_usd": 104713.0
+   },
+   {
+    "accession": "0001827011-26-000038",
+    "date": "2026-08-31",
+    "filing_date": "2026-09-02",
+    "insider": "Huffman Steve Ladd",
+    "is_director": true,
+    "is_officer": true,
+    "price": 151.17,
+    "role": "CEO & President",
+    "shares": 100.0,
+    "value_usd": 15117.0
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "RDDT",
+ "until": "2026-09-05"
+}

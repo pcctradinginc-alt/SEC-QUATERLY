@@ -25,6 +25,7 @@ from collections import defaultdict
 from datetime import date
 
 from config import (
+    run_date,
     ALPHA_WEIGHTS, CLUSTER_MIN_FUNDS, CROWDING_HOTEL_PENALTY,
     CROWDING_HOTEL_TICKERS, CROWDING_LABEL_BANDS,
     CROWDING_PENALTY_PER_FUND_OVER_MAX, DATA_DIR, DOUBLE_DOWN_MIN_DELTA,
@@ -75,7 +76,7 @@ def fetch_price_changes(tickers: list[str], filing_dates: dict[str, str]) -> dic
 
     # Download from the oldest filing date so every ticker has data from its filing onward
     oldest    = min(dates)
-    today_str = date.today().isoformat()
+    today_str = run_date()
 
     # yfinance uses BRK-B format, not BRK/B (Tradier format)
     yf_tickers = [t.replace("/", "-") for t in tickers]
@@ -123,7 +124,7 @@ def fetch_price_changes(tickers: list[str], filing_dates: dict[str, str]) -> dic
 
             filing_close  = round(float(series_after_filing.iloc[0]), 2)
             current_price = round(float(series_after_filing.iloc[-1]), 2)
-            days_since    = (date.today() - filing_date).days
+            days_since    = (date.fromisoformat(run_date()) - filing_date).days
 
             if filing_close <= 0:
                 result[ticker] = empty.copy()
@@ -298,7 +299,10 @@ def build_scored_universe(
         quality_score   = mq_info.get("quality_score", 0.5)
         fresh_info      = freshness_by_filer.get(filer_name, {})
         freshness_score = fresh_info.get("freshness_score", 0.5)
+        # report_date = quarter-end (price anchor + Form 4 window start);
+        # filing_date_actual = the day the 13F hit EDGAR (freshness age).
         filing_date     = filer_data.get("report_date") or filer_data.get("filing_date", "")
+        filing_date_actual = filer_data.get("filing_date", "")
 
         for pos in filer_data["positions"]:
             tx_type = pos["delta"]["type"]
@@ -332,7 +336,9 @@ def build_scored_universe(
                 "value_usd_k":            pos["value_usd_k"],
                 "put_value_usd_k":        pos.get("put_value_usd_k", 0),
                 "rank_in_port":           pos.get("rank"),
-                "filing_date":            filing_date,
+                "filing_date":            filing_date,          # = report_date (quarter-end), legacy name
+                "report_date":            filing_date,
+                "filing_date_actual":     filing_date_actual,
                 "position_change_raw":    position_change_raw,
                 "manager_quality_score":  quality_score,
                 "freshness_score":        freshness_score,
@@ -556,6 +562,8 @@ def aggregate_by_ticker(scored: list[dict]) -> list[dict]:
             "freshness_score":        entry["freshness_score"],
             "weight_vs_median":       entry.get("weight_vs_median"),
             "position_tier":          entry.get("position_tier"),
+            "report_date":            entry.get("report_date"),
+            "filing_date_actual":     entry.get("filing_date_actual"),
         })
         if entry["alpha_score"] >= agg["alpha_score"]:
             agg["alpha_score"]     = entry["alpha_score"]
@@ -648,7 +656,7 @@ def build_sell_signals(parsed: dict, manager_quality: dict[str, dict]) -> list[d
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def run():
-    today_str = date.today().isoformat()
+    today_str = run_date()
 
     print(f"\n{'='*60}")
     print(f"13F Alpha Score Engine – {today_str}")
@@ -710,6 +718,7 @@ def run():
         "aggregated":       aggregated,
         "clusters":         clusters,
         "top20":            aggregated[:20],
+        "top40":            aggregated[:40],
         "mq_signals":       mq_signals,
         "manager_quality":  manager_quality,
         "sell_signals":     sell_signals,

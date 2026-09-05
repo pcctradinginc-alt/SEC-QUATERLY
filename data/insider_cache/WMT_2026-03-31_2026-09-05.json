@@ -1,0 +1,146 @@
+{
+ "cik": "0000104169",
+ "error": null,
+ "form4_count": 40,
+ "reasons": [
+  "Insiders were net sellers ($745,679,169 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-03-31",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -745679168.54,
+  "officer_or_director_buyers": [],
+  "sell_count": 15,
+  "sell_value_usd": 745679168.54,
+  "sells": [
+   {
+    "accession": "0000104169-26-000117",
+    "date": "2026-06-16",
+    "filing_date": "2026-06-18",
+    "insider": "Walton Family Holdings Trust",
+    "is_director": false,
+    "is_officer": false,
+    "price": 121.782,
+    "role": "10% owner",
+    "shares": 539737.0,
+    "value_usd": 65730251.33
+   },
+   {
+    "accession": "0000104169-26-000117",
+    "date": "2026-06-16",
+    "filing_date": "2026-06-18",
+    "insider": "Walton Family Holdings Trust",
+    "is_director": false,
+    "is_officer": false,
+    "price": 122.4183,
+    "role": "10% owner",
+    "shares": 24716.0,
+    "value_usd": 3025690.7
+   },
+   {
+    "accession": "0001992808-26-000020",
+    "date": "2026-06-18",
+    "filing_date": "2026-06-22",
+    "insider": "Nicholas Christopher James",
+    "is_director": false,
+    "is_officer": true,
+    "price": 118.1904,
+    "role": "Executive Vice President",
+    "shares": 2900.0,
+    "value_usd": 342752.16
+   },
+   {
+    "accession": "0001579299-26-000021",
+    "date": "2026-07-01",
+    "filing_date": "2026-07-02",
+    "insider": "Bartlett Daniel J",
+    "is_director": false,
+    "is_officer": true,
+    "price": 109.64,
+    "role": "Executive Vice President",
+    "shares": 3775.0,
+    "value_usd": 413891.0
+   },
+   {
+    "accession": "0001992808-26-000022",
+    "date": "2026-07-16",
+    "filing_date": "2026-07-17",
+    "insider": "Nicholas Christopher James",
+    "is_director": false,
+    "is_officer": true,
+    "price": 113.8743,
+    "role": "Executive Vice President",
+    "shares": 1639.0,
+    "value_usd": 186639.98
+   },
+   {
+    "accession": "0001992808-26-000022",
+    "date": "2026-07-16",
+    "filing_date": "2026-07-17",
+    "insider": "Nicholas Christopher James",
+    "is_director": false,
+    "is_officer": true,
+    "price": 114.4787,
+    "role": "Executive Vice President",
+    "shares": 1261.0,
+    "value_usd": 144357.64
+   },
+   {
+    "accession": "0001579299-26-000022",
+    "date": "2026-08-03",
+    "filing_date": "2026-08-04",
+    "insider": "Bartlett Daniel J",
+    "is_director": false,
+    "is_officer": true,
+    "price": 113.1,
+    "role": "Executive Vice President",
+    "shares": 3710.0,
+    "value_usd": 419601.0
+   },
+   {
+    "accession": "0001992808-26-000024",
+    "date": "2026-08-20",
+    "filing_date": "2026-08-21",
+    "insider": "Nicholas Christopher James",
+    "is_director": false,
+    "is_officer": true,
+    "price": 106.3391,
+    "role": "Executive Vice President",
+    "shares": 2900.0,
+    "value_usd": 308383.39
+   },
+   {
+    "accession": "0000104169-26-000146",
+    "date": "2026-08-26",
+    "filing_date": "2026-08-27",
+    "insider": "Danker Daniel",
+    "is_director": false,
+    "is_officer": true,
+    "price": 105.35,
+    "role": "Executive Vice President",
+    "shares": 50644.0,
+    "value_usd": 5335345.4
+   },
+   {
+    "accession": "0001579299-26-000024",
+    "date": "2026-09-01",
+    "filing_date": "2026-09-02",
+    "insider": "Bartlett Daniel J",
+    "is_director": false,
+    "is_officer": true,
+    "price": 105.1387,
+    "role": "Executive Vice President",
+    "shares": 3950.0,
+    "value_usd": 415297.86
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "WMT",
+ "until": "2026-09-05"
+}

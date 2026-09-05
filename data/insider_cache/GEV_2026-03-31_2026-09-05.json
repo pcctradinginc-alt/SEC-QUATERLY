@@ -1,0 +1,50 @@
+{
+ "cik": "0001996810",
+ "error": null,
+ "form4_count": 20,
+ "reasons": [
+  "Insiders were net sellers ($7,039,654 net sold) since quarter-end",
+  "Only insider sales on record since quarter-end (no purchases)"
+ ],
+ "score": 0.0,
+ "since": "2026-03-31",
+ "summary": {
+  "buy_count": 0,
+  "buy_value_usd": 0,
+  "buys": [],
+  "distinct_buyers": [],
+  "net_value_usd": -7039654.49,
+  "officer_or_director_buyers": [],
+  "sell_count": 2,
+  "sell_value_usd": 7039654.49,
+  "sells": [
+   {
+    "accession": "0001996810-26-000095",
+    "date": "2026-05-14",
+    "filing_date": "2026-05-18",
+    "insider": "Potvin Matthew Joseph",
+    "is_director": false,
+    "is_officer": true,
+    "price": 1059.09,
+    "role": "Chief Accounting Officer",
+    "shares": 2333.0,
+    "value_usd": 2470856.97
+   },
+   {
+    "accession": "0001996810-26-000134",
+    "date": "2026-06-01",
+    "filing_date": "2026-06-03",
+    "insider": "Abate Victor",
+    "is_director": false,
+    "is_officer": true,
+    "price": 948.08,
+    "role": "Chief Executive Officer, Wind",
+    "shares": 4819.0,
+    "value_usd": 4568797.52
+   }
+  ],
+  "significant_buy_count": 0
+ },
+ "ticker": "GEV",
+ "until": "2026-09-05"
+}

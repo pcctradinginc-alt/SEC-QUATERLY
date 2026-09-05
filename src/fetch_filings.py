@@ -17,6 +17,7 @@ import requests
 import os
 
 from config import (
+    run_date,
     DATA_DIR, FILERS, OPENFIGI_API_KEY, OPENFIGI_BATCH, OPENFIGI_URL,
     SEC_HEADERS, SEC_RATE_LIMIT_SLEEP,
 )
@@ -434,7 +435,7 @@ def check_recent_splits(tickers: list[str]) -> dict[str, float]:
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def run():
-    today_str   = date.today().isoformat()
+    today_str   = run_date()
     output_path = DATA_DIR / f"{today_str}_raw_holdings.json"
 
     all_data   = {}

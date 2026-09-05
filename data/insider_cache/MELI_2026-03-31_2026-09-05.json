@@ -1,0 +1,68 @@
+{
+ "cik": "0001099590",
+ "error": null,
+ "form4_count": 9,
+ "reasons": [
+  "$1,193,556 of open-market insider purchases since quarter-end",
+  "2 distinct insiders bought (officer/director involved)"
+ ],
+ "score": 67.8,
+ "since": "2026-03-31",
+ "summary": {
+  "buy_count": 3,
+  "buy_value_usd": 1193556.29,
+  "buys": [
+   {
+    "accession": "0001628280-26-038297",
+    "date": "2026-05-22",
+    "filing_date": "2026-05-26",
+    "insider": "Aguzin Alejandro Nicolas",
+    "is_director": true,
+    "is_officer": false,
+    "price": 1655.01,
+    "role": "Director",
+    "shares": 95.0,
+    "value_usd": 157225.95
+   },
+   {
+    "accession": "0001628280-26-038297",
+    "date": "2026-05-22",
+    "filing_date": "2026-05-26",
+    "insider": "Aguzin Alejandro Nicolas",
+    "is_director": true,
+    "is_officer": false,
+    "price": 1656.1,
+    "role": "Director",
+    "shares": 505.0,
+    "value_usd": 836330.5
+   },
+   {
+    "accession": "0001628280-26-043342",
+    "date": "2026-06-11",
+    "filing_date": "2026-06-15",
+    "insider": "Melamud Marcelo",
+    "is_director": false,
+    "is_officer": true,
+    "price": 1604.62,
+    "role": "SVP - Chief Accounting Officer",
+    "shares": 124.64,
+    "value_usd": 199999.84
+   }
+  ],
+  "distinct_buyers": [
+   "Aguzin Alejandro Nicolas",
+   "Melamud Marcelo"
+  ],
+  "net_value_usd": 1193556.29,
+  "officer_or_director_buyers": [
+   "Aguzin Alejandro Nicolas",
+   "Melamud Marcelo"
+  ],
+  "sell_count": 0,
+  "sell_value_usd": 0,
+  "sells": [],
+  "significant_buy_count": 3
+ },
+ "ticker": "MELI",
+ "until": "2026-09-05"
+}

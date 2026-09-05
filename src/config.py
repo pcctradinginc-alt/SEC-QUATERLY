@@ -7,9 +7,17 @@ All CIKs, thresholds, and API endpoints defined here.
 from pathlib import Path
 
 # ── Directory layout ──────────────────────────────────────────────────────────
+import os
 BASE_DIR    = Path(__file__).parent.parent
-DATA_DIR    = BASE_DIR / "data" / "holdings"
-REPORTS_DIR = BASE_DIR / "reports"
+# SEC_DATA_DIR / SEC_REPORTS_DIR let tests and local dry-runs write elsewhere.
+DATA_DIR    = Path(os.environ.get("SEC_DATA_DIR",    BASE_DIR / "data" / "holdings"))
+REPORTS_DIR = Path(os.environ.get("SEC_REPORTS_DIR", BASE_DIR / "reports"))
+
+
+def run_date() -> str:
+    """ISO date used to key every data file. SEC_RUN_DATE overrides today (re-runs, tests)."""
+    from datetime import date as _date
+    return os.environ.get("SEC_RUN_DATE") or _date.today().isoformat()
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -258,28 +266,74 @@ ALPHA_WEIGHTS = {
 # ── Tradier API ───────────────────────────────────────────────────────────────
 TRADIER_BASE_URL    = "https://api.tradier.com/v1"   # Live account
 # TRADIER_BASE_URL  = "https://sandbox.tradier.com/v1"  # Paper account
-OPTION_MIN_VOLUME   = 300    # was 100 – stricter liquidity requirement
-OPTION_MAX_SPREAD_PCT = 8.0  # skip options with bid-ask spread > 8% of mid
-OPTION_DELTA_MIN    = 0.30
-OPTION_DELTA_MAX    = 0.70
-OPTION_MIN_DAYS     = 90
-OPTION_MAX_DAYS     = 180
-OPTION_MAX_IV       = 0.70   # skip options with IV > 70% (overpriced premium)
+# Predefined Call filters. A contract must pass ALL of them to be eligible;
+# if none does, the engine reports NO_SUITABLE_OPTION_FOUND for that stock.
+OPTION_MIN_DAYS        = 90     # expiry window (days to expiration)
+OPTION_MAX_DAYS        = 180
+OPTION_DELTA_MIN       = 0.30   # call delta window
+OPTION_DELTA_MAX       = 0.70
+OPTION_DELTA_TARGET    = 0.45   # selection prefers delta closest to this
+OPTION_MAX_SPREAD_PCT  = 8.0    # (ask - bid) / mid
+OPTION_MIN_VOLUME      = 300    # today's contract volume
+OPTION_MIN_OPEN_INT    = 500    # open interest
+OPTION_MAX_IV          = 0.70   # skip overpriced premium (IV > 70%)
+NO_SUITABLE_OPTION     = "NO_SUITABLE_OPTION_FOUND"
 
-# ── Claude API ────────────────────────────────────────────────────────────────
-# Round 1 (top-20 screening): Haiku is sufficient and ~20× cheaper than Sonnet
-# Round 2 (precise option selection): Sonnet for nuanced financial reasoning
-CLAUDE_MODEL_R1   = "claude-haiku-4-5-20251001"
-CLAUDE_MODEL_R2   = "claude-sonnet-4-6"
-CLAUDE_MODEL      = CLAUDE_MODEL_R2   # backward-compat alias
-CLAUDE_MAX_TOKENS = 4096
-# Round 1 now returns the full Section-20 structured format (manager activity
-# table + 5 narrative fields + bullet lists per stock, x5 stocks) - needs more room.
-CLAUDE_MAX_TOKENS_R1 = 8192
-CLAUDE_RETRY_COUNT = 3
-CLAUDE_RETRY_DELAY = 5   # seconds
+# ── Signal Engine (deterministic 0-100 model) ───────────────────────────────
+# Final SIGNAL SCORE = Σ weight_i × factor_i  (factors are each 0-100, fixed
+# absolute transforms - NOT universe-relative min-max - so a stock's score
+# does not change just because a different set of peers was scored).
+# Weights sum to 100. Crowding is a positive factor (LOW crowding = 100).
+# A capped price-action penalty is subtracted afterwards (see below).
+TOP_N = 10
+SIGNAL_WEIGHTS = {
+    "activity":        15,   # NEW / ADD activity strength
+    "conviction":      15,   # portfolio weight / rank of the position
+    "manager_quality": 15,   # dynamic manager quality of the buyers
+    "accumulation":    10,   # multi-quarter build
+    "consensus":       15,   # quality-weighted smart-money agreement
+    "insider":         15,   # Form 4 open-market buying since quarter-end
+    "freshness":       10,   # filing delay × turnover decay
+    "crowding":         5,   # inverse crowding (LOW = 100, EXTREME = 0)
+}
+assert sum(SIGNAL_WEIGHTS.values()) == 100
+SIGNAL_PRICE_PENALTY_CAP = 15.0   # max points removed for "already ran" names
+SIGNAL_CANDIDATE_POOL    = 40     # how many tickers get the (network-heavy) insider look-up
+CROWDING_FACTOR_BY_LABEL = {"LOW": 100.0, "MODERATE": 60.0, "HIGH": 25.0, "EXTREME": 0.0}
+
+# ── Insider activity (SEC Form 4) ────────────────────────────────────────────
+INSIDER_MAX_FORM4_PER_TICKER = 40     # newest Form 4s inspected per ticker
+INSIDER_MIN_PURCHASE_USD     = 25_000 # ignore token-sized buys
+INSIDER_CACHE_DIR            = BASE_DIR / "data" / "insider_cache"
+INSIDER_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+# Sub-score anchors (0-100): value of open-market buys and number of insiders
+INSIDER_VALUE_FULL_USD       = 2_000_000   # ≥ $2M net buying = full value credit
+INSIDER_CLUSTER_FULL_COUNT   = 3           # ≥ 3 distinct insiders buying = full cluster credit
+
+# ── Claude API: cost-aware model routing & cascading ─────────────────────────
+# Every LLM task is routed to the cheapest tier that historically passes
+# validation; on validation failure the router escalates one tier
+# (cascade). Responses are cached on disk by content hash, so re-running on
+# identical data costs zero tokens and yields identical narratives.
+LLM_MODELS = {
+    "haiku":  {"id": "claude-haiku-4-5",  "in_per_mtok": 1.00, "out_per_mtok": 5.00,  "cache_read_per_mtok": 0.10},
+    "sonnet": {"id": "claude-sonnet-5",   "in_per_mtok": 2.00, "out_per_mtok": 10.00, "cache_read_per_mtok": 0.20},
+    "opus":   {"id": "claude-opus-5",     "in_per_mtok": 5.00, "out_per_mtok": 25.00, "cache_read_per_mtok": 0.50},
+}
+# task -> ordered cascade of tiers (cheapest first)
+LLM_TASK_ROUTES = {
+    "market_context":   ["haiku"],
+    "explain_signals":  ["haiku", "sonnet", "opus"],
+    "option_rationale": ["haiku", "sonnet"],
+}
+LLM_MAX_RUN_COST_USD = 1.50     # hard budget per pipeline run; beyond it -> rule-based fallback
+LLM_CACHE_DIR        = BASE_DIR / "data" / "llm_cache"
+LLM_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+CLAUDE_MAX_TOKENS    = 8192
+CLAUDE_RETRY_COUNT   = 3
+CLAUDE_RETRY_DELAY   = 5   # seconds
 
 # ── Gmail ─────────────────────────────────────────────────────────────────────
 GMAIL_SMTP_HOST = "smtp.gmail.com"
 GMAIL_SMTP_PORT = 587
-REPORT_SUBJECT  = "📊 SEC 13F Smart Money Report – {date}"
+REPORT_SUBJECT  = "13F Signal Engine – Top 10 – {date}"
