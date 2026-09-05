@@ -11,6 +11,8 @@ Fixes from architecture audit:
 """
 
 import json
+import re
+import statistics
 import sys
 from datetime import date
 from pathlib import Path
@@ -186,6 +188,67 @@ def compute_delta(current_shares: int, prior_shares: int | None, ticker: str) ->
     }
 
 
+_NAME_SUFFIX_RE = re.compile(r"\b(INC|CORP|LTD|LLC|LP|PLC|CO|THE|DEL|COM|HOLDINGS?|GROUP)\b")
+
+
+def _normalize_name(name: str) -> str:
+    n = _NAME_SUFFIX_RE.sub("", (name or "").upper())
+    return re.sub(r"\s+", " ", n).strip()
+
+
+def _flag_possible_corporate_actions(parsed_filers: dict) -> None:
+    """
+    Section 18: don't score a same-quarter EXIT + NEW pair as a real sell/buy
+    if it looks like a merger, spin-off, or share-class swap rather than an
+    actual investment decision.
+
+    Heuristic only (best-effort, not authoritative): within one filer's
+    filing, if an exited position's issuer name shares its first name token
+    with a brand-new position AND the new position's value is within 2x of
+    the exited position's prior value, both are flagged
+    `possible_corporate_action=True` so scoring.py can exclude them from both
+    conviction and sell-signal scoring rather than risk a false signal.
+    A real cross-reference against SEC merger/spin-off filings would be more
+    reliable but is out of scope here - see README known-limitations.
+    """
+    for filer_name, filer_data in parsed_filers.items():
+        exits = filer_data.get("exited_positions", [])
+        news  = [p for p in filer_data.get("positions", []) if p["delta"]["type"] == "NEW"]
+        if not exits or not news:
+            continue
+
+        for exit_pos in exits:
+            exit_tokens = _normalize_name(exit_pos.get("name", "")).split()
+            if not exit_tokens:
+                continue
+            exit_first_token = exit_tokens[0]
+            exit_value = exit_pos.get("prior_value_usd_k", 0) or 0
+            if exit_value <= 0:
+                continue
+
+            for new_pos in news:
+                new_tokens = _normalize_name(new_pos.get("name", "")).split()
+                if not new_tokens or new_tokens[0] != exit_first_token:
+                    continue
+                new_value = new_pos.get("value_usd_k", 0) or 0
+                if new_value <= 0:
+                    continue
+                ratio = new_value / exit_value
+                if 0.5 <= ratio <= 2.0:
+                    exit_pos["possible_corporate_action"] = True
+                    exit_pos["corporate_action_note"] = (
+                        f"Possibly replaced by NEW position {new_pos.get('ticker') or new_pos.get('name')} "
+                        f"in the same filing (similar name + value) - may be a merger/spin-off/"
+                        f"share-class swap rather than a real EXIT."
+                    )
+                    new_pos["possible_corporate_action"] = True
+                    new_pos["corporate_action_note"] = (
+                        f"Possibly a continuation of exited position {exit_pos.get('ticker') or exit_pos.get('name')} "
+                        f"in the same filing (similar name + value) - may be a merger/spin-off/"
+                        f"share-class swap rather than a real NEW buy."
+                    )
+
+
 def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
     """
     Main enrichment pass: for each filer and each position, compute:
@@ -221,14 +284,29 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
             parsed_filers[filer_name] = {"error": "zero_aum", "positions": []}
             continue
 
-        # Prior quarter lookup for this filer
-        prior_lookup = {}
+        # Prior quarter lookup for this filer.
+        # CUSIP is the primary join key: it's the SEC-reported identifier and
+        # stable across quarters, whereas "ticker" is our own OpenFIGI-derived
+        # enrichment that can resolve differently (or not at all) from one
+        # quarter's fetch to the next. Joining ticker-first (the old behaviour)
+        # silently breaks the delta calculation whenever resolution flips -
+        # a real holding looks like a false EXIT + false NEW pair instead of
+        # an ADD/REDUCE. Ticker/name are kept only as a fallback for the rare
+        # case where a CUSIP itself changed (e.g. share reclassification).
+        prior_lookup_by_key   = {}
+        prior_lookup_by_cusip = {}
         if prior and filer_name in prior.get("filers", {}):
             prior_filer = prior["filers"][filer_name]
             if "positions" in prior_filer:
                 for pos in prior_filer["positions"]:
                     key = pos.get("ticker") or pos.get("cusip") or ""
-                    prior_lookup[key] = pos
+                    prior_lookup_by_key[key] = pos
+                    cusip = pos.get("cusip", "")
+                    if cusip:
+                        prior_lookup_by_cusip[cusip] = pos
+
+        matched_prior_cusips: set[str] = set()
+        matched_prior_keys:   set[str] = set()
 
         positions = []
         for key, holding in current_lookup.items():
@@ -241,7 +319,15 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
             if not net_bullish:
                 continue
 
-            prior_pos = prior_lookup.get(key)
+            cusip = holding.get("cusip", "")
+            prior_pos = prior_lookup_by_cusip.get(cusip) if cusip else None
+            if prior_pos is None:
+                prior_pos = prior_lookup_by_key.get(key)
+            if prior_pos is not None:
+                prior_cusip = prior_pos.get("cusip", "")
+                if prior_cusip:
+                    matched_prior_cusips.add(prior_cusip)
+                matched_prior_keys.add(prior_pos.get("ticker") or prior_pos.get("cusip") or "")
 
             # Compare only long shares (prior data may have aggregated puts+longs).
             # Use prior "shares" but cap to avoid inflated deltas from old data format.
@@ -288,9 +374,60 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
         # Sort by portfolio weight descending
         positions.sort(key=lambda x: x["port_weight_pct"], reverse=True)
 
-        # Add rank
+        # Add rank + tier flags (Section 4: rank relative to Top-3/5/10/median)
+        median_weight = (
+            statistics.median(p["port_weight_pct"] for p in positions) if positions else 0.0
+        )
         for i, pos in enumerate(positions, 1):
             pos["rank"] = i
+            pos["weight_vs_median"] = (
+                round(pos["port_weight_pct"] / median_weight, 2) if median_weight > 0 else None
+            )
+            pos["position_tier"] = (
+                "TOP3" if i <= 3 else "TOP5" if i <= 5 else "TOP10" if i <= 10 else "OTHER"
+            )
+
+        # EXIT detection (Section 2/14): a position present last quarter but
+        # absent from this filing was fully sold. EDGAR simply omits it rather
+        # than reporting 0 shares, so this must be reconstructed from the diff
+        # against prior_lookup - the old compute_delta "SOLD" path never fires
+        # in practice because current_lookup never contains a 0-share holding.
+        exited_positions = []
+        if prior_lookup_by_key:
+            seen_cusips: set[str] = set()
+            for key, prior_pos in prior_lookup_by_key.items():
+                prior_cusip = prior_pos.get("cusip", "")
+                dedup_key = prior_cusip or key
+                if dedup_key in seen_cusips:
+                    continue  # avoid double-listing when both maps point to the same position
+                seen_cusips.add(dedup_key)
+
+                matched = (prior_cusip and prior_cusip in matched_prior_cusips) or key in matched_prior_keys
+                if matched:
+                    continue
+                prior_shares = prior_pos.get("shares", 0)
+                if not prior_shares:
+                    continue  # prior entry was itself a pure-put placeholder etc.
+                exited_positions.append({
+                    "ticker":            prior_pos.get("ticker", ""),
+                    "cusip":             prior_pos.get("cusip", ""),
+                    "name":              prior_pos.get("name", ""),
+                    "prior_shares":      prior_shares,
+                    "prior_value_usd_k": prior_pos.get("value_usd_k", 0),
+                    "prior_port_weight": prior_pos.get("port_weight_pct"),
+                    "prior_rank":        prior_pos.get("rank"),
+                    "delta":             {"type": "EXIT", "delta_shares": -prior_shares, "delta_pct": -100.0},
+                })
+
+        # Filing delay (Section 8): days between quarter-end (report_date) and
+        # the actual filing date. Used downstream by the Freshness score -
+        # a manager who reports late AND turns over the book fast is stale.
+        try:
+            report_dt = date.fromisoformat(filer_data["meta"].get("reportDate") or filer_data["meta"]["filingDate"])
+            filing_dt = date.fromisoformat(filer_data["meta"]["filingDate"])
+            filing_delay_days = (filing_dt - report_dt).days
+        except (ValueError, TypeError):
+            filing_delay_days = None
 
         parsed_filers[filer_name] = {
             "cik":           filer_data["cik"],
@@ -298,13 +435,19 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
             "filing_date":   filer_data["meta"]["filingDate"],
             # report_date = quarter-end (period of report); used as price anchor.
             "report_date":   filer_data["meta"].get("reportDate") or filer_data["meta"]["filingDate"],
+            "filing_delay_days": filing_delay_days,
             "is_amendment":  filer_data["meta"]["isAmendment"],
             "position_count": len(positions),
+            "median_position_weight_pct": round(median_weight, 3),
             "positions":     positions,
+            "exited_positions": exited_positions,
         }
 
         print(f"  ✅ {filer_name}: {len(positions)} positions, "
+              f"{len(exited_positions)} exits, "
               f"AUM ${reported_aum/1e6:,.1f}B (13F reported, long-only)")
+
+    _flag_possible_corporate_actions(parsed_filers)
 
     return {
         "date":          today_str,

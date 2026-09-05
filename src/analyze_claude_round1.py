@@ -22,7 +22,7 @@ from datetime import date
 import anthropic
 
 from config import (
-    CLAUDE_MAX_TOKENS, CLAUDE_MODEL_R1, CLAUDE_RETRY_COUNT,
+    CLAUDE_MAX_TOKENS_R1, CLAUDE_MODEL_R1, CLAUDE_RETRY_COUNT,
     CLAUDE_RETRY_DELAY, DATA_DIR,
 )
 
@@ -44,13 +44,15 @@ def build_prompt(scores: dict) -> str:
     top20      = scores["top20"]
     clusters   = scores["clusters"]
     mq_signals = scores.get("mq_signals", {})
+    sell_signals = scores.get("sell_signals", [])
 
     positions_text = []
     for i, agg in enumerate(top20, 1):
         filer_summary = "; ".join(
-            f"{f['filer']} ({f['delta_type']}, "
+            f"{f['filer']} (quality={f.get('manager_quality_score', '?')}, {f['delta_type']}, "
             f"Δ{f['delta_pct'] if f['delta_pct'] is not None else 'N/A'}%, "
-            f"port_wt={f['port_weight_pct']}%)"
+            f"port_wt={f['port_weight_pct']}%, tier={f.get('position_tier','?')}, "
+            f"weight_vs_median={f.get('weight_vs_median', '?')}x)"
             for f in agg["filers"]
         )
 
@@ -76,22 +78,51 @@ def build_prompt(scores: dict) -> str:
             mq_note = (
                 f"\n   Multi-Quarter: {mq['build_quarters']} quarters of building"
                 f" | avg delta {mq['avg_delta_pct']}%"
+                f" | accumulation_score(recency-weighted)={mq.get('accumulation_score')}"
                 f" | flags: {', '.join(mq['flags']) or 'none'}"
             )
 
+        comp = agg.get("best_components", {})
+        comp_note = (
+            f"\n   Alpha Score components: active_weight={comp.get('active_weight')} "
+            f"position_change={comp.get('position_change')} manager_quality={comp.get('manager_quality')} "
+            f"consensus={comp.get('consensus')} accumulation={comp.get('accumulation')} "
+            f"freshness={comp.get('freshness')} abnormal_ownership=N/A(no data source yet)"
+        )
+
         positions_text.append(
             f"{i}. {agg['ticker']} ({agg['name']}){price_note}\n"
-            f"   Score: {agg['conviction_score']}/100 | Filers: {agg['filer_count']} | "
-            f"Flags: {', '.join(agg['flags']) or 'none'}\n"
-            f"   Cluster: {'YES – ' + str(agg['cluster_count']) + ' funds' if agg['cluster_count'] >= 3 else 'no'}\n"
-            f"   Details: {filer_summary}{mq_note}\n"
+            f"   13F Alpha Score: {agg['alpha_score']}/100 | Filers: {agg['filer_count']} | "
+            f"Crowding: {agg.get('crowding_label','?')} | "
+            f"Early Smart Money: {'YES' if agg.get('early_smart_money') else 'no'}\n"
+            f"   Flags: {', '.join(agg['flags']) or 'none'}\n"
+            f"   Cluster: {'YES – ' + str(agg['cluster_count']) + ' funds' if agg['cluster_count'] >= 2 else 'no'}\n"
+            f"   Manager activity: {filer_summary}{mq_note}{comp_note}\n"
         )
 
     cluster_text = ""
     if clusters:
-        cluster_text = "\nCLUSTER SIGNALS (3+ funds buying same ticker):\n"
+        cluster_text = "\nCLUSTER SIGNALS (2+ tracked funds buying same ticker):\n"
         for ticker, filers in clusters.items():
             cluster_text += f"  {ticker}: {', '.join(filers)}\n"
+
+    sell_text = ""
+    if sell_signals:
+        sell_text = "\nNOTABLE EXITS / REDUCTIONS (Section 14 – negative signals, for risk context only):\n"
+        for s in sell_signals[:15]:
+            if s["type"] == "EXIT":
+                sell_text += (
+                    f"  {s['ticker']}: {s['filer']} (quality={s['manager_quality_score']}) EXITED "
+                    f"a former rank #{s['prior_rank']} position"
+                    f"{' (was TOP-5!)' if s.get('was_top5_position') else ''}"
+                    f"{' — PARALLEL SELLING with ' + ', '.join(s['parallel_sellers']) if s.get('parallel_selling') else ''}\n"
+                )
+            else:
+                sell_text += (
+                    f"  {s['ticker']}: {s['filer']} (quality={s['manager_quality_score']}) REDUCED "
+                    f"{s['delta_pct']}%"
+                    f"{' — PARALLEL SELLING with ' + ', '.join(s['parallel_sellers']) if s.get('parallel_selling') else ''}\n"
+                )
 
     return f"""You are an expert quantitative analyst specializing in 13F filing analysis and institutional investor tracking.
 
@@ -100,35 +131,52 @@ DATA SOURCE: SEC 13F filings (latest available, up to 45-day lag)
 
 IMPORTANT DISCLAIMER: 13F data reflects only US long equity positions >$200K.
 Portfolio weights use long-only AUM (cash/shorts/bonds excluded → weights are systematically overstated).
-Stock splits have been adjusted. Treat this as an idea generator, not a buy signal.
+Stock splits have been adjusted. Never conclude "the manager is bullish on X" from a single filing –
+say "the manager increased its reported long position in X" instead (13F shows no shorts, cash, or
+most derivatives). Treat this as an idea generator, not a buy signal.
+
+DATA GAPS YOU MUST BE HONEST ABOUT (do not fabricate numbers for these):
+- No benchmark index data is wired up yet, so "Active Weight" vs. S&P 500/Russell is NOT available.
+  Use weight_vs_median (position size relative to that manager's OWN typical position) as the closest proxy instead.
+- No market-wide institutional ownership data is available (only these 13 tracked funds are observed).
+  Do not state or imply broad institutional ownership trends – say so explicitly when the format below asks for it.
+- Abnormal Ownership is not computed (no data source) – state "not available" rather than guessing.
 
 IMPORTANT – PRICE ACTION: Positions marked ⚠️ ALREADY +X% SINCE FILING have potentially
 already played out. Strong preference for fresh ideas that have NOT run significantly yet.
 
-TOP 20 CONVICTION SCORES (normalized 0-100):
+TOP 20 BY 13F ALPHA SCORE (0-100, components shown are pre-computed – do not recompute them, just interpret):
 {''.join(positions_text)}
 {cluster_text}
+{sell_text}
 
 YOUR TASK:
 Analyze the above data and identify the TOP 5 stocks with the strongest institutional conviction signals
 that have NOT already fully played out in price.
 
 Consider in priority order:
-1. Multi-quarter building (3+ quarters of consistent accumulation = strongest signal)
-2. Cluster signals (multiple top funds buying simultaneously)
-3. Fresh entries that haven't run >15% since the filing date
-4. Conviction Score magnitude
-5. Quality of the buying funds (university endowments > hedge funds for long-term thesis)
-6. Position type flags: HIGH_CONVICTION (>3% of portfolio), NEW_POSITION, AGGRESSIVE_ADD
+1. EARLY_SMART_MONEY_ACCUMULATION flag (2-6 high-quality managers building early, still low/moderate crowding) – the single most preferred setup
+2. Multi-quarter building (3+ quarters of consistent accumulation = strongest signal)
+3. Cluster signals (multiple quality-weighted funds buying simultaneously) net of Crowding label
+4. Fresh entries that haven't run >15% since the filing date
+5. 13F Alpha Score magnitude and its component breakdown
+6. Quality of the buying funds (dynamic manager_quality score, not just fund name recognition)
 
-Explicitly DOWNWEIGHT stocks with PRICE_ACTION_STALE flag – the thesis is likely priced in.
+Explicitly DOWNWEIGHT stocks with PRICE_ACTION_STALE flag or crowding HIGH/EXTREME – the thesis is
+likely priced in or the trade is already very crowded. Do NOT recommend a stock solely because it's a
+large market-value position, or because "many funds hold it" without a change in behavior (Section 17).
+
+For each of your 5 picks, fill in the full structured output (Section 20 format). "signal" must be one of
+VERY_STRONG_BUY, STRONG, MODERATE, WEAK, NEGATIVE, judged against how many independent signals line up.
+"fazit" must directly answer: is this an unusually strong institutional signal, or just a routine portfolio
+change? Be willing to answer "routine" if that's the honest read – do not inflate weak setups.
 
 Use the submit_top5_analysis tool to return your selections."""
 
 
 _ROUND1_TOOL = {
     "name": "submit_top5_analysis",
-    "description": "Submit the top-5 conviction picks from the 13F analysis.",
+    "description": "Submit the top-5 conviction picks from the 13F analysis, in the full Section-20 structured format.",
     "input_schema": {
         "type": "object",
         "properties": {
@@ -140,13 +188,53 @@ _ROUND1_TOOL = {
                 "maxItems": 5,
                 "items": {
                     "type": "object",
-                    "required": ["rank","ticker","company_name","conviction_score",
-                                 "thesis","key_buyers","primary_flag","risk_factors","direction"],
+                    "required": [
+                        "rank", "ticker", "company_name", "alpha_score", "signal",
+                        "manager_activity", "conviction_narrative", "accumulation_narrative",
+                        "consensus_narrative", "institutional_ownership_narrative",
+                        "crowding_label", "freshness_narrative", "why_interesting", "risks",
+                        "fazit", "thesis", "key_buyers", "primary_flag", "risk_factors", "direction",
+                    ],
                     "properties": {
                         "rank":               {"type": "integer"},
                         "ticker":             {"type": "string"},
                         "company_name":       {"type": "string"},
-                        "conviction_score":   {"type": "number"},
+                        "alpha_score":        {"type": "number", "description": "Copy the given 13F Alpha Score – do not recompute."},
+                        "conviction_score":   {"type": "number", "description": "Alias of alpha_score, kept for backward compatibility."},
+                        "signal": {
+                            "type": "string",
+                            "enum": ["VERY_STRONG_BUY", "STRONG", "MODERATE", "WEAK", "NEGATIVE"],
+                        },
+                        "manager_activity": {
+                            "type": "array",
+                            "description": "One row per buying manager (Section 20 table): manager | quality | status | weight before | weight now | shares change | weight_vs_median (Active-Weight proxy).",
+                            "items": {
+                                "type": "object",
+                                "required": ["manager", "quality_score", "status", "weight_now_pct", "shares_change_pct"],
+                                "properties": {
+                                    "manager":            {"type": "string"},
+                                    "quality_score":      {"type": "number"},
+                                    "status":             {"type": "string", "description": "NEW / ADD / REDUCE / EXIT"},
+                                    "weight_before_pct":  {"type": ["number", "null"]},
+                                    "weight_now_pct":      {"type": "number"},
+                                    "shares_change_pct":  {"type": ["number", "null"]},
+                                    "weight_vs_median":   {"type": ["number", "null"], "description": "Active-Weight proxy: position size vs. this manager's own median position."},
+                                },
+                            },
+                        },
+                        "conviction_narrative":   {"type": "string", "description": "Assessment of position size and portfolio importance."},
+                        "accumulation_narrative": {"type": "string", "description": "How the position built up over the available quarters."},
+                        "consensus_narrative":    {"type": "string", "description": "Which quality managers are buying together, and how strong that consensus is."},
+                        "institutional_ownership_narrative": {
+                            "type": "string",
+                            "description": "State plainly that broad institutional-ownership data is NOT available (only the 13 tracked funds) rather than fabricating a trend.",
+                        },
+                        "crowding_label": {"type": "string", "enum": ["LOW", "MODERATE", "HIGH", "EXTREME"], "description": "Copy the given crowding_label – do not invent your own."},
+                        "freshness_narrative": {"type": "string", "description": "How filing delay + manager turnover affect how stale this signal already is."},
+                        "why_interesting": {"type": "array", "items": {"type": "string"}, "maxItems": 5, "description": "Max 3-5 precise bullet points."},
+                        "risks":           {"type": "array", "items": {"type": "string"}, "maxItems": 5, "description": "Max 3-5 precise bullet points, incl. possible misinterpretations."},
+                        "fazit": {"type": "string", "description": "Sober paragraph answering: unusually strong institutional signal, or routine portfolio change?"},
+                        # Backward-compatible fields (used by round 2 + report rendering)
                         "thesis":             {"type": "string"},
                         "key_buyers":         {"type": "array", "items": {"type": "string"}},
                         "cluster_signal":     {"type": "boolean"},
@@ -172,7 +260,7 @@ def call_claude_with_retry(prompt: str) -> dict:
         try:
             response = client.messages.create(
                 model=CLAUDE_MODEL_R1,
-                max_tokens=CLAUDE_MAX_TOKENS,
+                max_tokens=CLAUDE_MAX_TOKENS_R1,
                 system="You are a quantitative analyst specialising in 13F filing analysis.",
                 tools=[_ROUND1_TOOL],
                 tool_choice={"type": "tool", "name": "submit_top5_analysis"},
@@ -213,6 +301,12 @@ def run():
 
     for stock in result.get("top5", []):
         stock["ticker"] = normalize_ticker(stock.get("ticker", ""))
+        # Backward-compat safety net: keep conviction_score in sync with
+        # alpha_score even if the model only filled one of the two.
+        if stock.get("conviction_score") is None:
+            stock["conviction_score"] = stock.get("alpha_score")
+        elif stock.get("alpha_score") is None:
+            stock["alpha_score"] = stock.get("conviction_score")
 
     print(f"✅ Claude identified top 5:")
     for stock in result.get("top5", []):

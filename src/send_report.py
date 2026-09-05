@@ -44,9 +44,77 @@ def flag_badge(flag: str) -> str:
         "NEW_POSITION":    "#059669",
         "AGGRESSIVE_ADD":  "#d97706",
         "TOP10_ENTRY":     "#0284c7",
+        "EARLY_SMART_MONEY_ACCUMULATION": "#be123c",
     }
     color = colors.get(flag, "#6b7280")
     return f'<span style="background:{color};color:white;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;margin-right:4px">{flag}</span>'
+
+
+def _signal_badge(signal: str) -> str:
+    colors = {
+        "VERY_STRONG_BUY": ("#fee2e2", "#dc2626", "🔥 VERY STRONG BUY"),
+        "STRONG":          ("#ffedd5", "#c2410c", "📈 STRONG"),
+        "MODERATE":        ("#fef9c3", "#a16207", "➕ MODERATE"),
+        "WEAK":            ("#f1f5f9", "#64748b", "〰️ WEAK"),
+        "NEGATIVE":        ("#e5e7eb", "#374151", "🔻 NEGATIVE"),
+    }
+    bg, color, label = colors.get(signal or "", ("#f1f5f9", "#64748b", signal or "n/a"))
+    return (f'<span style="background:{bg};color:{color};padding:4px 12px;border-radius:12px;'
+            f'font-size:12px;font-weight:700">{label}</span>')
+
+
+def _crowding_badge(label: str) -> str:
+    colors = {
+        "LOW":      ("#f0fdf4", "#166534"),
+        "MODERATE": ("#fffbeb", "#92400e"),
+        "HIGH":     ("#fff1f2", "#be123c"),
+        "EXTREME":  ("#fef2f2", "#991b1b"),
+    }
+    bg, color = colors.get(label or "", ("#f1f5f9", "#64748b"))
+    return (f'<span style="background:{bg};color:{color};padding:2px 10px;border-radius:10px;'
+            f'font-size:11px;font-weight:700">CROWDING: {label or "n/a"}</span>')
+
+
+def _bullet_list(items: list[str], color: str = "#374151") -> str:
+    if not items:
+        return ""
+    lis = "".join(f'<li style="margin-bottom:4px">{i}</li>' for i in items[:5])
+    return f'<ul style="margin:4px 0 0 0;padding-left:18px;color:{color};font-size:13px;line-height:1.5">{lis}</ul>'
+
+
+def _manager_activity_table(rows: list[dict]) -> str:
+    """Section 20 table: Manager | Quality | Status | Weight before | Weight now | Shares Δ | Active Weight proxy."""
+    if not rows:
+        return ""
+    trs = ""
+    for r in rows:
+        weight_before = r.get("weight_before_pct")
+        weight_now    = r.get("weight_now_pct")
+        shares_chg    = r.get("shares_change_pct")
+        wvm           = r.get("weight_vs_median")
+        trs += (
+            "<tr>"
+            f"<td style='padding:5px 8px;color:#111827;font-weight:600'>{r.get('manager','')}</td>"
+            f"<td style='padding:5px 8px;color:#6b7280'>{r.get('quality_score','?')}</td>"
+            f"<td style='padding:5px 8px;color:#6b7280'>{r.get('status','')}</td>"
+            f"<td style='padding:5px 8px;color:#6b7280'>{f'{weight_before:.2f}%' if weight_before is not None else '—'}</td>"
+            f"<td style='padding:5px 8px;color:#111827'>{f'{weight_now:.2f}%' if weight_now is not None else '—'}</td>"
+            f"<td style='padding:5px 8px;color:#6b7280'>{f'{shares_chg:+.0f}%' if shares_chg is not None else 'NEW'}</td>"
+            f"<td style='padding:5px 8px;color:#6b7280'>{f'{wvm:.1f}x median' if wvm is not None else '—'}</td>"
+            "</tr>"
+        )
+    return f"""
+    <div style="overflow-x:auto;margin-bottom:12px">
+    <table style="width:100%;border-collapse:collapse;font-size:12px;background:#f9fafb;border-radius:8px;">
+      <thead><tr style="text-align:left;color:#9ca3af;font-size:10px;text-transform:uppercase">
+        <th style="padding:5px 8px">Manager</th><th style="padding:5px 8px">Quality</th>
+        <th style="padding:5px 8px">Status</th><th style="padding:5px 8px">Weight before</th>
+        <th style="padding:5px 8px">Weight now</th><th style="padding:5px 8px">Shares Δ</th>
+        <th style="padding:5px 8px">vs. Manager Median</th>
+      </tr></thead>
+      <tbody>{trs}</tbody>
+    </table>
+    </div>"""
 
 
 def _post_filing_block(perf: dict) -> str:
@@ -284,6 +352,50 @@ def _option_trade_block(opt: dict) -> str:
           </div>'''
 
 
+def generate_sell_signals_html(sell_signals: list[dict]) -> str:
+    """Section 14: notable exits/reductions – negative signals, shown separately from the buy-side Top 5."""
+    if not sell_signals:
+        return ""
+
+    rows_html = ""
+    for s in sell_signals[:10]:
+        if s["type"] == "EXIT":
+            detail = (f"Exited a former rank #{s.get('prior_rank','?')} position"
+                      + (" (was TOP-5!)" if s.get("was_top5_position") else ""))
+        else:
+            detail = f"Reduced {s.get('delta_pct','?')}%"
+        parallel = (f" · parallel selling with {', '.join(s['parallel_sellers'])}"
+                    if s.get("parallel_selling") else "")
+        rows_html += (
+            "<tr>"
+            f"<td style='padding:5px 8px;font-weight:700;color:#111827'>{s.get('ticker','')}</td>"
+            f"<td style='padding:5px 8px;color:#6b7280'>{s.get('filer','')} (q={s.get('manager_quality_score','?')})</td>"
+            f"<td style='padding:5px 8px;color:#991b1b'>{s.get('type','')}</td>"
+            f"<td style='padding:5px 8px;color:#6b7280;font-size:12px'>{detail}{parallel}</td>"
+            "</tr>"
+        )
+
+    return f"""
+    <div style="background:#fff1f2;border:1px solid #fecdd3;border-radius:12px;padding:20px;margin-bottom:20px;">
+      <div style="font-size:14px;font-weight:700;color:#9f1239;margin-bottom:10px">
+        📉 Notable Exits &amp; Reductions (Section 14 – negative signals, informational only)
+      </div>
+      <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr style="text-align:left;color:#9ca3af;font-size:10px;text-transform:uppercase">
+          <th style="padding:5px 8px">Ticker</th><th style="padding:5px 8px">Manager</th>
+          <th style="padding:5px 8px">Type</th><th style="padding:5px 8px">Detail</th>
+        </tr></thead>
+        <tbody>{rows_html}</tbody>
+      </table>
+      </div>
+      <div style="font-size:11px;color:#9f1239;margin-top:8px">
+        Not part of the Top 5 buy ideas above – shown for risk context (a quality manager
+        exiting a name our Top 5 also holds is worth knowing about).
+      </div>
+    </div>"""
+
+
 def generate_html_report(analysis: dict, backtest: dict | None = None) -> str:
     today_str      = analysis["date"]
     top5           = analysis.get("round1_top5", [])
@@ -292,7 +404,8 @@ def generate_html_report(analysis: dict, backtest: dict | None = None) -> str:
     portfolio_note = analysis.get("portfolio_note", "")
     disclaimer     = analysis.get("disclaimer", "")
 
-    backtest_html = generate_backtest_html(backtest) if backtest else ""
+    backtest_html     = generate_backtest_html(backtest) if backtest else ""
+    sell_signals_html = generate_sell_signals_html(analysis.get("sell_signals", []))
 
     # Build options recommendations section
     options_html = ""
@@ -303,6 +416,9 @@ def generate_html_report(analysis: dict, backtest: dict | None = None) -> str:
         opt    = options_by_ticker.get(ticker, {})
         primary_flag = stock.get("primary_flag", "")
         flags_html = flag_badge(primary_flag) if primary_flag else ""
+        for extra_flag in ("EARLY_SMART_MONEY_ACCUMULATION",):
+            if extra_flag != primary_flag and stock.get("early_smart_money") and extra_flag == "EARLY_SMART_MONEY_ACCUMULATION":
+                flags_html += flag_badge(extra_flag)
 
         # Buyers list – prefer enriched filer_details (port weight + delta) if available
         filer_details = stock.get("filer_details", [])
@@ -328,6 +444,31 @@ def generate_html_report(analysis: dict, backtest: dict | None = None) -> str:
         else:
             buyers_html = ", ".join(stock.get("key_buyers", []))
 
+        signal_row = _signal_badge(stock.get("signal", "")) if stock.get("signal") else ""
+        crowding_row = _crowding_badge(stock.get("crowding_label")) if stock.get("crowding_label") else ""
+
+        narrative_blocks = ""
+        for title, key in [
+            ("Conviction", "conviction_narrative"),
+            ("Accumulation", "accumulation_narrative"),
+            ("Smart Money Consensus", "consensus_narrative"),
+            ("Institutional Ownership", "institutional_ownership_narrative"),
+            ("Freshness", "freshness_narrative"),
+        ]:
+            text = stock.get(key)
+            if text:
+                narrative_blocks += (
+                    f'<div style="margin-bottom:10px">'
+                    f'<div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase">{title}</div>'
+                    f'<div style="font-size:13px;color:#374151;margin-top:2px">{text}</div>'
+                    f'</div>'
+                )
+
+        why_html   = _bullet_list(stock.get("why_interesting", []), color="#166534")
+        risks_html = _bullet_list(stock.get("risks", []), color="#92400e")
+        manager_table_html = _manager_activity_table(stock.get("manager_activity", []))
+        fazit = stock.get("fazit", "")
+
         options_html += f"""
         <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
@@ -336,20 +477,26 @@ def generate_html_report(analysis: dict, backtest: dict | None = None) -> str:
               <span style="font-size:14px;color:#6b7280;margin-left:8px">{stock.get('company_name','')}</span>
             </div>
             <div style="text-align:right">
-              <div style="font-size:28px;font-weight:700;color:#7c3aed">{stock.get('conviction_score', '')}<span style="font-size:14px;color:#9ca3af">/100</span></div>
-              <div style="font-size:11px;color:#9ca3af">CONVICTION SCORE</div>
+              <div style="font-size:28px;font-weight:700;color:#7c3aed">{stock.get('alpha_score', stock.get('conviction_score', ''))}<span style="font-size:14px;color:#9ca3af">/100</span></div>
+              <div style="font-size:11px;color:#9ca3af">13F ALPHA SCORE</div>
             </div>
           </div>
 
-          <div style="margin-bottom:12px">{flags_html}</div>
+          <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            {signal_row}{crowding_row}{flags_html}
+          </div>
 
           {_post_filing_block(stock.get("post_filing_perf", {}))}
           {_multi_quarter_block(stock.get("mq_signal", {}))}
+
+          {manager_table_html}
 
           <div style="background:#f9fafb;border-radius:8px;padding:16px;margin-bottom:16px;">
             <div style="font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;margin-bottom:6px">Investment Thesis</div>
             <div style="color:#374151;font-size:14px;line-height:1.6">{stock.get('thesis','')}</div>
           </div>
+
+          {narrative_blocks}
 
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
             <div style="background:#eff6ff;border-radius:8px;padding:12px;">
@@ -361,6 +508,11 @@ def generate_html_report(analysis: dict, backtest: dict | None = None) -> str:
               <div style="color:#92400e;font-size:13px;margin-top:4px">{stock.get('risk_factors','')}</div>
             </div>
           </div>
+
+          {f'<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:#166534;text-transform:uppercase">Why this is interesting</div>{why_html}</div>' if why_html else ""}
+          {f'<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:#92400e;text-transform:uppercase">Risks / possible misreads</div>{risks_html}</div>' if risks_html else ""}
+
+          {f'<div style="background:#f3f4f6;border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px;color:#374151;font-style:italic">{fazit}</div>' if fazit else ""}
 
           {"" if not opt else _option_trade_block(opt)}
         </div>
@@ -400,6 +552,8 @@ def generate_html_report(analysis: dict, backtest: dict | None = None) -> str:
     </div>
 
     {options_html}
+
+    {sell_signals_html}
 
     <!-- Portfolio Note -->
     {f'<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:20px;margin-bottom:20px;"><div style="font-size:12px;font-weight:700;color:#0369a1;text-transform:uppercase;margin-bottom:8px">Portfolio Sizing Note</div><div style="color:#0c4a6e;font-size:14px">{portfolio_note}</div></div>' if portfolio_note else ''}

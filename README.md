@@ -35,8 +35,11 @@ GitHub Actions Trigger (14:00 UTC, 14th-20th of target months)
     ├─ fetch_filings.py     → SEC EDGAR: fetch 13F XMLs for all 13 CIKs
     │                          + CUSIP→Ticker mapping (OpenFIGI)
     │                          + Stock split detection (yfinance)
-    ├─ parse_13f.py         → Delta vs. prior quarter, portfolio weights
-    ├─ scoring.py           → Conviction scores, clustering detection
+    ├─ parse_13f.py         → Delta vs. prior quarter (incl. EXITs), portfolio weights,
+    │                          rank tiers, corporate-action heuristic
+    ├─ manager_quality.py   → Dynamic Manager Quality score (concentration + turnover)
+    ├─ scoring.py           → 13F Alpha Score, clustering, crowding proxy,
+    │                          Early Smart Money detection, sell-side signals
     ├─ analyze_claude_round1.py → Claude: Top 5 stocks + investment theses
     ├─ options_lookup.py    → Tradier: Real option chains for Top 5
     ├─ analyze_claude_round2.py → Claude: Select best specific option per stock
@@ -139,23 +142,49 @@ reports/
 | No shorts/hedges visible | Incomplete picture | Noted in report |
 | Stock splits adjusted | High accuracy, not perfect | yfinance split check |
 | Options prices at analysis time | Change constantly | Always verify before trading |
+| No benchmark index data | "Active Weight" vs. S&P 500/Russell not available | Proxied by weight vs. the manager's own median position |
+| No market-wide ownership data | Only the 13 tracked filers are observed, not all 13F filers | Report says so explicitly instead of guessing a trend |
+| No Abnormal Ownership model | Needs market cap/sector/float data not wired up | Component always reports 0, kept visible in the score breakdown |
+| Manager Quality is not backtest-calibrated yet | Only 2-3 quarters of history exist so far | Blends toward a static prior until more quarters accumulate |
+| Merger/spin-off detection is heuristic | Name+value matching can miss or misfire | Flagged `possible_corporate_action`, excluded from scoring either way |
 
 ---
 
-## Conviction Score Formula
+## 13F Alpha Score
+
+Additive, component-based score (0-100) per ticker, computed in [`scoring.py`](src/scoring.py):
 
 ```
-Raw Score = (0.40 × portfolio_weight%) + (0.30 × |delta%|)
-Cluster Bonus: ×1.5 if 3+ funds buy same ticker
-Normalized: min-max scaled to [0, 100]
+13F Alpha Score =
+    25% × Active Weight        (proxied by portfolio-weight percentile — no benchmark data yet)
+  + 20% × Position Change      (share-count delta magnitude, percentile)
+  + 15% × Manager Quality      (dynamic 0-1 score — see manager_quality.py)
+  + 15% × Smart-Money Consensus(quality-weighted multi-fund buying)
+  + 10% × Multi-Quarter Accumulation (recency-weighted: 0.5×current + 0.3×prior + 0.2×Q-2)
+  + 10% × Freshness            (exp(-k × turnover × filing_delay) — see manager_quality.py)
+  +  5% × Abnormal Ownership   (no data source yet — always 0, kept visible)
+  −  Crowding Penalty          (proxy: hedge-fund-hotel list + oversized same-run cluster)
+  −  Price-action penalty      (stock already ran hard since the filing date)
 ```
+
+Manager Quality replaces a hand-assigned lookup table with concentration (position
+count) and turnover (value-weighted portfolio churn quarter over quarter), blended
+toward a static prior until enough quarters of history exist to trust the data alone.
 
 **Flags:**
 - `HIGH_CONVICTION`: New position ≥3% of portfolio
 - `NEW_POSITION`: Not in prior quarter's filing
+- `SIZE_WEAK` / `SIZE_INTERESTING` / `SIZE_STRONG` / `SIZE_VERY_STRONG` / `SIZE_EXCEPTIONAL`: new-position size band
+- `OUTSIZED_VS_MANAGER_TYPICAL`: position ≥5× that manager's own median position size
+- `TOP3_POSITION` / `TOP5_POSITION` / `TOP10_ENTRY`: rank within the filer's own portfolio
 - `AGGRESSIVE_ADD`: Position increased >20% by share count
-- `CLUSTER`: 3+ monitored funds buying same ticker simultaneously
-- `TOP10_ENTRY`: New position entered directly in top 10 holdings
+- `CLUSTER`: 2+ monitored funds buying same ticker simultaneously
+- `EARLY_SMART_MONEY_ACCUMULATION`: 2-6 high-quality managers building the same name early, still low/moderate crowding — the single most-preferred setup
+- `PRICE_ACTION_STALE` / `PRICE_ACTION_WARNING`: stock has already run since the filing date
+
+**Sell-side signals** (REDUCE ≥20% cut, or a full EXIT) are scored separately in
+`build_sell_signals()` and shown in the report as "Notable Exits & Reductions" —
+they are informational risk context, not merged into the buy-side Top 5.
 
 ---
 

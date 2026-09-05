@@ -11,7 +11,7 @@ import json
 from datetime import date
 from pathlib import Path
 
-from config import DATA_DIR, MULTI_QUARTER_BUILD_MIN, MULTI_QUARTER_BONUS, MULTI_QUARTER_MAX
+from config import DATA_DIR, MULTI_QUARTER_BUILD_MIN, MULTI_QUARTER_MAX
 
 
 def load_historical_parsed(today_str: str) -> list[dict]:
@@ -118,7 +118,27 @@ def build_multi_quarter_signals(today_str: str) -> dict[str, dict]:
         )
 
         # Build score: more quarters + higher avg delta + positive slope
+        # (legacy composite metric, kept for logging/debugging only - the
+        # Alpha Score's accumulation component uses accumulation_score below)
         build_score = (build_quarters / 4.0) * max(avg_delta, 1.0) * (1.0 + max(slope, 0.0))
+
+        # Section 6: Accumulation Score with explicit recency weighting
+        # (0.5 x current quarter's delta + 0.3 x prior + 0.2 x the one before).
+        # Recent quarters count more heavily than older ones - a stock bought
+        # aggressively 3 quarters ago and left untouched since is a weaker
+        # signal than one still being actively built right now.
+        RECENCY_WEIGHTS = (0.5, 0.3, 0.2)
+        quarter_avg_deltas = []  # aligned with quarters_seen (most recent first)
+        for q in quarters_seen[:len(RECENCY_WEIGHTS)]:
+            q_entries = [e for e in entries if e["quarter"] == q]
+            q_deltas = [e["delta_pct"] for e in q_entries if e["delta_pct"] is not None]
+            quarter_avg_deltas.append(sum(q_deltas) / len(q_deltas) if q_deltas else 0.0)
+
+        accumulation_score = sum(
+            w * quarter_avg_deltas[i]
+            for i, w in enumerate(RECENCY_WEIGHTS)
+            if i < len(quarter_avg_deltas)
+        )
 
         flags = []
         if build_quarters >= MULTI_QUARTER_BUILD_MIN:
@@ -129,27 +149,14 @@ def build_multi_quarter_signals(today_str: str) -> dict[str, dict]:
             flags.append("SILENT_ACCUMULATION")
 
         signals[ticker] = {
-            "build_quarters":  build_quarters,
-            "total_quarters":  len(quarters_seen),
-            "avg_delta_pct":   round(avg_delta, 1),
-            "weight_slope":    round(slope, 3),
-            "build_score":     round(build_score, 2),
-            "silent_build":    silent_build,
-            "flags":           flags,
+            "build_quarters":     build_quarters,
+            "total_quarters":     len(quarters_seen),
+            "avg_delta_pct":      round(avg_delta, 1),
+            "weight_slope":       round(slope, 3),
+            "build_score":        round(build_score, 2),
+            "accumulation_score": round(accumulation_score, 2),
+            "silent_build":       silent_build,
+            "flags":              flags,
         }
 
     return signals
-
-
-def get_multiplier(ticker: str, signals: dict[str, dict]) -> float:
-    """Returns a score multiplier based on multi-quarter conviction signal."""
-    if ticker not in signals:
-        return 1.0
-    bq = signals[ticker]["build_quarters"]
-    if bq >= 5:
-        return MULTI_QUARTER_BONUS * 1.3
-    if bq >= 3:
-        return MULTI_QUARTER_BONUS
-    if bq >= 2:
-        return 1.2
-    return 1.0

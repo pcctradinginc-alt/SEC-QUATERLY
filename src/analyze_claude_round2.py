@@ -322,11 +322,13 @@ def run():
     # and multi-quarter signal from scores.json.
     # When OpenFIGI mapping failed, scores.json keys are CUSIPs rather than
     # ticker symbols. In that case we fall back to normalised company-name matching.
+    sell_signals: list[dict] = []
     try:
         scores_path = DATA_DIR / f"{today_str}_scores.json"
         with open(scores_path) as sf:
             scores = json.load(sf)
         aggregated = scores.get("aggregated", [])
+        sell_signals = scores.get("sell_signals", [])[:10]  # top 10 by severity (Section 14)
 
         def _norm(n: str) -> str:
             n = re.sub(
@@ -352,6 +354,11 @@ def run():
             stock["post_filing_perf"] = matched.get("post_filing_perf", {}) if matched else {}
             stock["filer_details"]    = matched.get("filers",            []) if matched else []
             stock["mq_signal"]        = matched.get("mq_signal",         {}) if matched else {}
+            stock["crowding_label"]   = matched.get("crowding_label")    if matched else None
+            stock["crowding_penalty"] = matched.get("crowding_penalty")  if matched else None
+            stock["alpha_components"] = matched.get("best_components",   {}) if matched else {}
+            stock["early_smart_money"] = matched.get("early_smart_money", False) if matched else False
+            stock["cluster_count"]    = matched.get("cluster_count",     0) if matched else 0
 
         print(f"  ✅ Enriched {enriched}/{len(top5)} stocks with post-filing perf + filer details")
     except Exception as e:
@@ -365,6 +372,7 @@ def run():
         "options_recs":      result.get("options_recommendations", []),
         "portfolio_note":    result.get("portfolio_note", ""),
         "disclaimer":        result.get("disclaimer", ""),
+        "sell_signals":      sell_signals,
     }
 
     output_path = DATA_DIR / f"{today_str}_final_analysis.json"

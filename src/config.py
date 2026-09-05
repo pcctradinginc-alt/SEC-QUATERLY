@@ -71,10 +71,8 @@ WEIGHT_DELTA_PCT     = 0.20   # how aggressively the manager bought
 
 # ── Scoring thresholds ────────────────────────────────────────────────────────
 MIN_PORTFOLIO_WEIGHT_PCT  = 0.5    # ignore positions < 0.5% of portfolio
-HIGH_CONVICTION_TOP_N     = 10     # "top 10" threshold for new position flag
 HIGH_CONVICTION_MIN_PCT   = 3.0    # new position >= 3% = HIGH CONVICTION flag
 CLUSTER_MIN_FUNDS         = 2      # 2+ funds buying = cluster signal
-CLUSTER_BONUS_MULTIPLIER  = 3.0    # strong bonus: 6-fund cluster >> 1-fund
 DOUBLE_DOWN_MIN_DELTA     = 20.0   # +20% shares while price fell = double-down
 
 # ── Price-action staleness check ─────────────────────────────────────────────
@@ -87,6 +85,81 @@ PRICE_ACTION_DOWNGRADE_PCT = 25.0  # halve the score if up >25% since filing
 MULTI_QUARTER_MAX       = 8    # look back up to 8 quarters of history
 MULTI_QUARTER_BUILD_MIN = 3    # 3+ consecutive build quarters = strong signal
 MULTI_QUARTER_BONUS     = 1.5  # score multiplier for confirmed multi-quarter builds
+
+# ── Manager Quality (dynamic, 0-1) ───────────────────────────────────────────
+# Replaces the old static FILER_QUALITY lookup with a data-driven estimate.
+# FILER_QUALITY above is kept and used as a bootstrap prior until enough
+# quarters of history exist (see manager_quality.py).
+MANAGER_QUALITY_MIN_HISTORY_QUARTERS = 2      # below this: mostly prior, some concentration
+MQ_CONCENTRATION_FLOOR_POSITIONS     = 10     # <=10 positions -> concentration score 1.0
+MQ_CONCENTRATION_CEIL_POSITIONS      = 200    # >=200 positions -> concentration score 0.0
+MQ_TURNOVER_FULL_PENALTY_PCT         = 60.0   # >=60% quarterly turnover -> turnover score 0.0
+
+# ── Freshness (Filing Delay x Turnover decay) ────────────────────────────────
+# Freshness = exp(-FRESHNESS_K * turnover_fraction * filing_delay_fraction)
+# filing_delay_fraction = (filingDate - reportDate) in days, normalized to a quarter.
+FRESHNESS_K             = 2.0
+FRESHNESS_QUARTER_DAYS  = 90.0
+
+# ── New-position size bands (Section 3) ──────────────────────────────────────
+# (lower_bound_pct_inclusive, label), ascending – the highest matching lower
+# bound wins. <1.0% falls through to "WEAK".
+NEW_POSITION_BANDS = [
+    (0.0,  "WEAK"),
+    (1.0,  "INTERESTING"),
+    (3.0,  "STRONG"),
+    (5.0,  "VERY_STRONG"),
+    (10.0, "EXCEPTIONAL"),
+]
+# A position >= this many times the filer's own median position weight is
+# flagged as an outsized bet for that manager, regardless of absolute %
+# (Section 3: "5% ist bei einem Fonds mit 10 Aktien etwas anderes als bei 200").
+RELATIVE_OUTSIZED_VS_MEDIAN = 5.0
+
+# ── Price-action penalty points (additive, replaces the old score-halving) ──
+PRICE_ACTION_STALE_PENALTY = 30.0   # points subtracted if > PRICE_ACTION_DOWNGRADE_PCT
+PRICE_ACTION_WARN_PENALTY  = 10.0   # points subtracted if > PRICE_ACTION_WARN_PCT
+
+# ── Early Smart Money Accumulation (Section 10) ──────────────────────────────
+EARLY_SMART_MONEY_MIN_FUNDS          = 2
+EARLY_SMART_MONEY_MAX_FUNDS          = 6
+EARLY_SMART_MONEY_MIN_AVG_QUALITY    = 0.6
+EARLY_SMART_MONEY_MAX_BUILD_QUARTERS = 3   # "seit wenigen Quartalen sichtbar"
+
+# ── Crowding penalty (proxy – Tier 2) ────────────────────────────────────────
+# NOTE: This is NOT real market-wide institutional ownership data (that is
+# Tier 3, section 11-13, and needs a data source beyond the 13 tracked filers).
+# It approximates crowding from (a) how many of the 13 tracked funds already
+# hold the name, and (b) a static list of well-known "hedge fund hotel" mega
+# caps that are structurally crowded regardless of what our 13 funds do.
+CROWDING_HOTEL_TICKERS = {
+    "AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "GOOG", "META", "TSLA",
+    "BRK/B", "BRK.B", "AVGO", "LLY",
+}
+CROWDING_HOTEL_PENALTY               = 25.0  # flat points if ticker is in the proxy hotel list
+CROWDING_PENALTY_PER_FUND_OVER_MAX   = 8.0   # points per fund beyond EARLY_SMART_MONEY_MAX_FUNDS
+CROWDING_LABEL_BANDS = [   # (max_score_inclusive, label)
+    (25.0, "LOW"),
+    (50.0, "MODERATE"),
+    (75.0, "HIGH"),
+    (float("inf"), "EXTREME"),
+]
+
+# ── 13F Alpha Score weights (Section 15) ─────────────────────────────────────
+# "active_weight" is proxied by portfolio-weight percentile since no benchmark
+# index data is wired up yet (Tier 3 gap – Section 5).
+# "abnormal_ownership" has no data source yet (Tier 3 gap – Section 11-12) and
+# always contributes 0; kept as an explicit line item so the gap stays visible
+# in the score breakdown rather than being silently redistributed.
+ALPHA_WEIGHTS = {
+    "active_weight":      0.25,
+    "position_change":    0.20,
+    "manager_quality":    0.15,
+    "consensus":          0.15,
+    "accumulation":       0.10,
+    "freshness":          0.10,
+    "abnormal_ownership": 0.05,
+}
 
 # ── Tradier API ───────────────────────────────────────────────────────────────
 TRADIER_BASE_URL    = "https://api.tradier.com/v1"   # Live account
@@ -106,6 +179,9 @@ CLAUDE_MODEL_R1   = "claude-haiku-4-5-20251001"
 CLAUDE_MODEL_R2   = "claude-sonnet-4-6"
 CLAUDE_MODEL      = CLAUDE_MODEL_R2   # backward-compat alias
 CLAUDE_MAX_TOKENS = 4096
+# Round 1 now returns the full Section-20 structured format (manager activity
+# table + 5 narrative fields + bullet lists per stock, x5 stocks) - needs more room.
+CLAUDE_MAX_TOKENS_R1 = 8192
 CLAUDE_RETRY_COUNT = 3
 CLAUDE_RETRY_DELAY = 5   # seconds
 

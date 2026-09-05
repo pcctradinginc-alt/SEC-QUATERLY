@@ -1,29 +1,41 @@
 """
 scoring.py
-Conviction Score calculation engine.
+13F Alpha Score engine (spec Sections 1-17).
 
-Improvements:
-  - Multi-quarter position building bonus (multi_quarter.py)
-  - Filer quality tier multiplier (FILER_QUALITY in config)
-  - Price-action staleness check via yfinance:
-      +15% since filing → WARNING flag
-      +25% since filing → score halved + STALE flag
-  - Score normalization min-max [0, 100]
-  - Cluster detection on ticker > CUSIP > normalized name
+Component-based, additive Alpha Score (Section 15):
+  25% Active Weight (proxied by portfolio-weight percentile - no benchmark
+       index wired up yet, see Tier-3 gap in README)
+  20% Position Change (share-count delta magnitude, percentile)
+  15% Manager Quality (dynamic 0-1 score, see manager_quality.py)
+  15% Smart-Money Consensus (quality-weighted multi-fund buying)
+  10% Multi-Quarter Accumulation (recency-weighted, see multi_quarter.py)
+  10% Freshness (exp(-k * turnover * filing_delay), see manager_quality.py)
+   5% Abnormal Institutional Ownership (Tier-3 gap - always 0, kept explicit)
+  -  Crowding Penalty (proxy: hotel-ticker list + oversized same-run cluster)
+  -  Price-action staleness penalty (stock already ran hard since filing)
+
+Sell-side signals (REDUCE/EXIT, Section 14) are scored separately and never
+mixed into the buy-side Top 20 that feeds Claude Round 1.
 """
 
 import json
+import math
 import re
 from collections import defaultdict
-from datetime import date, timedelta
+from datetime import date
 
 from config import (
-    CLUSTER_BONUS_MULTIPLIER, CLUSTER_MIN_FUNDS,
-    DATA_DIR, DOUBLE_DOWN_MIN_DELTA, FILER_QUALITY,
-    HIGH_CONVICTION_MIN_PCT, HIGH_CONVICTION_TOP_N,
-    MIN_PORTFOLIO_WEIGHT_PCT, PRICE_ACTION_DOWNGRADE_PCT,
-    PRICE_ACTION_WARN_PCT, WEIGHT_DELTA_PCT, WEIGHT_PORTFOLIO_PCT,
+    ALPHA_WEIGHTS, CLUSTER_MIN_FUNDS, CROWDING_HOTEL_PENALTY,
+    CROWDING_HOTEL_TICKERS, CROWDING_LABEL_BANDS,
+    CROWDING_PENALTY_PER_FUND_OVER_MAX, DATA_DIR, DOUBLE_DOWN_MIN_DELTA,
+    EARLY_SMART_MONEY_MAX_BUILD_QUARTERS, EARLY_SMART_MONEY_MAX_FUNDS,
+    EARLY_SMART_MONEY_MIN_AVG_QUALITY, EARLY_SMART_MONEY_MIN_FUNDS,
+    FRESHNESS_K, FRESHNESS_QUARTER_DAYS, HIGH_CONVICTION_MIN_PCT,
+    MIN_PORTFOLIO_WEIGHT_PCT, NEW_POSITION_BANDS, PRICE_ACTION_DOWNGRADE_PCT,
+    PRICE_ACTION_STALE_PENALTY, PRICE_ACTION_WARN_PCT,
+    PRICE_ACTION_WARN_PENALTY, RELATIVE_OUTSIZED_VS_MEDIAN,
 )
+import manager_quality as manager_quality_mod
 import multi_quarter
 
 
@@ -130,131 +142,13 @@ def fetch_price_changes(tickers: list[str], filing_dates: dict[str, str]) -> dic
     return result
 
 
-# ── Core scoring ──────────────────────────────────────────────────────────────
-
-def compute_raw_score(pos: dict, filer_name: str) -> float:
-    """
-    Score = (weight_port × portfolio_pct) + (weight_delta × normalized_delta)
-    × filer_quality_multiplier
-
-    NEW positions: delta component uses 100 as proxy.
-    REDUCED / SOLD / UNCHANGED: score = 0.
-    """
-    port_pct   = pos["port_weight_pct"]
-    delta_info = pos["delta"]
-    delta_pct  = delta_info.get("delta_pct")
-    tx_type    = delta_info.get("type", "UNCHANGED")
-
-    if port_pct < MIN_PORTFOLIO_WEIGHT_PCT:
-        return 0.0
-
-    if tx_type in ("REDUCED", "SOLD", "UNCHANGED"):
-        return 0.0
-
-    # Skip positions where the fund is net short/hedged via puts.
-    # A filer with 100 long shares and 10,000 put shares is bearish,
-    # not a conviction buy – scoring it bullish would be a false signal.
-    if not pos.get("net_bullish", True):
-        return 0.0
-
-    delta_component = 100.0 if delta_pct is None else abs(delta_pct)
-
-    raw = (WEIGHT_PORTFOLIO_PCT * port_pct) + (WEIGHT_DELTA_PCT * delta_component)
-
-    # Filer quality multiplier
-    quality = FILER_QUALITY.get(filer_name, 1.0)
-    raw *= quality
-
-    return round(raw, 4)
-
-
-def apply_flags(pos: dict, rank: int) -> list[str]:
-    flags    = []
-    tx_type  = pos["delta"].get("type")
-    port_pct = pos["port_weight_pct"]
-    delta_pct = pos["delta"].get("delta_pct")
-
-    if tx_type == "NEW":
-        flags.append("NEW_POSITION")
-        if port_pct >= HIGH_CONVICTION_MIN_PCT:
-            flags.append("HIGH_CONVICTION")
-        if rank <= HIGH_CONVICTION_TOP_N:
-            flags.append("TOP10_ENTRY")
-
-    if tx_type == "ADDED" and delta_pct is not None and delta_pct >= DOUBLE_DOWN_MIN_DELTA:
-        flags.append("AGGRESSIVE_ADD")
-
-    # Warn if the long position is accompanied by a significant put hedge
-    put_val  = pos.get("put_value_usd_k", 0)
-    long_val = pos.get("value_usd_thousands", 0)
-    if put_val > 0 and long_val > 0 and put_val > long_val * 0.5:
-        flags.append("PUT_HEDGE_PRESENT")
-
-    return flags
-
-
-def build_scored_universe(parsed: dict, mq_signals: dict[str, dict]) -> list[dict]:
-    """
-    Iterates all filers and positions, computing a score for each.
-    Applies filer quality and multi-quarter multipliers.
-    Returns flat list of scored buy-only positions.
-    """
-    scored = []
-
-    for filer_name, filer_data in parsed["filers"].items():
-        if "positions" not in filer_data:
-            continue
-
-        positions = filer_data["positions"]
-        # Prefer report_date (quarter-end) over filing_date so price comparison
-        # measures from when the manager held the position, not when they disclosed it.
-        filing_date = filer_data.get("report_date") or filer_data.get("filing_date", "")
-
-        for pos in positions:
-            raw_score = compute_raw_score(pos, filer_name)
-            if raw_score <= 0:
-                continue
-
-            flags  = apply_flags(pos, pos.get("rank", 999))
-            ticker = pos.get("ticker", "") or pos.get("cusip", "")
-
-            # Multi-quarter bonus
-            mq_mult = multi_quarter.get_multiplier(ticker, mq_signals)
-            raw_score *= mq_mult
-            if mq_mult > 1.0:
-                mq_sig = mq_signals.get(ticker, {})
-                flags.extend([f for f in mq_sig.get("flags", []) if f not in flags])
-
-            scored.append({
-                "filer":           filer_name,
-                "ticker":          ticker,
-                "cusip":           pos.get("cusip", ""),
-                "name":            pos.get("name", ""),
-                "port_weight_pct": pos["port_weight_pct"],
-                "delta_pct":       pos["delta"].get("delta_pct"),
-                "delta_type":      pos["delta"]["type"],
-                "delta_shares":    pos["delta"]["delta_shares"],
-                "value_usd_k":     pos["value_usd_k"],
-                "rank_in_port":    pos.get("rank"),
-                "filing_date":     filing_date,
-                "raw_score":       round(raw_score, 4),
-                "mq_multiplier":   round(mq_mult, 2),
-                "mq_signal":       mq_signals.get(ticker, {}),
-                "flags":           flags,
-            })
-
-    return scored
-
-
-# ── Price-action staleness enrichment ─────────────────────────────────────────
-
 def enrich_with_price_action(scored: list[dict]) -> list[dict]:
     """
     Checks current price vs price at filing date for each ticker.
     If the stock has already run >25% since the 13F filing, the
-    thesis may have played out – score is halved and STALE flag added.
+    thesis may have played out - a penalty is applied to the Alpha Score
+    later (see compute_alpha_score) and a STALE flag is added.
     """
-    # Collect unique ticker → filing_date mapping (use earliest filing date per ticker)
     filing_dates: dict[str, str] = {}
     for entry in scored:
         t = entry["ticker"]
@@ -274,18 +168,19 @@ def enrich_with_price_action(scored: list[dict]) -> list[dict]:
         perf = changes.get(t, {})
         pct  = perf.get("pct_change")
 
-        # Store full performance snapshot on each scored entry
         entry["post_filing_perf"] = perf
+        entry["price_action_penalty"] = 0.0
 
         if pct is None:
             continue
 
         if pct >= PRICE_ACTION_DOWNGRADE_PCT:
-            entry["raw_score"] *= 0.5
+            entry["price_action_penalty"] = PRICE_ACTION_STALE_PENALTY
             if "PRICE_ACTION_STALE" not in entry["flags"]:
                 entry["flags"].append("PRICE_ACTION_STALE")
             staled += 1
         elif pct >= PRICE_ACTION_WARN_PCT:
+            entry["price_action_penalty"] = PRICE_ACTION_WARN_PENALTY
             if "PRICE_ACTION_WARNING" not in entry["flags"]:
                 entry["flags"].append("PRICE_ACTION_WARNING")
             warned += 1
@@ -296,67 +191,334 @@ def enrich_with_price_action(scored: list[dict]) -> list[dict]:
     return scored
 
 
-# ── Cluster detection ─────────────────────────────────────────────────────────
+# ── Freshness (Section 8) ──────────────────────────────────────────────────────
 
-def detect_clusters(scored: list[dict]) -> dict[str, list[str]]:
-    """Clusters on ticker > CUSIP > normalized company name."""
-    key_filers: dict[str, list[str]] = defaultdict(list)
+def compute_freshness_scores(parsed: dict, manager_quality: dict[str, dict]) -> dict[str, dict]:
+    """
+    Per-filer Freshness = exp(-FRESHNESS_K * turnover_fraction * filing_delay_fraction).
 
-    for entry in scored:
-        if entry["delta_type"] not in ("NEW", "ADDED"):
+    High turnover + long filing delay = steep discount, because the reported
+    positions have likely already changed by the time anyone can read the filing.
+    A patient, low-turnover manager's filing stays informative for much longer.
+    """
+    freshness: dict[str, dict] = {}
+
+    for filer_name, filer_data in parsed["filers"].items():
+        if "positions" not in filer_data:
             continue
 
-        ticker    = entry.get("ticker", "").strip()
-        cusip     = entry.get("cusip", "").strip()
-        name      = entry.get("name", "").strip().upper()
-        name_norm = re.sub(r"\b(INC|CORP|LTD|LLC|LP|PLC|CO|THE|DEL|COM)\b", "", name)
-        name_norm = re.sub(r"\s+", " ", name_norm).strip()
+        delay_days = filer_data.get("filing_delay_days")
+        if delay_days is None:
+            delay_days = 45  # SEC's typical max lag, conservative fallback
 
-        key = ticker or cusip or name_norm
-        if key:
-            key_filers[key].append(entry["filer"])
+        mq = manager_quality.get(filer_name, {})
+        turnover_pct = mq.get("avg_turnover_pct")
+        if turnover_pct is None:
+            # No turnover history yet - fall back to the concentration signal
+            # as a rough proxy (fewer positions tends to mean lower turnover).
+            turnover_pct = (1.0 - mq.get("concentration_score", 0.5)) * 50.0
 
-    return {
-        key: filers
-        for key, filers in key_filers.items()
-        if len(filers) >= CLUSTER_MIN_FUNDS
-    }
+        turnover_fraction = max(0.0, min(1.0, turnover_pct / 100.0))
+        delay_fraction    = max(0.0, delay_days) / FRESHNESS_QUARTER_DAYS
+
+        score = math.exp(-FRESHNESS_K * turnover_fraction * delay_fraction)
+
+        freshness[filer_name] = {
+            "freshness_score":    round(score, 3),
+            "filing_delay_days":  delay_days,
+            "turnover_pct_used":  round(turnover_pct, 1),
+        }
+
+    return freshness
 
 
-def apply_cluster_bonus(scored: list[dict], clusters: dict[str, list[str]]) -> list[dict]:
-    for entry in scored:
-        cluster_key = entry["ticker"] or entry.get("cusip", "")
-        if cluster_key in clusters:
-            entry["cluster_funds"] = clusters[cluster_key]
-            entry["cluster_count"] = len(clusters[cluster_key])
-            entry["raw_score"]    *= CLUSTER_BONUS_MULTIPLIER
-            if "CLUSTER" not in entry["flags"]:
-                entry["flags"].append("CLUSTER")
-        else:
-            entry["cluster_funds"] = []
-            entry["cluster_count"] = 0
+# ── Position size classification (Section 3) ──────────────────────────────────
+
+def classify_position_strength(port_pct: float) -> str:
+    label = NEW_POSITION_BANDS[0][1]
+    for lower, lbl in NEW_POSITION_BANDS:
+        if port_pct >= lower:
+            label = lbl
+    return label
+
+
+# ── Core scoring: buy-side universe ────────────────────────────────────────────
+
+def apply_flags(entry: dict) -> list[str]:
+    flags = []
+    tier   = entry.get("position_tier")
+    is_new = entry["delta_type"] == "NEW"
+
+    if is_new:
+        flags.append("NEW_POSITION")
+        flags.append(f"SIZE_{classify_position_strength(entry['port_weight_pct'])}")
+        if entry["port_weight_pct"] >= HIGH_CONVICTION_MIN_PCT:
+            flags.append("HIGH_CONVICTION")
+        if tier == "TOP10":
+            flags.append("TOP10_ENTRY")
+
+    if tier == "TOP3":
+        flags.append("TOP3_POSITION")
+    elif tier == "TOP5":
+        flags.append("TOP5_POSITION")
+
+    wvm = entry.get("weight_vs_median")
+    if wvm is not None and wvm >= RELATIVE_OUTSIZED_VS_MEDIAN:
+        flags.append("OUTSIZED_VS_MANAGER_TYPICAL")
+
+    if entry["delta_type"] == "ADDED" and entry["delta_pct"] is not None \
+            and entry["delta_pct"] >= DOUBLE_DOWN_MIN_DELTA:
+        flags.append("AGGRESSIVE_ADD")
+
+    put_val  = entry.get("put_value_usd_k", 0)
+    long_val = entry.get("value_usd_k", 0)
+    if put_val > 0 and long_val > 0 and put_val > long_val * 0.5:
+        flags.append("PUT_HEDGE_PRESENT")
+
+    return flags
+
+
+def build_scored_universe(
+    parsed: dict,
+    manager_quality: dict[str, dict],
+    freshness_by_filer: dict[str, dict],
+) -> list[dict]:
+    """
+    Iterates all filers and positions, collecting buy-side (NEW/ADDED) rows
+    with the raw inputs each Alpha Score component needs. Normalization
+    across the universe happens afterward in finalize_alpha_scores().
+    """
+    scored = []
+
+    for filer_name, filer_data in parsed["filers"].items():
+        if "positions" not in filer_data:
+            continue
+
+        mq_info         = manager_quality.get(filer_name, {})
+        quality_score   = mq_info.get("quality_score", 0.5)
+        fresh_info      = freshness_by_filer.get(filer_name, {})
+        freshness_score = fresh_info.get("freshness_score", 0.5)
+        filing_date     = filer_data.get("report_date") or filer_data.get("filing_date", "")
+
+        for pos in filer_data["positions"]:
+            tx_type = pos["delta"]["type"]
+            if tx_type not in ("NEW", "ADDED"):
+                continue
+            if pos["port_weight_pct"] < MIN_PORTFOLIO_WEIGHT_PCT:
+                continue
+            # Net short/hedged via puts - not a real conviction buy (Section 17).
+            if not pos.get("net_bullish", True):
+                continue
+            # Section 18: don't treat a likely merger/spin-off/share-class
+            # swap as a genuine new buy decision.
+            if pos.get("possible_corporate_action"):
+                continue
+
+            delta_pct = pos["delta"].get("delta_pct")
+            position_change_raw = 100.0 if delta_pct is None else abs(delta_pct)
+            ticker = pos.get("ticker", "") or pos.get("cusip", "")
+
+            entry = {
+                "filer":                  filer_name,
+                "ticker":                 ticker,
+                "cusip":                  pos.get("cusip", ""),
+                "name":                   pos.get("name", ""),
+                "port_weight_pct":        pos["port_weight_pct"],
+                "weight_vs_median":       pos.get("weight_vs_median"),
+                "position_tier":          pos.get("position_tier"),
+                "delta_pct":              delta_pct,
+                "delta_type":             tx_type,
+                "delta_shares":           pos["delta"]["delta_shares"],
+                "value_usd_k":            pos["value_usd_k"],
+                "put_value_usd_k":        pos.get("put_value_usd_k", 0),
+                "rank_in_port":           pos.get("rank"),
+                "filing_date":            filing_date,
+                "position_change_raw":    position_change_raw,
+                "manager_quality_score":  quality_score,
+                "freshness_score":        freshness_score,
+                "filing_delay_days":      fresh_info.get("filing_delay_days"),
+                "flags":                  [],
+            }
+            entry["flags"] = apply_flags(entry)
+            scored.append(entry)
+
     return scored
 
 
-def normalize_scores(scored: list[dict]) -> list[dict]:
-    """Min-max normalize raw_score to [0, 100]."""
+# ── Consensus (Section 9) & buyer counting ────────────────────────────────────
+
+def count_buyers_per_ticker(scored: list[dict]) -> dict[str, list[str]]:
+    """All filers buying (NEW/ADDED) each ticker this run - unfiltered by cluster threshold."""
+    buyers: dict[str, list[str]] = defaultdict(list)
+    for e in scored:
+        if e["ticker"]:
+            buyers[e["ticker"]].append(e["filer"])
+    return dict(buyers)
+
+
+def compute_consensus_raw(scored: list[dict]) -> dict[str, float]:
+    """
+    Section 9: Consensus = Sum(Manager Quality x Conviction x Position Change x Freshness)
+    over buying filers, per ticker. Unnormalized - min-max normalized later
+    alongside the other Alpha Score components.
+    """
+    raw: dict[str, float] = defaultdict(float)
+    for e in scored:
+        conviction      = e["port_weight_pct"] / 100.0
+        position_change = min(e["position_change_raw"] / 100.0, 3.0)  # cap extreme deltas
+        raw[e["ticker"]] += (
+            e["manager_quality_score"] * conviction * position_change * e["freshness_score"]
+        )
+    return dict(raw)
+
+
+# ── Crowding (Section 13, Tier-2 proxy) ───────────────────────────────────────
+
+def compute_crowding(ticker: str, buyer_count: int) -> dict:
+    """
+    NOT real market-wide institutional ownership data (that needs a data
+    source beyond the 13 tracked filers - see README Tier-3 gap). Approximates
+    crowding from (a) a static "hedge fund hotel" mega-cap list and (b) how
+    many of our own 13 tracked funds are already piling into the same name.
+    """
+    penalty = 0.0
+    if ticker in CROWDING_HOTEL_TICKERS:
+        penalty += CROWDING_HOTEL_PENALTY
+    if buyer_count > EARLY_SMART_MONEY_MAX_FUNDS:
+        penalty += (buyer_count - EARLY_SMART_MONEY_MAX_FUNDS) * CROWDING_PENALTY_PER_FUND_OVER_MAX
+
+    penalty = min(penalty, 100.0)
+    label = next(lbl for max_score, lbl in CROWDING_LABEL_BANDS if penalty <= max_score)
+    return {"crowding_penalty": round(penalty, 1), "crowding_label": label}
+
+
+# ── Alpha Score assembly (Section 15) ─────────────────────────────────────────
+
+def _minmax(values: list[float]) -> tuple[float, float]:
+    if not values:
+        return (0.0, 0.0)
+    return (min(values), max(values))
+
+
+def _norm(value: float, lo: float, hi: float) -> float:
+    """Min-max to [0,100]. When every value in the universe is identical,
+    there is no relative signal to extract - return neutral (50), not 0."""
+    if hi == lo:
+        return 50.0
+    return (value - lo) / (hi - lo) * 100.0
+
+
+def finalize_alpha_scores(
+    scored: list[dict],
+    mq_signals: dict[str, dict],
+) -> tuple[list[dict], dict[str, list[str]]]:
+    """
+    Normalizes the universe-relative components (active weight, position
+    change, consensus, accumulation) and assembles the weighted Alpha Score
+    per Section 15, minus crowding and price-action penalties.
+
+    Returns (scored, all_buyers_per_ticker).
+    """
     if not scored:
-        return scored
+        return scored, {}
 
-    scores = [e["raw_score"] for e in scored]
-    min_s, max_s = min(scores), max(scores)
+    aw_lo, aw_hi = _minmax([e["port_weight_pct"] for e in scored])
+    pc_lo, pc_hi = _minmax([e["position_change_raw"] for e in scored])
 
-    if max_s == min_s:
-        for e in scored:
-            e["conviction_score"] = 50.0
-    else:
-        for e in scored:
-            e["conviction_score"] = round(
-                (e["raw_score"] - min_s) / (max_s - min_s) * 100, 1
-            )
+    all_buyers = count_buyers_per_ticker(scored)
+    clusters   = {t: f for t, f in all_buyers.items() if len(f) >= CLUSTER_MIN_FUNDS}
 
-    return scored
+    consensus_raw       = compute_consensus_raw(scored)
+    cons_lo, cons_hi     = _minmax(list(consensus_raw.values()))
 
+    tickers_in_play      = {e["ticker"] for e in scored if e["ticker"]}
+    accumulation_raw     = {
+        t: mq_signals.get(t, {}).get("accumulation_score", 0.0) for t in tickers_in_play
+    }
+    acc_lo, acc_hi       = _minmax(list(accumulation_raw.values()))
+
+    for e in scored:
+        t = e["ticker"]
+
+        active_weight_component   = _norm(e["port_weight_pct"], aw_lo, aw_hi)
+        position_change_component = _norm(e["position_change_raw"], pc_lo, pc_hi)
+        consensus_component       = _norm(consensus_raw.get(t, 0.0), cons_lo, cons_hi)
+        accumulation_component    = _norm(accumulation_raw.get(t, 0.0), acc_lo, acc_hi)
+        manager_quality_component = e["manager_quality_score"] * 100.0
+        freshness_component       = e["freshness_score"] * 100.0
+        abnormal_ownership_component = 0.0  # Tier-3 gap - no data source yet
+
+        components = {
+            "active_weight":      round(active_weight_component, 1),
+            "position_change":    round(position_change_component, 1),
+            "manager_quality":    round(manager_quality_component, 1),
+            "consensus":          round(consensus_component, 1),
+            "accumulation":       round(accumulation_component, 1),
+            "freshness":          round(freshness_component, 1),
+            "abnormal_ownership": round(abnormal_ownership_component, 1),
+        }
+
+        buyer_count = len(all_buyers.get(t, []))
+        crowd = compute_crowding(t, buyer_count)
+
+        weighted = sum(ALPHA_WEIGHTS[k] * v for k, v in components.items())
+        price_penalty = e.get("price_action_penalty", 0.0)
+        alpha_score = max(0.0, min(100.0, weighted - crowd["crowding_penalty"] - price_penalty))
+
+        e["components"]        = components
+        e["crowding_penalty"]  = crowd["crowding_penalty"]
+        e["crowding_label"]    = crowd["crowding_label"]
+        e["alpha_score"]       = round(alpha_score, 1)
+        e["conviction_score"]  = e["alpha_score"]  # alias for backward-compat callers
+
+        if t in clusters:
+            e["cluster_funds"] = clusters[t]
+            e["cluster_count"] = len(clusters[t])
+            if "CLUSTER" not in e["flags"]:
+                e["flags"].append("CLUSTER")
+        else:
+            e["cluster_funds"] = []
+            e["cluster_count"] = buyer_count
+
+    return scored, all_buyers
+
+
+# ── Early Smart Money Accumulation (Section 10) ───────────────────────────────
+
+def flag_early_smart_money(
+    aggregated: list[dict],
+    all_buyers: dict[str, list[str]],
+    manager_quality: dict[str, dict],
+    mq_signals: dict[str, dict],
+) -> list[dict]:
+    """
+    Section 10: 2-6 high-quality managers buying/building the same name,
+    still early (few build quarters visible), not yet broadly crowded.
+    This is flagged as the single most-preferred setup in the spec.
+    """
+    for agg in aggregated:
+        ticker  = agg["ticker"]
+        buyers  = all_buyers.get(ticker, [])
+        count   = len(buyers)
+        agg["early_smart_money"] = False
+
+        if not (EARLY_SMART_MONEY_MIN_FUNDS <= count <= EARLY_SMART_MONEY_MAX_FUNDS):
+            continue
+
+        qualities    = [manager_quality.get(f, {}).get("quality_score", 0.5) for f in buyers]
+        avg_quality  = sum(qualities) / len(qualities) if qualities else 0.0
+        build_quarters = mq_signals.get(ticker, {}).get("build_quarters", 1)
+
+        if avg_quality >= EARLY_SMART_MONEY_MIN_AVG_QUALITY \
+                and build_quarters <= EARLY_SMART_MONEY_MAX_BUILD_QUARTERS \
+                and agg.get("crowding_label") in ("LOW", "MODERATE"):
+            agg["early_smart_money"] = True
+            agg["flags"] = sorted(set(agg["flags"]) | {"EARLY_SMART_MONEY_ACCUMULATION"})
+
+    return aggregated
+
+
+# ── Aggregation ────────────────────────────────────────────────────────────────
 
 def aggregate_by_ticker(scored: list[dict]) -> list[dict]:
     """Merges per-filer entries into per-ticker aggregates."""
@@ -369,41 +531,117 @@ def aggregate_by_ticker(scored: list[dict]) -> list[dict]:
                 "ticker":            ticker,
                 "name":              entry["name"],
                 "filers":            [],
-                "conviction_score":  0.0,
+                "alpha_score":       0.0,
                 "total_value_usd_k": 0,
                 "flags":             set(),
                 "cluster_count":     entry["cluster_count"],
                 "cluster_funds":     entry["cluster_funds"],
+                "crowding_penalty":  entry["crowding_penalty"],
+                "crowding_label":    entry["crowding_label"],
                 "delta_types":       [],
-                # Full post-filing performance dict (pct_change, filing_close,
-                # current_price, days_since_filing) – used in report and Claude prompt
                 "post_filing_perf":  entry.get("post_filing_perf", {}),
-                # Multi-quarter conviction signal (build_quarters, avg_delta_pct, flags)
                 "mq_signal":         entry.get("mq_signal", {}),
+                "best_components":   entry["components"],
             }
 
         agg = by_ticker[ticker]
         agg["filers"].append({
-            "filer":           entry["filer"],
-            "port_weight_pct": entry["port_weight_pct"],
-            "delta_pct":       entry["delta_pct"],
-            "delta_type":      entry["delta_type"],
-            "conviction_score":entry["conviction_score"],
-            "mq_multiplier":   entry.get("mq_multiplier", 1.0),
+            "filer":                  entry["filer"],
+            "port_weight_pct":        entry["port_weight_pct"],
+            "delta_pct":              entry["delta_pct"],
+            "delta_type":             entry["delta_type"],
+            "alpha_score":            entry["alpha_score"],
+            "manager_quality_score":  entry["manager_quality_score"],
+            "freshness_score":        entry["freshness_score"],
+            "weight_vs_median":       entry.get("weight_vs_median"),
+            "position_tier":          entry.get("position_tier"),
         })
-        agg["conviction_score"] = max(agg["conviction_score"], entry["conviction_score"])
+        if entry["alpha_score"] >= agg["alpha_score"]:
+            agg["alpha_score"]     = entry["alpha_score"]
+            agg["best_components"] = entry["components"]
         agg["total_value_usd_k"] += entry["value_usd_k"]
         agg["flags"].update(entry["flags"])
         agg["delta_types"].append(entry["delta_type"])
 
     result = []
     for ticker, agg in by_ticker.items():
-        agg["flags"]       = sorted(agg["flags"])
-        agg["filer_count"] = len(agg["filers"])
+        agg["flags"]            = sorted(agg["flags"])
+        agg["filer_count"]      = len(agg["filers"])
+        agg["conviction_score"] = agg["alpha_score"]  # backward-compat alias
         result.append(agg)
 
-    result.sort(key=lambda x: x["conviction_score"], reverse=True)
+    result.sort(key=lambda x: x["alpha_score"], reverse=True)
     return result
+
+
+# ── Sell-side signals (Section 14) ────────────────────────────────────────────
+
+def build_sell_signals(parsed: dict, manager_quality: dict[str, dict]) -> list[dict]:
+    """
+    Section 14: REDUCE/EXIT are negative signals in their own right, not just
+    discarded rows. Not merged into the buy-side Top 20 / Claude prompt -
+    surfaced separately (report: "Notable Exits & Reductions").
+
+    Small reductions are deliberately NOT overweighted (spec explicit ask):
+    only cuts of REDUCE_SIGNAL_MIN_DELTA_PCT or worse are included.
+    """
+    REDUCE_SIGNAL_MIN_DELTA_PCT = -20.0
+    signals: list[dict] = []
+
+    for filer_name, filer_data in parsed["filers"].items():
+        if "positions" not in filer_data:
+            continue
+        quality = manager_quality.get(filer_name, {}).get("quality_score", 0.5)
+
+        for pos in filer_data["positions"]:
+            if pos["delta"]["type"] != "REDUCED" or pos.get("possible_corporate_action"):
+                continue
+            delta_pct = pos["delta"].get("delta_pct")
+            if delta_pct is None or delta_pct > REDUCE_SIGNAL_MIN_DELTA_PCT:
+                continue
+            signals.append({
+                "filer":                 filer_name,
+                "ticker":                pos.get("ticker", "") or pos.get("cusip", ""),
+                "name":                  pos.get("name", ""),
+                "type":                  "REDUCE",
+                "manager_quality_score": quality,
+                "current_rank":          pos.get("rank"),
+                "port_weight_pct":       pos["port_weight_pct"],
+                "delta_pct":             delta_pct,
+                "severity_score":        round(quality * abs(delta_pct) / 100.0, 3),
+            })
+
+        for exit_pos in filer_data.get("exited_positions", []):
+            if exit_pos.get("possible_corporate_action"):
+                continue
+            prior_rank = exit_pos.get("prior_rank") or 999
+            was_top5   = prior_rank <= 5
+            signals.append({
+                "filer":                 filer_name,
+                "ticker":                exit_pos.get("ticker", "") or exit_pos.get("cusip", ""),
+                "name":                  exit_pos.get("name", ""),
+                "type":                  "EXIT",
+                "manager_quality_score": quality,
+                "prior_rank":            prior_rank,
+                "prior_port_weight":     exit_pos.get("prior_port_weight"),
+                "was_top5_position":     was_top5,
+                "severity_score":        round(quality * (2.0 if was_top5 else 1.0), 3),
+            })
+
+    # Parallel selling: 2+ funds exiting/reducing the same name is a much
+    # stronger negative signal than one fund trimming alone (Section 14).
+    by_ticker: dict[str, list[dict]] = defaultdict(list)
+    for s in signals:
+        by_ticker[s["ticker"]].append(s)
+
+    for ticker, group in by_ticker.items():
+        parallel = len(group) >= 2
+        for s in group:
+            s["parallel_selling"] = parallel
+            s["parallel_sellers"] = [g["filer"] for g in group if g["filer"] != s["filer"]] if parallel else []
+
+    signals.sort(key=lambda s: s["severity_score"], reverse=True)
+    return signals
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -412,54 +650,68 @@ def run():
     today_str = date.today().isoformat()
 
     print(f"\n{'='*60}")
-    print(f"Conviction Scoring Engine – {today_str}")
+    print(f"13F Alpha Score Engine – {today_str}")
     print(f"{'='*60}")
 
     parsed = load_parsed(today_str)
 
-    # 1. Multi-quarter signals from historical data
+    # 1. Dynamic Manager Quality (Section 7)
+    print("\n🧮 Computing dynamic manager quality scores...")
+    manager_quality = manager_quality_mod.build_manager_quality_scores(today_str, parsed)
+    for name, mq in manager_quality.items():
+        print(f"   {name}: quality={mq['quality_score']} "
+              f"(concentration={mq['concentration_score']}, turnover={mq['avg_turnover_pct']}, "
+              f"bootstrapped={mq['is_bootstrapped']})")
+
+    # 2. Freshness per filer (Section 8)
+    freshness_by_filer = compute_freshness_scores(parsed, manager_quality)
+
+    # 3. Multi-quarter accumulation signals (Section 6)
     print("\n🔍 Analyzing multi-quarter position building...")
     mq_signals = multi_quarter.build_multi_quarter_signals(today_str)
     print(f"   {len(mq_signals)} tickers with 2+ build quarters")
-    for t, s in list(mq_signals.items())[:5]:
-        print(f"   {t}: {s['build_quarters']}Q build, flags={s['flags']}")
 
-    # 2. Raw scores per filer/position (includes filer quality + MQ multiplier)
-    scored = build_scored_universe(parsed, mq_signals)
-    print(f"\n📊 Scored positions (buys only, ≥{MIN_PORTFOLIO_WEIGHT_PCT}% port weight): {len(scored)}")
+    # 4. Buy-side universe
+    scored = build_scored_universe(parsed, manager_quality, freshness_by_filer)
+    print(f"\n📊 Scored buy-side positions (≥{MIN_PORTFOLIO_WEIGHT_PCT}% port weight): {len(scored)}")
 
-    # 3. Price-action staleness check
+    # 5. Price-action staleness check
     scored = enrich_with_price_action(scored)
 
-    # 4. Cluster detection
-    clusters = detect_clusters(scored)
-    print(f"🔗 Cluster signals (≥{CLUSTER_MIN_FUNDS} funds): {len(clusters)} tickers")
-    for t, f in clusters.items():
-        print(f"   {t}: {f}")
-
-    # 5. Apply cluster bonus
-    scored = apply_cluster_bonus(scored, clusters)
-
-    # 6. Normalize to [0, 100]
-    scored = normalize_scores(scored)
+    # 6. Assemble Alpha Score (components, consensus, crowding)
+    scored, all_buyers = finalize_alpha_scores(scored, mq_signals)
 
     # 7. Aggregate by ticker
     aggregated = aggregate_by_ticker(scored)
 
+    # 8. Early Smart Money Accumulation (Section 10)
+    aggregated = flag_early_smart_money(aggregated, all_buyers, manager_quality, mq_signals)
+
+    clusters = {t: f for t, f in all_buyers.items() if len(f) >= CLUSTER_MIN_FUNDS}
+    print(f"🔗 Cluster signals (≥{CLUSTER_MIN_FUNDS} funds): {len(clusters)} tickers")
+    early_count = sum(1 for a in aggregated if a.get("early_smart_money"))
+    print(f"🌱 Early Smart Money Accumulation: {early_count} tickers")
+
+    # 9. Sell-side signals (Section 14) - separate from the buy universe
+    sell_signals = build_sell_signals(parsed, manager_quality)
+    print(f"📉 Sell-side signals (REDUCE ≥20% / EXIT): {len(sell_signals)}")
+
     print(f"\n{'─'*60}")
-    print(f"{'Rank':<5}{'Ticker':<8}{'Score':<8}{'Filers':<8}{'Flags'}")
+    print(f"{'Rank':<5}{'Ticker':<8}{'Score':<8}{'Filers':<8}{'Crowd':<10}{'Flags'}")
     print(f"{'─'*60}")
     for i, agg in enumerate(aggregated[:20], 1):
-        print(f"{i:<5}{agg['ticker']:<8}{agg['conviction_score']:<8.1f}"
-              f"{agg['filer_count']:<8}{', '.join(agg['flags'])}")
+        print(f"{i:<5}{agg['ticker']:<8}{agg['alpha_score']:<8.1f}"
+              f"{agg['filer_count']:<8}{agg['crowding_label']:<10}{', '.join(agg['flags'])}")
 
     output = {
-        "date":        today_str,
-        "scored_flat": scored,
-        "aggregated":  aggregated,
-        "clusters":    clusters,
-        "top20":       aggregated[:20],
-        "mq_signals":  mq_signals,
+        "date":             today_str,
+        "scored_flat":      scored,
+        "aggregated":       aggregated,
+        "clusters":         clusters,
+        "top20":            aggregated[:20],
+        "mq_signals":       mq_signals,
+        "manager_quality":  manager_quality,
+        "sell_signals":     sell_signals,
     }
 
     output_path = DATA_DIR / f"{today_str}_scores.json"
