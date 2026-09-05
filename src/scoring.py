@@ -377,9 +377,10 @@ def compute_consensus_raw(scored: list[dict]) -> dict[str, float]:
 def compute_crowding(ticker: str, buyer_count: int) -> dict:
     """
     NOT real market-wide institutional ownership data (that needs a data
-    source beyond the 13 tracked filers - see README Tier-3 gap). Approximates
-    crowding from (a) a static "hedge fund hotel" mega-cap list and (b) how
-    many of our own 13 tracked funds are already piling into the same name.
+    source beyond the tracked filers in config.FILERS - see README Tier-3
+    gap). Approximates crowding from (a) a static "hedge fund hotel" mega-cap
+    list and (b) how many of our own tracked funds are already piling into
+    the same name.
     """
     penalty = 0.0
     if ticker in CROWDING_HOTEL_TICKERS:

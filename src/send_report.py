@@ -16,7 +16,7 @@ from email.mime.text import MIMEText
 from pathlib import Path
 
 from config import (
-    DATA_DIR, GMAIL_SMTP_HOST, GMAIL_SMTP_PORT,
+    DATA_DIR, FILERS, GMAIL_SMTP_HOST, GMAIL_SMTP_PORT,
     REPORT_SUBJECT, REPORTS_DIR,
 )
 
@@ -535,7 +535,7 @@ def generate_html_report(analysis: dict, backtest: dict | None = None) -> str:
         QUARTERLY INSTITUTIONAL INTELLIGENCE
       </div>
       <div style="font-size:28px;font-weight:800;margin-bottom:4px">SEC 13F Smart Money Report</div>
-      <div style="font-size:16px;color:#c7d2fe">{today_str} &nbsp;·&nbsp; 13 Monitored Institutions &nbsp;·&nbsp; Top 5 Picks</div>
+      <div style="font-size:16px;color:#c7d2fe">{today_str} &nbsp;·&nbsp; {len(FILERS)} Monitored Institutions &nbsp;·&nbsp; Top 5 Picks</div>
     </div>
 
     <!-- Market Context -->

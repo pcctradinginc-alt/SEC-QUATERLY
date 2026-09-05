@@ -24,7 +24,7 @@ import anthropic
 
 from config import (
     CLAUDE_MAX_TOKENS, CLAUDE_MODEL_R2, CLAUDE_RETRY_COUNT,
-    CLAUDE_RETRY_DELAY, DATA_DIR,
+    CLAUDE_RETRY_DELAY, DATA_DIR, FILERS,
 )
 
 
@@ -123,7 +123,7 @@ def _build_cached_system_context(r1: dict) -> str:
 
 ANALYSIS DATE: {today_str}
 DATA SOURCE: SEC 13F filings (up to 45-day lag). These theses were identified by a prior
-quantitative screen of 13 institutional investors; they reflect positions as of quarter-end.
+quantitative screen of {len(FILERS)} institutional investors; they reflect positions as of quarter-end.
 
 ═══════════════════════════════════════════════════════
 TOP-5 INVESTMENT THESES (from 13F conviction analysis)

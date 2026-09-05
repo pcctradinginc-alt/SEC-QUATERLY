@@ -15,40 +15,133 @@ REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # ── Filer registry ────────────────────────────────────────────────────────────
 # Format: { "display_name": "CIK_padded_to_10_digits" }
+# All CIKs verified against https://data.sec.gov/submissions/CIK{cik}.json
+# (name match + confirmed 13F-HR filing history) before being added here.
+#
+# DATA-QUALITY FIX: the CIK previously labeled "TCI Fund (Chris Hohn)"
+# (0001649339) actually resolves to Scion Asset Management, LLC (Michael
+# Burry) on EDGAR - a mislabeled entry, not TCI Fund Management at all.
+# Renamed below to the correct manager; the real TCI Fund Management Ltd
+# CIK (0001647251) is added as its own entry. Any historical
+# data/holdings/*.json from before this fix has Burry's Scion filings
+# stored under the old "TCI Fund (Chris Hohn)" key.
 FILERS = {
-    "Situational Awareness LP":   "0002045724",
-    "Yale University":            "0000938582",
-    "Gates Foundation Trust":     "0001166559",
-    "Harvard Management Co":      "0001082621",
-    "Brown University":           "0001664741",
-    "Duke University":            "0001439873",
-    "TCI Fund (Chris Hohn)":      "0001649339",
-    "Pershing Square (Ackman)":   "0001336528",
-    "Tiger Global (Coleman)":     "0001167483",
-    "Coatue (Laffont)":          "0001766502",
-    "D1 Capital (Sundheim)":      "0001747057",
-    "Viking Global (Halvorsen)":  "0001103804",
-    "AQR Capital (Asness)":       "0001167557",
+    "Situational Awareness LP":       "0002045724",
+    "Yale University":                "0000938582",
+    "Gates Foundation Trust":         "0001166559",
+    "Harvard Management Co":          "0001082621",
+    "Brown University":               "0001664741",
+    "Duke University":                "0001439873",
+    "Scion Asset Management (Burry)": "0001649339",  # was mislabeled "TCI Fund (Chris Hohn)"
+    "Pershing Square (Ackman)":       "0001336528",
+    "Tiger Global (Coleman)":         "0001167483",
+    "Coatue (Laffont)":               "0001766502",
+    "D1 Capital (Sundheim)":          "0001747057",
+    "Viking Global (Halvorsen)":      "0001103804",
+    "AQR Capital (Asness)":           "0001167557",
+    # --- Added: broader "smart money" universe ---
+    "Berkshire Hathaway (Buffett)":         "0001067983",
+    "Soros Fund Management (Soros)":        "0001029160",
+    "Duquesne Family Office (Druckenmiller)":"0001536411",
+    "NVIDIA Corp":                          "0001045810",
+    "Alphabet Inc":                         "0001652044",
+    "Third Point (Loeb)":                   "0001040273",
+    "Baupost Group (Klarman)":              "0001061768",
+    "TCI Fund Management (Hohn)":           "0001647251",
+    "Pershing Square Inc":                  "0002026053",
+    "SoftBank Group Corp":                  "0001065521",
+    "Oaktree Capital Management (Marks)":   "0000949509",
+    "Trian Fund Management (Peltz)":        "0001345471",
+    "DME Capital Management":               "0001489933",
+    "Renaissance Technologies (Quant)":     "0001037389",
+    "Two Sigma Investments (Quant)":        "0001179392",
+    "Thiel Macro (Thiel)":                  "0001562087",
+    "Donald Smith & Co":                    "0000814375",
+    "Whale Rock Capital Management":        "0001387322",
+    "Appaloosa (Tepper)":                   "0001656456",
+    "Chou Associates Management":           "0001389403",
+    "7G Capital Management":                "0001720350",
+    "Lountzis Asset Management":            "0001821168",
+    "ValueAct Holdings":                    "0001418814",
+    "H&H International Investment (Li Lu)": "0001759760",
+    "Brave Warrior Advisors (Ainslie)":     "0001553733",
+    "Arbiter Partners Capital Management":  "0001513193",
+    "Sound Shore Management":               "0000820124",
+    "Fairfax Financial Holdings (Watsa)":   "0000915191",
+    "Semper Augustus Investments Group":    "0001115373",
+    "Atreides Management":                  "0001777813",
+    "RV Capital (Zeller)":                  "0001766596",
+    "Ancient Art (Pabrai)":                 "0001426749",
+    "Muhlenkamp & Co":                      "0001133219",
+    "Himalaya Capital Management (Li Lu)":  "0001709323",
+    "Abrams Capital Management":            "0001358706",
+    "Lone Pine Capital (Mandel)":           "0001061165",
+    "Dodge & Cox":                          "0000200217",
+    "Harris Associates (Oakmark)":          "0000813917",
+    "SurgoCap Partners":                    "0001960830",
 }
 
-# ── Filer quality tiers ───────────────────────────────────────────────────────
-# University endowments: long-horizon, fundamental → higher weight
-# Growth hedge funds: more momentum-driven → lower weight
-# These multipliers are applied to raw_score in scoring.py
+# ── Filer quality tiers (static bootstrap prior) ─────────────────────────────
+# University endowments / concentrated value investors: long-horizon,
+# fundamental -> higher weight. Quant / diversified / non-traditional
+# filers (corporate treasuries, pure quant shops): lower weight.
+# This is only the STARTING prior - manager_quality.py blends it with
+# actual measured concentration + turnover once enough quarters of history
+# exist, and the prior's influence shrinks as real data accumulates.
 FILER_QUALITY: dict[str, float] = {
     "Yale University":            1.3,
     "Harvard Management Co":      1.3,
     "Gates Foundation Trust":     1.3,
     "Brown University":           1.2,
     "Duke University":            1.2,
-    "TCI Fund (Chris Hohn)":      1.2,
+    "TCI Fund Management (Hohn)": 1.2,
     "Viking Global (Halvorsen)":  1.1,
     "AQR Capital (Asness)":       1.0,
     "Pershing Square (Ackman)":   1.0,
+    "Pershing Square Inc":        1.0,
     "Tiger Global (Coleman)":     0.9,
-    "Coatue (Laffont)":          0.9,
+    "Coatue (Laffont)":           0.9,
     "D1 Capital (Sundheim)":      0.9,
     "Situational Awareness LP":   0.8,
+    # --- Added ---
+    "Berkshire Hathaway (Buffett)":           1.3,
+    "Baupost Group (Klarman)":                1.3,
+    "ValueAct Holdings":                      1.3,
+    "H&H International Investment (Li Lu)":   1.3,
+    "Himalaya Capital Management (Li Lu)":    1.3,
+    "Semper Augustus Investments Group":      1.2,
+    "Fairfax Financial Holdings (Watsa)":     1.2,
+    "RV Capital (Zeller)":                    1.2,
+    "Oaktree Capital Management (Marks)":     1.2,
+    "Harris Associates (Oakmark)":            1.2,
+    "Dodge & Cox":                            1.2,
+    "Ancient Art (Pabrai)":                   1.2,
+    "Muhlenkamp & Co":                        1.1,
+    "Donald Smith & Co":                      1.1,
+    "Chou Associates Management":             1.1,
+    "Sound Shore Management":                 1.1,
+    "Lountzis Asset Management":              1.1,
+    "Abrams Capital Management":              1.1,
+    "Scion Asset Management (Burry)":         1.0,
+    "Duquesne Family Office (Druckenmiller)": 1.0,
+    "Third Point (Loeb)":                     1.0,
+    "Trian Fund Management (Peltz)":          1.0,
+    "Arbiter Partners Capital Management":    1.0,
+    "Brave Warrior Advisors (Ainslie)":       1.0,
+    "7G Capital Management":                  1.0,
+    "SurgoCap Partners":                      1.0,
+    "DME Capital Management":                 1.0,
+    "Soros Fund Management (Soros)":          0.9,
+    "Thiel Macro (Thiel)":                    0.9,
+    "Appaloosa (Tepper)":                     0.9,
+    "Lone Pine Capital (Mandel)":             0.9,
+    "Whale Rock Capital Management":          0.9,
+    "Atreides Management":                    0.9,
+    "SoftBank Group Corp":                    0.7,
+    "NVIDIA Corp":                            0.6,
+    "Alphabet Inc":                           0.6,
+    "Renaissance Technologies (Quant)":       0.3,
+    "Two Sigma Investments (Quant)":          0.3,
 }
 
 # ── SEC EDGAR endpoints ───────────────────────────────────────────────────────
@@ -128,10 +221,11 @@ EARLY_SMART_MONEY_MAX_BUILD_QUARTERS = 3   # "seit wenigen Quartalen sichtbar"
 
 # ── Crowding penalty (proxy – Tier 2) ────────────────────────────────────────
 # NOTE: This is NOT real market-wide institutional ownership data (that is
-# Tier 3, section 11-13, and needs a data source beyond the 13 tracked filers).
-# It approximates crowding from (a) how many of the 13 tracked funds already
-# hold the name, and (b) a static list of well-known "hedge fund hotel" mega
-# caps that are structurally crowded regardless of what our 13 funds do.
+# Tier 3, section 11-13, and needs a data source beyond the tracked filers
+# in FILERS above). It approximates crowding from (a) how many of the
+# tracked funds already hold the name, and (b) a static list of well-known
+# "hedge fund hotel" mega caps that are structurally crowded regardless of
+# what our tracked funds do.
 CROWDING_HOTEL_TICKERS = {
     "AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "GOOG", "META", "TSLA",
     "BRK/B", "BRK.B", "AVGO", "LLY",

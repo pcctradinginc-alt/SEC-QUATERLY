@@ -23,7 +23,7 @@ import anthropic
 
 from config import (
     CLAUDE_MAX_TOKENS_R1, CLAUDE_MODEL_R1, CLAUDE_RETRY_COUNT,
-    CLAUDE_RETRY_DELAY, DATA_DIR,
+    CLAUDE_RETRY_DELAY, DATA_DIR, FILERS,
 )
 
 
@@ -138,7 +138,7 @@ most derivatives). Treat this as an idea generator, not a buy signal.
 DATA GAPS YOU MUST BE HONEST ABOUT (do not fabricate numbers for these):
 - No benchmark index data is wired up yet, so "Active Weight" vs. S&P 500/Russell is NOT available.
   Use weight_vs_median (position size relative to that manager's OWN typical position) as the closest proxy instead.
-- No market-wide institutional ownership data is available (only these 13 tracked funds are observed).
+- No market-wide institutional ownership data is available (only these {len(FILERS)} tracked funds are observed).
   Do not state or imply broad institutional ownership trends – say so explicitly when the format below asks for it.
 - Abnormal Ownership is not computed (no data source) – state "not available" rather than guessing.
 
@@ -227,7 +227,7 @@ _ROUND1_TOOL = {
                         "consensus_narrative":    {"type": "string", "description": "Which quality managers are buying together, and how strong that consensus is."},
                         "institutional_ownership_narrative": {
                             "type": "string",
-                            "description": "State plainly that broad institutional-ownership data is NOT available (only the 13 tracked funds) rather than fabricating a trend.",
+                            "description": f"State plainly that broad institutional-ownership data is NOT available (only the {len(FILERS)} tracked funds) rather than fabricating a trend.",
                         },
                         "crowding_label": {"type": "string", "enum": ["LOW", "MODERATE", "HIGH", "EXTREME"], "description": "Copy the given crowding_label – do not invent your own."},
                         "freshness_narrative": {"type": "string", "description": "How filing delay + manager turnover affect how stale this signal already is."},

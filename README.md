@@ -1,12 +1,22 @@
 # SEC 13F Smart Money Analyzer
 
-Automated quarterly analysis of 13F filings from 13 top institutional investors.
+Automated quarterly analysis of 13F filings from 52 tracked institutional investors.
 Runs automatically on **16 May / 16 Aug / 16 Nov / 16 Feb** (next business day if weekend).
 Delivers a **Top 5 stock picks + specific option trades** report via Gmail.
 
 ---
 
 ## Monitored Institutions
+
+All CIKs below are verified against `https://data.sec.gov/submissions/CIK{cik}.json`
+(name match + confirmed 13F-HR filing history).
+
+> **Data-quality fix:** the CIK previously labeled `TCI Fund (Chris Hohn)`
+> (`0001649339`) actually resolves to **Scion Asset Management, LLC (Michael
+> Burry)** on EDGAR — a mislabeled entry, not TCI Fund Management. It has been
+> renamed below to the correct manager; the real TCI Fund Management Ltd CIK
+> (`0001647251`) was added as its own entry. Any `data/holdings/*.json` from
+> before this fix has Burry's Scion filings stored under the old key.
 
 | Institution | CIK |
 |---|---|
@@ -16,13 +26,61 @@ Delivers a **Top 5 stock picks + specific option trades** report via Gmail.
 | Harvard Management Co | 0001082621 |
 | Brown University | 0001664741 |
 | Duke University | 0001439873 |
-| TCI Fund (Chris Hohn) | 0001649339 |
+| Scion Asset Management (Burry) | 0001649339 |
 | Pershing Square (Ackman) | 0001336528 |
 | Tiger Global (Coleman) | 0001167483 |
 | Coatue (Laffont) | 0001766502 |
 | D1 Capital (Sundheim) | 0001747057 |
 | Viking Global (Halvorsen) | 0001103804 |
 | AQR Capital (Asness) | 0001167557 |
+| Berkshire Hathaway (Buffett) | 0001067983 |
+| Soros Fund Management (Soros) | 0001029160 |
+| Duquesne Family Office (Druckenmiller) | 0001536411 |
+| NVIDIA Corp | 0001045810 |
+| Alphabet Inc | 0001652044 |
+| Third Point (Loeb) | 0001040273 |
+| Baupost Group (Klarman) | 0001061768 |
+| TCI Fund Management (Hohn) | 0001647251 |
+| Pershing Square Inc | 0002026053 |
+| SoftBank Group Corp | 0001065521 |
+| Oaktree Capital Management (Marks) | 0000949509 |
+| Trian Fund Management (Peltz) | 0001345471 |
+| DME Capital Management | 0001489933 |
+| Renaissance Technologies (Quant) | 0001037389 |
+| Two Sigma Investments (Quant) | 0001179392 |
+| Thiel Macro (Thiel) | 0001562087 |
+| Donald Smith & Co | 0000814375 |
+| Whale Rock Capital Management | 0001387322 |
+| Appaloosa (Tepper) | 0001656456 |
+| Chou Associates Management | 0001389403 |
+| 7G Capital Management | 0001720350 |
+| Lountzis Asset Management | 0001821168 |
+| ValueAct Holdings | 0001418814 |
+| H&H International Investment (Li Lu) | 0001759760 |
+| Brave Warrior Advisors (Ainslie) | 0001553733 |
+| Arbiter Partners Capital Management | 0001513193 |
+| Sound Shore Management | 0000820124 |
+| Fairfax Financial Holdings (Watsa) | 0000915191 |
+| Semper Augustus Investments Group | 0001115373 |
+| Atreides Management | 0001777813 |
+| RV Capital (Zeller) | 0001766596 |
+| Ancient Art (Pabrai) | 0001426749 |
+| Muhlenkamp & Co | 0001133219 |
+| Himalaya Capital Management (Li Lu) | 0001709323 |
+| Abrams Capital Management | 0001358706 |
+| Lone Pine Capital (Mandel) | 0001061165 |
+| Dodge & Cox | 0000200217 |
+| Harris Associates (Oakmark) | 0000813917 |
+| SurgoCap Partners | 0001960830 |
+
+**Note:** NVIDIA Corp and Alphabet Inc file 13F for their own corporate
+treasury/strategic-stake holdings, not a dedicated stock-picking mandate —
+they're tracked here as corporate strategic-investment signals, and their
+`FILER_QUALITY` prior in `config.py` is set lower to reflect that.
+
+Going from 13 to 52 tracked filers multiplies SEC EDGAR + OpenFIGI request
+volume roughly 4x — `fetch_filings.py` respects `SEC_RATE_LIMIT_SLEEP`
+either way, but expect a noticeably longer pipeline run.
 
 ---
 
