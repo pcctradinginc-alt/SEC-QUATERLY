@@ -219,7 +219,7 @@ each was re-verified against the EDGAR submissions feed):
 | 13F data is up to 45 days old and shows no shorts, hedges or cash | freshness factor, price-action penalty, disclaimer |
 | Weights use long-only reported AUM | overstated for diversified managers – noted in the report |
 | Only the 40 top pre-ranked tickers get the Form 4 look-up | a name outside that pool cannot enter the Top 10 on insider strength alone |
-| Share classes of one issuer share a Top-10 slot | the higher-scoring class is kept; the other is listed as an alternate |
+| Share classes of one issuer share a Top-10 slot | the higher-scoring class is kept; the other is listed as an alternate. Folding requires the issuer name **and** the ticker family to match, because every iShares fund reports the issuer name "ISHARES INC" |
 | A filer absent from the prior quarter makes all its positions look NEW | expected once after the universe is expanded; self-corrects next quarter |
 | Crowding is a proxy (hotel list + tracked-fund cluster) | no market-wide ownership feed is wired up |
 | Manager quality blends toward a static prior until enough quarters exist | fully data-driven after 8 quarters |

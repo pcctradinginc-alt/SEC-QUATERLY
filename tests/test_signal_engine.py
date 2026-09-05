@@ -168,6 +168,31 @@ def test_issuer_key_does_not_overmerge():
     assert k({"name": "", "ticker": "ELV"}) == "ELV"       # falls back to ticker
 
 
+def test_share_class_family_ticker_test():
+    f = se.same_share_class_family
+    for a, b in [("BRK/A", "BRK/B"), ("GOOG", "GOOGL"), ("UA", "UAA"),
+                 ("FOX", "FOXA"), ("CORZ", "CORZW"), ("LLYVA", "LLYVK")]:
+        assert f(a, b) and f(b, a), (a, b)
+    for a, b in [("EWY", "EWZ"), ("IWM", "INDA"), ("BRK/B", "BRKB2")]:
+        assert not f(a, b) and not f(b, a), (a, b)
+
+
+def test_etfs_of_one_sponsor_are_not_merged():
+    """Every iShares fund reports issuer name "ISHARES INC"; matching the name
+    alone merged South Korea (EWY) with Brazil (EWZ) in a real run."""
+    s = {"aggregated": [
+            _agg("EWZ",  [_filer("Fund A", 9.0)], name="Ishares Inc"),
+            _agg("EWY",  [_filer("Fund A", 8.0)], name="ISHARES INC"),
+            _agg("INDA", [_filer("Fund B", 7.0)], name="ISHARES TR"),
+            _agg("IWM",  [_filer("Fund B", 6.0)], name="Ishares Tr"),
+            _agg("VZ",   [_filer("Fund C", 5.0)], name="VERIZON COMMUNICATIONS INC"),
+            _agg("V",    [_filer("Fund C", 4.0)], name="VISA INC COM CL A"),
+         ], "scored_flat": [], "mq_signals": {}}
+    r = se.compute_signals(s, {}, TODAY)
+    assert [x["ticker"] for x in r["top10"]] == ["EWZ", "EWY", "INDA", "IWM", "VZ", "V"]
+    assert r["excluded_same_issuer"] == []
+
+
 def test_json_roundtrip_stable():
     r = se.compute_signals(make_scores(), INSIDER, TODAY)
     again = json.loads(json.dumps(r, sort_keys=True))

@@ -34,6 +34,7 @@ import hashlib
 import json
 import re
 import sys
+from collections import defaultdict
 from datetime import date
 
 from config import (
@@ -75,9 +76,13 @@ _ISSUER_SUFFIX_RE = re.compile(
 
 def issuer_key(row: dict) -> str:
     """
-    Collapses share classes of one issuer onto a single key so BRK/A and BRK/B
-    (or GOOG and GOOGL) cannot occupy two Top-10 slots with the same signal.
-    Uses the normalised issuer name, falling back to the ticker root.
+    Grouping key for share-class detection: the normalised issuer name, falling
+    back to the ticker root.
+
+    A matching name is NECESSARY but NOT SUFFICIENT to treat two rows as the
+    same instrument - every iShares ETF reports the issuer name "ISHARES INC",
+    so name-only matching merges South Korea (EWY) with Brazil (EWZ). Callers
+    must also pass same_share_class_family() on the tickers.
     """
     name = _ISSUER_SUFFIX_RE.sub("", (row.get("name") or "").upper())
     name = re.sub(r"[^A-Z0-9 ]", " ", name)
@@ -88,6 +93,35 @@ def issuer_key(row: dict) -> str:
     if name:
         return name
     return (row.get("ticker") or "").split("/")[0].upper()
+
+
+def _ticker_root(t: str) -> str:
+    return (t or "").split("/")[0].upper()
+
+
+def same_share_class_family(a: str, b: str) -> bool:
+    """
+    Are two tickers share classes of the SAME instrument?
+
+    True for BRK/A vs BRK/B (same root before the class separator),
+    GOOG vs GOOGL, UA vs UAA, FOX vs FOXA, CORZ vs CORZW (one is a strict
+    prefix of the other) and LLYVA vs LLYVK (equal length, differing only in a
+    trailing class letter, sharing at least four characters).
+
+    False for EWY vs EWZ and IWM vs INDA - different funds that merely share a
+    legal issuer name.
+    """
+    ra, rb = _ticker_root(a), _ticker_root(b)
+    if not ra or not rb:
+        return False
+    if "/" in (a or "") or "/" in (b or ""):
+        return ra == rb
+    if ra == rb:
+        return True
+    lo, hi = sorted((ra, rb), key=len)
+    if hi.startswith(lo):
+        return True
+    return len(ra) == len(rb) and len(ra) >= 5 and ra[:-1] == rb[:-1]
 
 
 def _grade(score: float) -> str:
@@ -330,18 +364,22 @@ def compute_signals(scores: dict, insider_by_ticker: dict[str, dict], today: dat
 
     eligible = [r for r in rows if r["option_eligible"]]
 
-    # One issuer occupies one slot: keep its highest-scoring share class and
-    # record the ones that were folded into it.
+    # One instrument occupies one slot: keep the highest-scoring share class and
+    # record the ones folded into it. A row is folded only when BOTH the issuer
+    # name and the ticker family match, so different funds of one ETF sponsor
+    # stay separate.
     deduped: list[dict] = []
-    seen: dict[str, dict] = {}
+    kept_by_name: dict[str, list[dict]] = defaultdict(list)
     for r in eligible:                                   # already score-sorted
         key = issuer_key(r)
-        if key in seen:
-            seen[key].setdefault("same_issuer_alternates", []).append(
+        host = next((k for k in kept_by_name[key]
+                     if same_share_class_family(k["ticker"], r["ticker"])), None)
+        if host is not None:
+            host.setdefault("same_issuer_alternates", []).append(
                 {"ticker": r["ticker"], "signal_score": r["signal_score"]})
-            r["superseded_by"] = seen[key]["ticker"]
+            r["superseded_by"] = host["ticker"]
             continue
-        seen[key] = r
+        kept_by_name[key].append(r)
         deduped.append(r)
 
     for i, r in enumerate(deduped, 1):
