@@ -1,30 +1,27 @@
 {
-  "passed": false,
-  "failures": [
-    "loaded prior period UNKNOWN is not the required 2025-09-30",
-    "no current position matched the prior quarter"
-  ],
+  "passed": true,
+  "failures": [],
   "warnings": [
-    "zero EXITs across the whole universe (every comparable filer has a capped book)"
+    "1 filers had no prior baseline (new to the universe or newly renamed)"
   ],
   "summary": {
     "counts": {
-      "NEW": 3466,
-      "ADDED": 0,
-      "REDUCED": 0,
-      "UNCHANGED": 0,
+      "NEW": 752,
+      "ADDED": 1044,
+      "REDUCED": 1215,
+      "UNCHANGED": 455,
       "SOLD": 0
     },
-    "exits": 0,
+    "exits": 343,
     "total_positions": 3466,
-    "matched_positions": 0,
-    "new_ratio": 1.0,
-    "filers_with_prior": 0,
-    "filers_without_prior": 49,
+    "matched_positions": 2714,
+    "new_ratio": 0.21696480092325446,
+    "filers_with_prior": 48,
+    "filers_without_prior": 1,
     "capped_without_exits": 3
   },
   "current_period": "2025-12-31",
-  "prior_period": "",
+  "prior_period": "2025-09-30",
   "expected_prior": "2025-09-30",
   "checked_at": "2026-09-06"
 }
