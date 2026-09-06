@@ -328,6 +328,10 @@ def build_scored_universe(
             # swap as a genuine new buy decision.
             if pos.get("possible_corporate_action"):
                 continue
+            # Options-only exposure is not share accumulation. It stays in the
+            # book and is reported, but the share-count signal needs shares.
+            if pos.get("exposure_type", "COMMON_LONG") != "COMMON_LONG":
+                continue
 
             delta_pct = pos["delta"].get("delta_pct")
             position_change_raw = 100.0 if delta_pct is None else abs(delta_pct)

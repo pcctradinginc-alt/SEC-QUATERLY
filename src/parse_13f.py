@@ -175,49 +175,56 @@ def build_position_lookup(filer_data: dict) -> dict:
       net_bullish                   → True if long_value > put_value
     """
     long_lookup: dict = {}
+    call_lookup: dict = {}
     put_lookup:  dict = {}
 
     for h in filer_data.get("holdings", []):
         put_call = (h.get("putCall") or "").strip().upper()
         key      = h.get("ticker") or h.get("cusip") or h.get("nameOfIssuer", "UNKNOWN")
 
-        if put_call == "PUT":
-            if key in put_lookup:
-                put_lookup[key]["shares"]              += h["shares"]
-                put_lookup[key]["value_usd_thousands"] += h["value_usd_thousands"]
-            else:
-                put_lookup[key] = {**h}
+        # Three exposures, never merged. A CALL reports the notional share count
+        # of an option, not shares owned: adding it to the common line makes a
+        # manager who only bought options look like a share buyer, and letting
+        # an option expire look like a sale. The share-count delta the ranking
+        # is built on must compare common stock with common stock.
+        target = put_lookup if put_call == "PUT" else call_lookup if put_call == "CALL" else long_lookup
+        if key in target:
+            target[key]["shares"]              += h["shares"]
+            target[key]["value_usd_thousands"] += h["value_usd_thousands"]
         else:
-            # Long or CALL – counts as bullish exposure
-            if key in long_lookup:
-                long_lookup[key]["shares"]              += h["shares"]
-                long_lookup[key]["value_usd_thousands"] += h["value_usd_thousands"]
-            else:
-                long_lookup[key] = {**h}
+            target[key] = {**h}
 
-    # Merge: annotate every long position with its paired PUT size
-    all_keys = set(long_lookup) | set(put_lookup)
+    # Merge: annotate every common-stock line with its paired option exposure
+    all_keys = set(long_lookup) | set(call_lookup) | set(put_lookup)
     lookup   = {}
 
     for key in all_keys:
         if key in long_lookup:
             entry = {**long_lookup[key]}
         else:
-            # Pure-put position: create a placeholder with zero long exposure
-            entry = {**put_lookup[key], "shares": 0, "value_usd_thousands": 0}
+            # Options only, no shares owned: keep it for transparency with an
+            # explicit zero common position so no share delta is invented.
+            source = call_lookup.get(key) or put_lookup[key]
+            entry = {**source, "shares": 0, "value_usd_thousands": 0}
 
-        put_entry = put_lookup.get(key, {})
+        call_entry = call_lookup.get(key, {})
+        put_entry  = put_lookup.get(key, {})
+        entry["call_shares"]      = call_entry.get("shares", 0)
+        entry["call_value_usd_k"] = call_entry.get("value_usd_thousands", 0)
         entry["put_shares"]       = put_entry.get("shares", 0)
         entry["put_value_usd_k"]  = put_entry.get("value_usd_thousands", 0)
 
         long_val = entry["value_usd_thousands"]
+        call_val = entry["call_value_usd_k"]
         put_val  = entry["put_value_usd_k"]
-        entry["net_bullish"] = long_val >= put_val   # False → fund is net short/hedged
+        entry["exposure_type"] = (
+            "COMMON_LONG" if long_val > 0 else "CALL_ONLY" if call_val > 0 else "PUT_ONLY")
+        entry["net_bullish"] = (long_val + call_val) >= put_val
 
         if not entry["net_bullish"]:
             # Surface this so scoring can skip or flag it
             entry["direction_note"] = (
-                f"NET SHORT/HEDGED: long ${long_val:,}k vs put ${put_val:,}k"
+                f"NET SHORT/HEDGED: long ${long_val:,} + calls ${call_val:,} vs puts ${put_val:,}"
             )
 
         lookup[key] = entry
@@ -381,6 +388,8 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
         # Reported AUM = long + CALL positions only (Puts are hedges, not capital deployed).
         # Using filer_data["total_value"] would inflate the denominator with put notional,
         # making every position's portfolio weight look smaller than it really is.
+        # Common stock only: option notionals are not capital deployed in shares,
+        # and including them would overstate every other position's weight.
         reported_aum = sum(
             pos["value_usd_thousands"]
             for pos in current_lookup.values()
@@ -466,8 +475,9 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
 
             # Determine position direction: LONG or CALL (no pure PUTs reach here)
             put_val  = holding.get("put_value_usd_k", 0)
+            call_val = holding.get("call_value_usd_k", 0)
             long_val = holding["value_usd_thousands"]
-            direction = "LONG_WITH_HEDGE" if put_val > 0 else "LONG"
+            direction = "LONG_WITH_HEDGE" if put_val > 0 else "LONG_WITH_CALLS" if call_val > 0 else "LONG"
 
             positions.append({
                 "ticker":             ticker,
@@ -477,6 +487,9 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
                 "shares":             holding["shares"],
                 "put_shares":         holding.get("put_shares", 0),
                 "put_value_usd_k":    put_val,
+                "call_shares":        holding.get("call_shares", 0),
+                "call_value_usd_k":   call_val,
+                "exposure_type":      holding.get("exposure_type", "COMMON_LONG"),
                 "direction":          direction,
                 "port_weight_pct":    round(port_weight_pct, 3),
                 "prior_port_weight":  round(prior_port_weight, 3) if prior_port_weight else None,

@@ -106,3 +106,52 @@ def test_a_filer_without_a_prior_quarter_is_not_a_buy_signal():
     import scoring
     universe = scoring.build_scored_universe(out, {}, {})
     assert [e["ticker"] for e in universe] == []    # but never as a buy signal
+
+
+def _opt(cusip, shares, value, put_call=None):
+    h = _holding(cusip, shares, value)
+    h["putCall"] = put_call
+    return h
+
+
+def test_calls_are_not_added_to_the_common_share_count():
+    """A 13F CALL reports an option's notional share count, not shares owned.
+    Merging it into the common line makes an options buyer look like a share
+    buyer, and an expiring option look like a sale."""
+    raw = {"date": "2026-09-06", "report_date": "2026-06-30", "recent_splits": {},
+           "filers": {"F": {
+               "cik": "0000000001",
+               "meta": {"filingDate": "2026-08-14", "reportDate": "2026-06-30", "isAmendment": False},
+               "holdings": [_opt("AAA", 1_000_000, 1000),
+                            _opt("AAA", 2_000_000, 500, "CALL"),
+                            _opt("BBB", 0, 0, "CALL")]}}}
+    prior = {"date": "2026-05-16", "period_of_report": "2026-03-31", "filers": {"F": {
+        "cik": "0000000001", "reported_aum_k": 1000,
+        "positions": [{"ticker": "AAA", "cusip": "AAA", "shares": 1_000_000,
+                       "value_usd_k": 1000, "port_weight_pct": 100.0}]}}}
+
+    out = p13.parse_and_enrich(raw, prior)
+    aaa = next(p for p in out["filers"]["F"]["positions"] if p["cusip"] == "AAA")
+    assert aaa["shares"] == 1_000_000            # not 3,000,000
+    assert aaa["delta"]["type"] == "UNCHANGED"   # not a massive ADDED
+    assert aaa["call_shares"] == 2_000_000       # the call is kept, separately
+    assert aaa["exposure_type"] == "COMMON_LONG"
+
+
+def test_an_options_only_position_is_not_share_accumulation():
+    raw = {"date": "2026-09-06", "report_date": "2026-06-30", "recent_splits": {},
+           "filers": {"F": {
+               "cik": "0000000001",
+               "meta": {"filingDate": "2026-08-14", "reportDate": "2026-06-30", "isAmendment": False},
+               "holdings": [_opt("CCC", 500_000, 900, "CALL"), _opt("DDD", 100, 100)]}}}
+    prior = {"date": "2026-05-16", "period_of_report": "2026-03-31",
+             "filers": {"F": {"cik": "0000000001", "reported_aum_k": 100, "positions": []}}}
+
+    out = p13.parse_and_enrich(raw, prior)
+    ccc = next(p for p in out["filers"]["F"]["positions"] if p["cusip"] == "CCC")
+    assert ccc["exposure_type"] == "CALL_ONLY"
+    assert ccc["shares"] == 0
+
+    import scoring
+    universe = scoring.build_scored_universe(out, {}, {})
+    assert "CCC" not in [e["ticker"] for e in universe]

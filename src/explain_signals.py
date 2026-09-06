@@ -20,7 +20,8 @@ import re
 import sys
 from datetime import date
 
-from config import run_date, DATA_DIR, FILERS, NO_SUITABLE_OPTION, SIGNAL_WEIGHTS, TOP_N
+from config import (run_date, DATA_DIR, ENGINE_VERSION, FILERS, NO_SUITABLE_OPTION,
+                    SIGNAL_WEIGHTS, TOP_N)
 import llm_router
 
 
@@ -336,6 +337,7 @@ def run(today_str: str | None = None) -> dict:
 
     final = {
         "date":               today_str,
+        "engine_version":     ENGINE_VERSION,
         "quarter_label":      quarter_label,
         "stocks_scored":      len(signals.get("ranking", [])),
         "top10":              merged,

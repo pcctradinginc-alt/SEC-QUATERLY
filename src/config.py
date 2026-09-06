@@ -330,6 +330,9 @@ NO_SUITABLE_OPTION     = "NO_SUITABLE_OPTION_FOUND"
 # does not change just because a different set of peers was scored).
 # Weights sum to 100. Crowding is a positive factor (LOW crowding = 100).
 # A capped price-action penalty is subtracted afterwards (see below).
+# Rule version of the scoring model. Bump it whenever the ranking rules change,
+# so the backtest never pools results produced by different models.
+ENGINE_VERSION = "v2.1_dissent"
 TOP_N = 10
 SIGNAL_WEIGHTS = {
     "activity":        15,   # NEW / ADD activity strength
