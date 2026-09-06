@@ -349,11 +349,23 @@ guard or a loud warning:
 
 ## Track record
 
-Every report ends with the running 90-day record **against the S&P 500 (SPY)**:
-average excess return, share of signals that beat the benchmark, and a split
-between the current deterministic engine and the earlier LLM-selected top-5
-pipeline. Legacy rows are reported separately because they are not evidence for
-the current engine.
+Every report ends with **two separate records**, because "does the signal find
+good stocks?" and "is the option expression profitable?" are different questions
+and a single number would hide the difference.
+
+**Stock signal record** — the 90-day return of each Top-10 name against the
+S&P 500 (SPY) over the same window: average excess return and the share of
+signals that beat the benchmark, split by `engine_version` so the current model
+is never pooled with the earlier LLM-selected top-5 pipeline. On the September
+2026 run the legacy engine returned +6.5 % against SPY's +7.9 %, so **−1.4 %
+excess** — a result that looked like a win until the benchmark was added.
+
+**Option record** — what the recommended calls actually did, settled at expiry
+where a long call is worth `max(0, S − K)`, so the result is exact and needs
+only the underlying. Reported on the premium paid, with the number that expired
+worthless and the number of signals that had no contract meeting the liquidity
+filters. A call can expire worthless on a stock that rose; that is precisely
+what this measures and why it is never blended with the stock return.
 
 ---
 
