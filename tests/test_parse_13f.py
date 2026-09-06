@@ -34,3 +34,19 @@ def test_unchanged_filer_and_unknown_filer():
 def test_falls_back_to_name_when_prior_has_no_cik():
     prior = {"filers": {"Old Fund": {"reported_aum_k": 1, "positions": []}}}
     assert p13._match_prior_filer(prior, "Old Fund", "0000000001") is not None
+
+
+def test_manager_history_chains_across_a_rename():
+    """Renaming a filer must not split its quality history into two managers."""
+    import manager_quality as mq
+    hist = [
+        {"filers": {"Scion Asset Management (Burry)": {
+            "cik": "0001649339", "position_count": 8, "positions": [{"cusip": "A", "value_usd_k": 10}]}}},
+        {"filers": {"TCI Fund (Chris Hohn)": {
+            "cik": "0001649339", "position_count": 7, "positions": [{"cusip": "A", "value_usd_k": 9}]}}},
+        {"filers": {"TCI Fund (Chris Hohn)": {
+            "cik": "0001649339", "position_count": 6, "positions": [{"cusip": "B", "value_usd_k": 8}]}}},
+    ]
+    r = mq.compute_manager_quality(hist)
+    assert list(r) == ["Scion Asset Management (Burry)"]     # no stale duplicate
+    assert r["Scion Asset Management (Burry)"]["quarters_used"] == 3

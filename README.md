@@ -262,6 +262,33 @@ each was re-verified against the EDGAR submissions feed):
 
 ---
 
+## Data-quality guards
+
+Every one of these was a silent failure found in a live run, so each now has a
+guard or a loud warning:
+
+| Guard | What it prevents |
+|---|---|
+| Share counts read from the nested `<shrsOrPrnAmt><sshPrnamt>` | A direct-child lookup returned nothing, so **every position ever parsed had 0 shares**: everything read as NEW, no EXIT was ever detected and the share-count delta the ranking is built on never worked |
+| Only filings whose `reportDate` equals the target quarter are used | Yale and Scion contributed Q3-2025 books and Pershing Square a Q1-2026 book to a Q2-2026 run; a filer without the current quarter is reported as `STALE_FILER` and excluded |
+| Prior quarter selected by reporting quarter, not file date | Re-running the pipeline wrote a second file for the same quarter, and the next run diffed that quarter against itself |
+| Portfolio weights divide by the full reported book | Quant books are stored capped at 500 positions; dividing by the capped sum inflated every weight, and EXITs are not derived for capped filers because a rank drop is indistinguishable from a sale |
+| Filer history keyed on CIK, in both the delta join and the manager-quality chain | A rename split one manager into two half-length histories and left the wrong old name standing |
+| Unmapped CUSIPs never reach the price feed or the Top 10 | Roughly a hundred failed downloads per run, and CUSIP strings appearing in the ranking |
+| Zero EXITs or all-NEW across the universe raises a data-quality warning | The comparison being broken is far more likely than a quarter in which nobody sold anything |
+
+---
+
+## Track record
+
+Every report ends with the running 90-day record **against the S&P 500 (SPY)**:
+average excess return, share of signals that beat the benchmark, and a split
+between the current deterministic engine and the earlier LLM-selected top-5
+pipeline. Legacy rows are reported separately because they are not evidence for
+the current engine.
+
+---
+
 ## Known limitations
 
 | Limitation | Handling |

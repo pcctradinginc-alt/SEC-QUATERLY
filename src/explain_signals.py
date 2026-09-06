@@ -351,6 +351,7 @@ def run(today_str: str | None = None) -> dict:
         "llm":                {**llm_router.budget().summary(), "route": meta.get("attempts", [])},
         "weights":            SIGNAL_WEIGHTS,
         "filters":            (options or {}).get("filters", {}),
+        "market":             (options or {}).get("market", {}),
         "input_fingerprint":  signals.get("input_fingerprint"),
         "ranking_fingerprint": signals.get("ranking_fingerprint"),
         "sell_signals":       sell_signals,

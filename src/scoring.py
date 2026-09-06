@@ -156,7 +156,13 @@ def enrich_with_price_action(scored: list[dict]) -> list[dict]:
         if t and t not in filing_dates:
             filing_dates[t] = entry.get("filing_date", "")
 
-    tickers = [t for t in filing_dates if t]
+    # Only real, tradable symbols go to the price feed. An unmapped CUSIP
+    # ("82452JAD1") is not a ticker; sending it produced a hundred failed
+    # downloads per run and no price action either way.
+    tickers = [t for t in filing_dates if t and len(t) <= 6 and t[:1].isalpha()]
+    skipped = len(filing_dates) - len(tickers)
+    if skipped:
+        print(f"  ⏭️  {skipped} unmapped CUSIP keys skipped for price action (no tradable ticker)")
     if not tickers:
         return scored
 

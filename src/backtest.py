@@ -39,6 +39,22 @@ def _yf_ticker(ticker: str) -> str:
     return ticker.replace("/", "-")
 
 
+_BENCH = "SPY"
+_bench_cache: dict[str, dict] = {}
+
+
+def benchmark_return(signal_date_str: str, days: int) -> float | None:
+    """S&P 500 (SPY) return over the same window, so a signal's return can be
+    read against the market rather than in isolation."""
+    key = f"{signal_date_str}:{days}"
+    if key in _bench_cache:
+        return _bench_cache[key]["ret"]
+    perf = check_stock_performance(_BENCH, signal_date_str)
+    val = perf.get(f"return_d{days}_pct")
+    _bench_cache[key] = {"ret": val}
+    return val
+
+
 def check_stock_performance(ticker: str, signal_date_str: str) -> dict:
     """
     Downloads price history for ticker starting from signal_date.
@@ -117,8 +133,17 @@ def run() -> dict:
             perf = check_stock_performance(ticker, report_date)
             ret90 = perf.get("return_d90_pct")
             print(f"{f'+{ret90}%' if ret90 and ret90 > 0 else (f'{ret90}%' if ret90 is not None else perf.get('status_d90', '?'))}")
+            b90  = benchmark_return(report_date, 90)
+            b180 = benchmark_return(report_date, 180)
+            r90  = perf.get("return_d90_pct")
+            r180 = perf.get("return_d180_pct")
             rows.append({
                 "report_date":      report_date,
+                "engine":           "v2_deterministic" if analysis.get("top10") else "v1_llm_top5",
+                "benchmark_d90_pct":  b90,
+                "benchmark_d180_pct": b180,
+                "excess_d90_pct":   round(r90 - b90, 1) if (r90 is not None and b90 is not None) else None,
+                "excess_d180_pct":  round(r180 - b180, 1) if (r180 is not None and b180 is not None) else None,
                 "ticker":           ticker,
                 "company":          stock.get("company_name") or stock.get("name", ""),
                 "signal_score":     stock.get("signal_score", stock.get("conviction_score")),
@@ -140,8 +165,35 @@ def run() -> dict:
         vals = [r[key] for r in subset if r.get(key) is not None]
         return round(sum(vals) / len(vals), 1) if vals else None
 
+    def _avg(subset, key):
+        vals = [r[key] for r in subset if r.get(key) is not None]
+        return round(sum(vals) / len(vals), 1) if vals else None
+
+    def _beat(subset):
+        pairs = [(r["return_d90_pct"], r["benchmark_d90_pct"]) for r in subset
+                 if r.get("return_d90_pct") is not None and r.get("benchmark_d90_pct") is not None]
+        return round(sum(1 for a, b in pairs if a > b) / len(pairs) * 100, 1) if pairs else None
+
+    by_engine = {}
+    for eng in sorted({r.get("engine", "unknown") for r in rows}):
+        sub = [r for r in done_90 if r.get("engine") == eng]
+        if sub:
+            by_engine[eng] = {
+                "signals":            len(sub),
+                "win_rate_90d_pct":   _win_rate(sub, "status_d90"),
+                "avg_return_90d_pct": _avg_ret(sub, "return_d90_pct"),
+                "avg_benchmark_90d_pct": _avg(sub, "benchmark_d90_pct"),
+                "avg_excess_90d_pct": _avg(sub, "excess_d90_pct"),
+                "beat_benchmark_pct": _beat(sub),
+            }
+
     summary = {
         "generated_at":       today_str,
+        "benchmark":          _BENCH,
+        "avg_benchmark_90d_pct": _avg(done_90, "benchmark_d90_pct"),
+        "avg_excess_90d_pct":    _avg(done_90, "excess_d90_pct"),
+        "beat_benchmark_90d_pct": _beat(done_90),
+        "by_engine":          by_engine,
         "total_signals":      len(rows),
         "completed_90d":      len(done_90),
         "completed_180d":     len(done_180),

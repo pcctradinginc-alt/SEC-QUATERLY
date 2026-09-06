@@ -46,3 +46,40 @@ def test_sec_ticker_map_uses_www_host():
     src = inspect.getsource(ff._build_sec_name_map)
     assert "https://www.sec.gov/files/company_tickers.json" in src
     assert "data.sec.gov/files/company_tickers.json" not in src
+
+
+REAL_INFOTABLE = """<?xml version="1.0"?>
+<informationTable xmlns="http://www.sec.gov/edgar/document/thirteenf/informationtable">
+  <infoTable>
+    <nameOfIssuer>ALLY FINL INC</nameOfIssuer>
+    <titleOfClass>COM</titleOfClass>
+    <cusip>02005N100</cusip>
+    <value>577211815</value>
+    <shrsOrPrnAmt>
+      <sshPrnamt>12561737</sshPrnamt>
+      <sshPrnamtType>SH</sshPrnamtType>
+    </shrsOrPrnAmt>
+    <investmentDiscretion>DFND</investmentDiscretion>
+    <votingAuthority><Sole>12561737</Sole><Shared>0</Shared><None>0</None></votingAuthority>
+  </infoTable>
+</informationTable>"""
+
+
+def test_share_count_is_read_from_the_nested_element():
+    """<sshPrnamt> sits inside <shrsOrPrnAmt>. A direct-child lookup returned
+    nothing and silently produced 0 shares for every position ever parsed,
+    which made every holding look NEW and produced zero EXITs universe-wide."""
+    holdings = ff.parse_infotable(REAL_INFOTABLE)
+    assert len(holdings) == 1
+    assert holdings[0]["shares"] == 12561737
+    assert holdings[0]["sshPrnamtType"] == "SH"
+    assert holdings[0]["value_usd_thousands"] == 577211815
+
+
+def test_target_report_date_follows_the_45_day_deadline():
+    t = ff.target_report_date
+    assert t("2026-09-06") == "2026-06-30"
+    assert t("2026-08-16") == "2026-06-30"   # just past the deadline
+    assert t("2026-08-13") == "2026-03-31"   # deadline not reached yet
+    assert t("2026-02-16") == "2025-12-31"
+    assert t("2026-01-10") == "2025-12-31"

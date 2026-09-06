@@ -91,16 +91,32 @@ def compute_manager_quality(history: list[dict]) -> dict[str, dict]:
     """
     results: dict[str, dict] = {}
 
-    all_filer_names: set[str] = set()
-    for q in history:
-        all_filer_names.update(q.get("filers", {}).keys())
+    # Chain a manager's quarters on CIK, not on the display name. Renaming
+    # "TCI Fund (Chris Hohn)" to "Scion Asset Management (Burry)" otherwise
+    # splits one manager into two half-length histories - and leaves the old
+    # wrong name standing beside the real TCI Fund entry.
+    def _cik_of(filer: dict) -> str:
+        raw = str(filer.get("cik", "") or "").strip()
+        return raw.zfill(10) if raw else ""
+
+    current = history[0].get("filers", {}) if history else {}
+    names_by_cik = {_cik_of(f): n for n, f in current.items() if _cik_of(f)}
+
+    all_filer_names: set[str] = set(current.keys())
 
     for filer_name in all_filer_names:
-        quarters_with_data = [
-            q for q in history
-            if filer_name in q.get("filers", {})
-            and "positions" in q["filers"][filer_name]
-        ]
+        cik = _cik_of(current.get(filer_name, {}))
+        quarters_with_data = []
+        for q in history:
+            entry = None
+            for n, f in q.get("filers", {}).items():
+                if cik and _cik_of(f) == cik:
+                    entry = f
+                    break
+            if entry is None:
+                entry = q.get("filers", {}).get(filer_name)
+            if entry is not None and "positions" in entry:
+                quarters_with_data.append({"filers": {filer_name: entry}})
         if not quarters_with_data:
             continue
 

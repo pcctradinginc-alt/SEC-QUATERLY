@@ -28,7 +28,7 @@ def load_latest_raw(today_str: str) -> dict:
         return json.load(f)
 
 
-def load_prior_quarter(today_str: str) -> dict | None:
+def load_prior_quarter(today_str: str, current_report_date: str = "") -> dict | None:
     """
     Finds the most recent previously saved *_holdings_parsed.json
     that is NOT today. Returns None if this is the first run.
@@ -50,6 +50,14 @@ def load_prior_quarter(today_str: str) -> dict | None:
             d = date.fromisoformat(c.name[:10])
             if d < today:
                 data = json.load(open(c))
+                # Pick the previous QUARTER, not merely an earlier file. Re-running
+                # the pipeline writes another file for the same quarter, and diffing
+                # a quarter against itself yields no ADDs, no REDUCEs and no EXITs.
+                prior_rd = data.get("report_date", "")
+                if current_report_date and prior_rd and prior_rd >= current_report_date:
+                    print(f"  ↩︎  Skipping {data.get('date')} - same reporting quarter "
+                          f"({prior_rd}), not a prior quarter")
+                    continue
                 # Warn if the prior data itself contains amendments, so the
                 # user knows the baseline may have been restated.
                 amendment_filers = [
@@ -317,6 +325,14 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
             pos["value_usd_thousands"]
             for pos in current_lookup.values()
         )
+        # Quant books are capped at the top 500 positions for storage; weights
+        # must still divide by the full reported book (see fetch_filings.py).
+        full_reported = filer_data.get("full_reported_value") or 0
+        if filer_data.get("is_capped") and full_reported > reported_aum:
+            print(f"  ↔︎  {filer_name}: weights use the full reported book "
+                  f"(${full_reported/1e9:,.1f}B, {filer_data.get('full_position_count')} positions), "
+                  f"not the stored top {len(current_lookup)}")
+            reported_aum = full_reported
         if reported_aum == 0:
             print(f"  ⚠️  {filer_name}: reported long-only AUM = 0, skipping")
             parsed_filers[filer_name] = {"error": "zero_aum", "positions": []}
@@ -431,7 +447,7 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
         # against prior_lookup - the old compute_delta "SOLD" path never fires
         # in practice because current_lookup never contains a 0-share holding.
         exited_positions = []
-        if prior_lookup_by_key:
+        if prior_lookup_by_key and not filer_data.get("is_capped"):
             seen_cusips: set[str] = set()
             for key, prior_pos in prior_lookup_by_key.items():
                 prior_cusip = prior_pos.get("cusip", "")
@@ -476,6 +492,8 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
             "filing_delay_days": filing_delay_days,
             "is_amendment":  filer_data["meta"]["isAmendment"],
             "position_count": len(positions),
+            "full_position_count": filer_data.get("full_position_count", len(positions)),
+            "is_capped":     bool(filer_data.get("is_capped")),
             "median_position_weight_pct": round(median_weight, 3),
             "positions":     positions,
             "exited_positions": exited_positions,
@@ -485,15 +503,36 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
         # dollars in 2023, so `value_usd_thousands` / `reported_aum_k` actually
         # hold dollars for current filings. Portfolio weights are ratios and are
         # unaffected; only absolute displays need the /1e9 below.
+        capped_note = " (capped book – EXITs not derivable)" if filer_data.get("is_capped") else ""
         print(f"  ✅ {filer_name}: {len(positions)} positions, "
-              f"{len(exited_positions)} exits, "
+              f"{len(exited_positions)} exits{capped_note}, "
               f"AUM ${reported_aum/1e9:,.1f}B (13F reported, long-only)")
 
     _flag_possible_corporate_actions(parsed_filers)
 
+    # Sanity check: across a real universe some managers always exit something.
+    # Zero exits means the comparison itself is broken (a missing prior quarter,
+    # or share counts that failed to parse), not an unusually loyal quarter.
+    total_positions = sum(len(f.get("positions", [])) for f in parsed_filers.values())
+    total_exits     = sum(len(f.get("exited_positions", [])) for f in parsed_filers.values())
+    types = {}
+    for f in parsed_filers.values():
+        for pos in f.get("positions", []):
+            t = pos["delta"]["type"]
+            types[t] = types.get(t, 0) + 1
+    print(f"\n📊 Delta mix: {types}")
+    if prior is not None and total_positions > 500 and total_exits == 0:
+        print("  🚨 DATA QUALITY WARNING: zero EXITs across the entire universe - "
+              "the prior-quarter comparison is almost certainly broken")
+    if prior is not None and total_positions > 500 and types.get("NEW", 0) == total_positions:
+        print("  🚨 DATA QUALITY WARNING: every position reads as NEW - "
+              "share counts or the prior-quarter join failed")
+
     return {
         "date":          today_str,
+        "report_date":   raw.get("report_date", ""),
         "prior_date":    prior["date"] if prior else None,
+        "prior_report_date": (prior or {}).get("report_date", ""),
         "is_first_run":  prior is None,
         "recent_splits": splits,
         "filers":        parsed_filers,
@@ -508,10 +547,11 @@ def run():
     print(f"{'='*60}")
 
     raw = load_latest_raw(today_str)
-    prior = load_prior_quarter(today_str)
+    prior = load_prior_quarter(today_str, raw.get("report_date", ""))
 
+    print(f"📅 Reporting quarter: {raw.get('report_date', '?')}")
     if prior:
-        print(f"📂 Prior quarter data: {prior['date']}")
+        print(f"📂 Prior quarter data: {prior['date']} (quarter {prior.get('report_date', '?')})")
     else:
         print("⚠️  First run – no prior quarter data available. Deltas will be marked as NEW.")
 

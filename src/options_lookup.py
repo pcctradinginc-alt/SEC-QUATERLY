@@ -64,6 +64,28 @@ def compute_iv_rank(ticker: str, current_atm_iv: float | None) -> dict:
         return {}
 
 
+def market_status(headers: dict) -> dict:
+    """
+    Tradier's clock, so the report can say whether the option quotes are live or
+    a weekend snapshot. A chain pulled while the market is shut shows near-zero
+    volume for every strike, which must not be read as illiquidity.
+    """
+    from datetime import datetime, timezone
+    info = {"state": "unknown", "as_of": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "description": ""}
+    try:
+        r = requests.get(f"{TRADIER_BASE_URL}/markets/clock", headers=headers, timeout=10)
+        r.raise_for_status()
+        clock = (r.json() or {}).get("clock") or {}
+        info["state"] = (clock.get("state") or "unknown").lower()
+        info["description"] = clock.get("description", "")
+        if clock.get("date"):
+            info["trading_day"] = clock["date"]
+    except Exception as e:
+        print(f"  ⚠️  Market clock unavailable: {e}")
+    return info
+
+
 def get_headers() -> dict:
     api_key = os.environ.get("TRADIER_API_KEY", "")
     if not api_key:
@@ -183,6 +205,11 @@ def run(today_str: str | None = None) -> dict:
         raise ValueError("Signal engine produced no Top-10")
 
     headers = get_headers()
+    clock = market_status(headers)
+    print(f"🕒 Market is {clock['state'].upper()}"
+          + (f" – {clock['description']}" if clock.get("description") else ""))
+    if clock["state"] != "open":
+        print("   Option volume reflects the last session, not live trading.")
     tickers = [s["ticker"] for s in top]
     quotes = get_stock_quotes([normalize_ticker_for_tradier(t) for t in tickers], headers)
 
@@ -192,6 +219,7 @@ def run(today_str: str | None = None) -> dict:
         results[t] = lookup_ticker(t, headers, quotes.get(normalize_ticker_for_tradier(t)), today)
 
     output = {"date": today_str, "tickers": tickers, "options": results,
+              "market": clock,
               "filters": option_selector.FILTERS_DESCRIPTION}
     out = DATA_DIR / f"{today_str}_options.json"
     with open(out, "w") as f:

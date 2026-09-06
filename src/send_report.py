@@ -231,6 +231,19 @@ def insider_block(s: dict) -> str:
     </div>"""
 
 
+def quote_note(s: dict) -> str:
+    """Say plainly whether the option quotes were taken with the market open."""
+    m = (s.get("_market") or {})
+    state = (m.get("state") or "").lower()
+    if state == "open":
+        return "Live quotes from the analysis run. Verify before trading."
+    if state:
+        return (f"Market {state.upper()} at the time of the run"
+                f"{' · ' + m['description'] if m.get('description') else ''} – "
+                f"volume reflects the last session, not live trading. Verify before trading.")
+    return "Delayed snapshot from the analysis run. Verify before trading."
+
+
 def option_block(s: dict) -> str:
     o = s.get("option") or {}
     c = o.get("contract")
@@ -277,7 +290,7 @@ def option_block(s: dict) -> str:
         <tr>{''.join(tds[:3])}</tr><tr>{''.join(tds[3:])}</tr>
       </table>
       {f'<div style="font-size:12px;color:{INK2};margin-top:8px;line-height:1.5">{esc(note)}</div>' if note else ''}
-      <div style="font-size:11px;color:{INK3};margin-top:8px">Quotes are delayed snapshots from the analysis run. Verify before trading.</div>
+      <div style="font-size:11px;color:{INK3};margin-top:8px">{esc(quote_note(s))}</div>
     </div>"""
 
 
@@ -357,6 +370,39 @@ def sell_block(sell_signals: list[dict]) -> str:
         f'<div style="background:{CARD};border:1px solid {LINE};border-radius:18px;padding:18px 24px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">{rows}</table></div>'
 
 
+def track_record_block(bt: dict | None) -> str:
+    """Running record against the S&P 500, shown on every report."""
+    s = (bt or {}).get("summary") or {}
+    done = s.get("completed_90d") or 0
+    if not done:
+        return (f'<div style="font-size:11px;color:{INK3};margin-top:18px;padding:0 4px">'
+                f'Track record: no signal has completed its 90-day window yet.</div>')
+
+    ret, bench = s.get("avg_return_90d_pct"), s.get("avg_benchmark_90d_pct")
+    excess, beat = s.get("avg_excess_90d_pct"), s.get("beat_benchmark_90d_pct")
+    col = GREEN if (excess or 0) > 0 else ORANGE
+    eng = (s.get("by_engine") or {})
+    eng_txt = " · ".join(
+        f"{'current engine' if k.startswith('v2') else 'legacy engine'}: "
+        f"{v['signals']} signals, {v.get('avg_excess_90d_pct', 0) or 0:+.1f}% vs {esc(s.get('benchmark', 'SPY'))}"
+        for k, v in sorted(eng.items()))
+
+    return f"""
+    <div style="background:{CARD};border:1px solid {LINE};border-radius:18px;padding:18px 24px;margin-top:18px">
+      <div class="k2">Track record · 90 days · vs {esc(s.get('benchmark', 'SPY'))}</div>
+      <div style="font-size:14px;color:{INK};margin-top:6px">
+        <span style="font-weight:600;color:{col}">{excess:+.1f}% excess</span> on average
+        ({ret:+.1f}% signal vs {bench:+.1f}% benchmark) across {done} completed signals ·
+        {beat if beat is not None else '–'}% beat the benchmark
+      </div>
+      {f'<div style="font-size:11px;color:{INK3};margin-top:6px">{esc(eng_txt)}</div>' if eng_txt else ''}
+      <div style="font-size:11px;color:{INK3};margin-top:6px">
+        Stock returns, not option returns. The current engine has only just begun its forward record;
+        legacy rows come from the earlier LLM-selected top-5 pipeline and are not evidence for it.
+      </div>
+    </div>"""
+
+
 def methodology_block(a: dict) -> str:
     w = a.get("weights", SIGNAL_WEIGHTS)
     wrows = "".join(
@@ -432,6 +478,9 @@ def generate_html_report(a: dict) -> str:
 def _generate_html_report(a: dict) -> str:
     top = a.get("top10", [])
     today_str = a["date"]
+    market = a.get("market") or {}
+    for _s in top:
+        _s["_market"] = market
     cards = "".join(stock_card(s) for s in top)
     n_ins = sum(1 for s in top
                 if ((s.get("insider") or {}).get("summary") or {}).get("net_stance") == "NET_BUYING")
@@ -489,6 +538,7 @@ def _generate_html_report(a: dict) -> str:
   {cards}
 
   {sell_block(a.get('sell_signals', []))}
+  {track_record_block(a.get('backtest'))}
   {methodology_block(a)}
 
   <div style="font-size:11px;color:{INK3};line-height:1.6;margin-top:28px;padding:0 4px">
@@ -555,6 +605,12 @@ def run(today_str: str | None = None, send: bool = True) -> str:
             raise RuntimeError(f"Report validation failed: {s['ticker']} has no option status")
     print(f"✅ Validation passed: {len(top)} stocks")
 
+    bt_path = DATA_DIR / f"{today_str}_backtest.json"
+    if bt_path.exists():
+        try:
+            analysis["backtest"] = json.load(open(bt_path))
+        except (OSError, json.JSONDecodeError):
+            pass
     html_out = generate_html_report(analysis)
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     report_path = REPORTS_DIR / f"{today_str}_report.html"

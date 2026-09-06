@@ -34,9 +34,26 @@ def edgar_get(url: str) -> requests.Response:
     return resp
 
 
-# ── Step 1: Get latest 13F filing metadata ────────────────────────────────────
+# ── Step 1: Get the 13F filing FOR THE TARGET QUARTER ────────────────────────
 
-def get_latest_13f_filing(cik: str) -> dict | None:
+def target_report_date(as_of: str | None = None) -> str:
+    """
+    The quarter-end this run is about: the most recent quarter-end whose 13F
+    deadline (45 days later) has passed.
+
+    Taking whatever 13F a CIK filed most recently is wrong - a filer that has
+    not reported yet would contribute a year-old book, and that book would then
+    be diffed against the current quarter as if it were fresh.
+    """
+    today = date.fromisoformat(as_of or run_date())
+    ends = [date(today.year - 1, 12, 31), date(today.year, 3, 31),
+            date(today.year, 6, 30), date(today.year, 9, 30), date(today.year, 12, 31)]
+    due = [q for q in ends if (today - q).days >= 45]
+    return max(due).isoformat() if due else ends[0].isoformat()
+
+
+def get_latest_13f_filing(cik: str, want_report_date: str | None = None) -> dict | None:
+    """Latest 13F-HR / 13F-HR/A whose reportDate matches the target quarter."""
     url = f"https://data.sec.gov/submissions/CIK{cik}.json"
     try:
         data = edgar_get(url).json()
@@ -52,8 +69,16 @@ def get_latest_13f_filing(cik: str) -> dict | None:
 
     report_dates = filings.get("reportDate", [])
 
+    want = want_report_date or target_report_date()
+    seen_quarters = []
     for i, form in enumerate(forms):
-        if form in ("13F-HR", "13F-HR/A"):
+        if form not in ("13F-HR", "13F-HR/A"):
+            continue
+        rd = report_dates[i] if i < len(report_dates) else dates[i]
+        if rd != want:
+            seen_quarters.append(rd)
+            continue
+        if True:
             return {
                 "cik":             cik,
                 "accessionNumber": accessions[i],
@@ -68,7 +93,10 @@ def get_latest_13f_filing(cik: str) -> dict | None:
                 "primaryDocument": primary_docs[i] if i < len(primary_docs) else "",
             }
 
-    print(f"  ℹ️  No 13F-HR found for CIK {cik}")
+    if seen_quarters:
+        print(f"  ⏭️  STALE_FILER: no 13F for {want} (newest on file: {max(seen_quarters)}) - excluded")
+    else:
+        print(f"  ℹ️  No 13F-HR found for CIK {cik}")
     return None
 
 
@@ -212,7 +240,19 @@ def parse_infotable(xml_text: str) -> list[dict]:
     holdings = []
     for entry in root.findall(f".//{prefix}infoTable", ns):
         def _t(tag_name):
+            """
+            Search anywhere below <infoTable>, not just its direct children.
+
+            The share count lives nested:
+                <shrsOrPrnAmt><sshPrnamt>12561737</sshPrnamt></shrsOrPrnAmt>
+            A direct-child lookup returns nothing and silently yields 0 shares -
+            which made every position look NEW, produced zero EXITs across the
+            whole universe and disabled the share-count delta the ranking is
+            built on.
+            """
             el = entry.find(f"{prefix}{tag_name}", ns)
+            if el is None:
+                el = entry.find(f".//{prefix}{tag_name}", ns)
             return el.text.strip() if el is not None and el.text else ""
 
         try:
@@ -461,12 +501,15 @@ def run():
     print(f"SEC EDGAR Fetch – {today_str}")
     print(f"{'='*60}")
 
+    want = target_report_date(today_str)
+    print(f"Target quarter (period of report): {want}\n")
+
     for name, cik in FILERS.items():
         print(f"\n▶ {name} (CIK: {cik})")
 
-        filing_meta = get_latest_13f_filing(cik)
+        filing_meta = get_latest_13f_filing(cik, want)
         if not filing_meta:
-            all_data[name] = {"error": "no_filing", "cik": cik}
+            all_data[name] = {"error": "stale_or_missing_filing", "cik": cik}
             continue
 
         print(f"  Filing: {filing_meta['form']} on {filing_meta['filingDate']}"
@@ -491,6 +534,10 @@ def run():
         # Cap at top 500 by value so they don't flood the CUSIP pool.
         MAX_POSITIONS_PER_FILER = 500
         original_count = len(holdings)
+        # Portfolio weights must divide by the FULL reported book. Capping first
+        # shrinks the denominator and inflates every remaining position's weight
+        # (a $3bn slice of a $100bn book would read as 4.3% of $70bn).
+        full_value = sum(h["value_usd_thousands"] for h in holdings)
         if original_count > MAX_POSITIONS_PER_FILER:
             holdings = sorted(holdings, key=lambda h: h["value_usd_thousands"], reverse=True)
             holdings = holdings[:MAX_POSITIONS_PER_FILER]
@@ -505,6 +552,9 @@ def run():
             "cik":        cik,
             "meta":       filing_meta,
             "holdings":   holdings,
+            "full_reported_value": full_value,
+            "full_position_count": original_count,
+            "is_capped":  original_count > MAX_POSITIONS_PER_FILER,
             "total_value":sum(h["value_usd_thousands"] for h in holdings),
             "fetched_at": datetime.utcnow().isoformat(),
         }
@@ -534,6 +584,7 @@ def run():
 
     output = {
         "date":            today_str,
+        "report_date":     want,
         "cusip_to_ticker": cusip_to_ticker,
         "recent_splits":   splits,
         "filers":          all_data,
