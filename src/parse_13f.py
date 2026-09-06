@@ -14,10 +14,10 @@ import json
 import re
 import statistics
 import sys
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
-from config import DATA_DIR
+from config import run_date, DATA_DIR
 
 
 def load_latest_raw(today_str: str) -> dict:
@@ -28,42 +28,136 @@ def load_latest_raw(today_str: str) -> dict:
         return json.load(f)
 
 
-def load_prior_quarter(today_str: str) -> dict | None:
-    """
-    Finds the most recent previously saved *_holdings_parsed.json
-    that is NOT today. Returns None if this is the first run.
+def previous_quarter_end(report_date: str) -> str:
+    """The quarter-end immediately before the given one. 2026-06-30 -> 2026-03-31."""
+    d = date.fromisoformat(report_date)
+    ends = {3: (d.year - 1, 12, 31), 6: (d.year, 3, 31),
+            9: (d.year, 6, 30), 12: (d.year, 9, 30)}
+    y, m, day = ends[d.month]
+    return date(y, m, day).isoformat()
 
-    Amendment note: 13F-HR/A filings amend a prior quarter's data.
-    Because fetch_filings.py always retrieves the LATEST filing per filer
-    (which is the amendment if one exists), the data saved today is always
-    the most up-to-date. The delta comparison against the *previous* parsed
-    file is therefore always amendment-aware as long as each run overwrites
-    stale data from the same quarter. If two runs occur within the same
-    quarter (e.g., base + amendment), only the most recent parsed file
-    survives and prior-quarter comparison remains valid.
-    """
-    today = date.fromisoformat(today_str)
-    candidates = sorted(DATA_DIR.glob("*_holdings_parsed.json"), reverse=True)
 
-    for c in candidates:
+def infer_report_date(parsed: dict) -> str:
+    """File-level reporting quarter, falling back to what the filers themselves
+    report (files written before report_date was stored have no top-level one)."""
+    rd = parsed.get("period_of_report") or parsed.get("report_date", "")
+    if rd:
+        return rd
+    dates = [f.get("report_date") for f in parsed.get("filers", {}).values() if f.get("report_date")]
+    if not dates:
+        return ""
+    return max(set(dates), key=dates.count)
+
+
+def has_usable_share_counts(parsed: dict, sample: int = 400) -> bool:
+    """
+    A baseline whose share counts are all zero cannot produce a delta: every
+    current holding would come out as NEW. Files written before the nested
+    <sshPrnamt> parsing fix are in exactly that state, so they must not be used
+    as a prior quarter.
+    """
+    seen = nonzero = 0
+    for f in parsed.get("filers", {}).values():
+        for pos in f.get("positions", []):
+            seen += 1
+            if (pos.get("shares") or 0) > 0:
+                nonzero += 1
+            if seen >= sample:
+                break
+        if seen >= sample:
+            break
+    return seen == 0 or nonzero > seen * 0.05
+
+
+def load_prior_quarter(today_str: str, current_report_date: str = "") -> dict | None:
+    """
+    Load the dataset for the quarter immediately preceding `current_report_date`.
+
+    Selection is by `period_of_report`, never by file name or run date: running
+    the pipeline twice writes a second file for the SAME quarter, and diffing a
+    quarter against itself yields no ADDs, no REDUCEs and no EXITs. Amendments
+    restate a quarter, so the newest file for the required quarter wins.
+
+    Returns None when the required quarter is unavailable or unusable; the
+    caller must then stop rather than emit a degenerate all-NEW comparison.
+    """
+    if not current_report_date:
+        print("  ⚠️  Current reporting period unknown - cannot identify the prior quarter")
+        return None
+
+    required = previous_quarter_end(current_report_date)
+    print(f"  Expected prior quarter:   {required}")
+
+    best = None
+    for c in sorted(DATA_DIR.glob("*_holdings_parsed.json"), reverse=True):
         try:
-            d = date.fromisoformat(c.name[:10])
-            if d < today:
-                data = json.load(open(c))
-                # Warn if the prior data itself contains amendments, so the
-                # user knows the baseline may have been restated.
-                amendment_filers = [
-                    name for name, fd in data.get("filers", {}).items()
-                    if fd.get("is_amendment")
-                ]
-                if amendment_filers:
-                    print(f"  ℹ️  Prior quarter ({data['date']}) contains amendments "
-                          f"for: {', '.join(amendment_filers)} – baseline has been restated.")
-                return data
-        except (ValueError, json.JSONDecodeError):
+            file_date = c.name[:10]
+            date.fromisoformat(file_date)
+        except ValueError:
+            continue
+        try:
+            with open(c) as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, OSError):
             continue
 
-    return None  # First run
+        if infer_report_date(data) != required:
+            continue
+        if not has_usable_share_counts(data):
+            print(f"  ↩︎  {c.name}: share counts are all zero (pre-fix file) - unusable as a baseline")
+            continue
+        if best is None or file_date > best[0]:
+            best = (file_date, c.name, data)
+
+    if best is None:
+        print(f"  ❌ No usable dataset for the required prior quarter {required}")
+        return None
+
+    data = best[2]
+    amendment_filers = [n for n, fd in data.get("filers", {}).items() if fd.get("is_amendment")]
+    if amendment_filers:
+        print(f"  ℹ️  Prior quarter contains amendments for: {', '.join(amendment_filers)}")
+    print(f"  Loaded prior dataset:     {best[1]}")
+    print(f"  Loaded prior period:      {infer_report_date(data)}")
+    return data
+
+
+def _match_prior_filer(prior: dict | None, filer_name: str, cik: str) -> dict | None:
+    """
+    Find last quarter's entry for this filer, keyed on CIK rather than on the
+    display name.
+
+    The name is ours and it changes: relabelling "TCI Fund (Chris Hohn)" to
+    "Scion Asset Management (Burry)" would make every one of Burry's carried-over
+    holdings look like a brand-new position. The reverse is worse - "Coatue
+    (Laffont)" kept its name while its CIK was corrected from Chewy's, so a
+    name-keyed join would diff Chewy's book against Coatue's and invent a full
+    set of EXITs and NEW positions. The CIK is the SEC's identifier and is
+    stable, so a changed CIK means a genuinely different entity: no prior.
+    """
+    if not prior:
+        return None
+    filers = prior.get("filers", {})
+
+    if cik:
+        for prior_name, prior_filer in filers.items():
+            raw = str(prior_filer.get("cik", "") or "").strip()
+            if raw and raw.zfill(10) == str(cik).zfill(10):
+                if prior_name != filer_name:
+                    print(f"    ℹ️  {filer_name}: prior quarter matched by CIK {cik} "
+                          f"(was filed under '{prior_name}')")
+                return prior_filer
+
+    candidate = filers.get(filer_name)
+    if candidate is None:
+        return None
+    prior_cik_raw = str(candidate.get("cik", "") or "").strip()
+    prior_cik = prior_cik_raw.zfill(10) if prior_cik_raw else ""
+    if cik and prior_cik and prior_cik != str(cik).zfill(10):
+        print(f"    ⚠️  {filer_name}: prior quarter has CIK {prior_cik}, now {cik} - "
+              f"different entity, treating as no prior quarter")
+        return None
+    return candidate
 
 
 def build_position_lookup(filer_data: dict) -> dict:
@@ -279,6 +373,14 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
             pos["value_usd_thousands"]
             for pos in current_lookup.values()
         )
+        # Quant books are capped at the top 500 positions for storage; weights
+        # must still divide by the full reported book (see fetch_filings.py).
+        full_reported = filer_data.get("full_reported_value") or 0
+        if filer_data.get("is_capped") and full_reported > reported_aum:
+            print(f"  ↔︎  {filer_name}: weights use the full reported book "
+                  f"(${full_reported/1e9:,.1f}B, {filer_data.get('full_position_count')} positions), "
+                  f"not the stored top {len(current_lookup)}")
+            reported_aum = full_reported
         if reported_aum == 0:
             print(f"  ⚠️  {filer_name}: reported long-only AUM = 0, skipping")
             parsed_filers[filer_name] = {"error": "zero_aum", "positions": []}
@@ -295,8 +397,8 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
         # case where a CUSIP itself changed (e.g. share reclassification).
         prior_lookup_by_key   = {}
         prior_lookup_by_cusip = {}
-        if prior and filer_name in prior.get("filers", {}):
-            prior_filer = prior["filers"][filer_name]
+        prior_filer = _match_prior_filer(prior, filer_name, filer_data.get("cik", ""))
+        if prior_filer is not None:
             if "positions" in prior_filer:
                 for pos in prior_filer["positions"]:
                     key = pos.get("ticker") or pos.get("cusip") or ""
@@ -344,8 +446,8 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
 
             # Prior portfolio weight
             prior_port_weight = None
-            if prior_pos and prior:
-                prior_aum = prior["filers"].get(filer_name, {}).get("reported_aum_k", 0)
+            if prior_pos and prior_filer:
+                prior_aum = prior_filer.get("reported_aum_k", 0)
                 if prior_aum > 0:
                     prior_port_weight = (prior_pos.get("value_usd_thousands", 0) / prior_aum) * 100.0
 
@@ -393,7 +495,7 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
         # against prior_lookup - the old compute_delta "SOLD" path never fires
         # in practice because current_lookup never contains a 0-share holding.
         exited_positions = []
-        if prior_lookup_by_key:
+        if prior_lookup_by_key and not filer_data.get("is_capped"):
             seen_cusips: set[str] = set()
             for key, prior_pos in prior_lookup_by_key.items():
                 prior_cusip = prior_pos.get("cusip", "")
@@ -438,20 +540,40 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
             "filing_delay_days": filing_delay_days,
             "is_amendment":  filer_data["meta"]["isAmendment"],
             "position_count": len(positions),
+            "full_position_count": filer_data.get("full_position_count", len(positions)),
+            "is_capped":     bool(filer_data.get("is_capped")),
+            # A top-500 subset cannot tell a sale from a rank drop, so EXITs are
+            # simply not derivable for these books - stated, not guessed.
+            "exit_detection_available": not bool(filer_data.get("is_capped")) and bool(prior_lookup_by_key),
+            "exit_detection_note": ("historical book capped" if filer_data.get("is_capped")
+                                    else "" if prior_lookup_by_key else "no prior baseline"),
             "median_position_weight_pct": round(median_weight, 3),
             "positions":     positions,
             "exited_positions": exited_positions,
         }
 
+        # NOTE: the SEC switched the 13F <value> column from thousands to whole
+        # dollars in 2023, so `value_usd_thousands` / `reported_aum_k` actually
+        # hold dollars for current filings. Portfolio weights are ratios and are
+        # unaffected; only absolute displays need the /1e9 below.
+        capped_note = " (capped book – EXITs not derivable)" if filer_data.get("is_capped") else ""
         print(f"  ✅ {filer_name}: {len(positions)} positions, "
-              f"{len(exited_positions)} exits, "
-              f"AUM ${reported_aum/1e6:,.1f}B (13F reported, long-only)")
+              f"{len(exited_positions)} exits{capped_note}, "
+              f"AUM ${reported_aum/1e9:,.1f}B (13F reported, long-only)")
 
     _flag_possible_corporate_actions(parsed_filers)
 
     return {
-        "date":          today_str,
+        "date":            today_str,
+        "period_of_report": raw.get("report_date", ""),
+        # Was this dataset itself produced by a real quarter-over-quarter diff?
+        # A baseline built without its own predecessor marks every holding NEW,
+        # and those NEW labels are artifacts, not investment decisions.
+        "has_prior_baseline": prior is not None,
+        "report_date":     raw.get("report_date", ""),   # legacy alias
+        "generated_at":    datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "prior_date":    prior["date"] if prior else None,
+        "prior_report_date": infer_report_date(prior) if prior else "",
         "is_first_run":  prior is None,
         "recent_splits": splits,
         "filers":        parsed_filers,
@@ -459,17 +581,18 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
 
 
 def run():
-    today_str = date.today().isoformat()
+    today_str = run_date()
 
     print(f"\n{'='*60}")
     print(f"13F Parser & Delta Calculator – {today_str}")
     print(f"{'='*60}")
 
     raw = load_latest_raw(today_str)
-    prior = load_prior_quarter(today_str)
+    prior = load_prior_quarter(today_str, raw.get("report_date", ""))
 
+    print(f"📅 Reporting quarter: {raw.get('report_date', '?')}")
     if prior:
-        print(f"📂 Prior quarter data: {prior['date']}")
+        print(f"📂 Prior quarter data: {prior['date']} (quarter {infer_report_date(prior) or '?'})")
     else:
         print("⚠️  First run – no prior quarter data available. Deltas will be marked as NEW.")
 
@@ -482,6 +605,12 @@ def run():
     tmp_path.replace(output_path)
 
     print(f"\n✅ Parsed holdings saved to {output_path}")
+
+    # The verdict is printed here for visibility, but the hard stop lives in its
+    # own pipeline step (data_quality.py) so a deliberate baseline rebuild can
+    # parse a quarter that has no predecessor on file.
+    import data_quality
+    data_quality.gate(today_str, parsed, strict=False)
 
 
 if __name__ == "__main__":

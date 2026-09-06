@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "failures": [],
+  "warnings": [
+    "1 filers had no prior baseline (new to the universe or newly renamed)"
+  ],
+  "summary": {
+    "counts": {
+      "NEW": 830,
+      "ADDED": 1073,
+      "REDUCED": 1163,
+      "UNCHANGED": 516,
+      "SOLD": 0
+    },
+    "exits": 345,
+    "total_positions": 3582,
+    "matched_positions": 2752,
+    "new_ratio": 0.23171412618648798,
+    "filers_with_prior": 48,
+    "filers_without_prior": 1,
+    "capped_without_exits": 3
+  },
+  "current_period": "2026-06-30",
+  "prior_period": "2026-03-31",
+  "expected_prior": "2026-03-31",
+  "checked_at": "2026-09-06"
+}

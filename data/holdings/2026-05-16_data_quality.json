@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "failures": [],
+  "warnings": [],
+  "summary": {
+    "counts": {
+      "NEW": 816,
+      "ADDED": 1154,
+      "REDUCED": 1067,
+      "UNCHANGED": 454,
+      "SOLD": 0
+    },
+    "exits": 417,
+    "total_positions": 3491,
+    "matched_positions": 2675,
+    "new_ratio": 0.2337439129189344,
+    "filers_with_prior": 49,
+    "filers_without_prior": 0,
+    "capped_without_exits": 3
+  },
+  "current_period": "2026-03-31",
+  "prior_period": "2025-12-31",
+  "expected_prior": "2025-12-31",
+  "checked_at": "2026-09-06"
+}

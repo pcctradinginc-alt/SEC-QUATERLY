@@ -1,15 +1,16 @@
 """
 options_lookup.py
-Fetches real options chains from Tradier for the Top 5 tickers.
+Fetches real Call chains from Tradier for the deterministic Top-10 and
+applies the predefined filters via option_selector.select_call().
 
-Improvements:
-  - Spread filter tightened: 15% → 8% (OPTION_MAX_SPREAD_PCT)
-  - Volume threshold raised: 100 → 300 (OPTION_MIN_VOLUME)
-  - IV filter: skip options with IV > 70% (OPTION_MAX_IV) – avoids
-    buying expensive premium on high-IV names like NVDA/PLTR
-  - OTM warning when strike > +10% above spot
-  - Greeks=None pre-market → fallback to volume/OI filter
-  - Empty results handled with relaxed fallback
+Output per ticker:
+    status          "OK" | "NO_SUITABLE_OPTION_FOUND"
+    contract        the single selected Call (or null)
+    rejections      {filter_name: count} for transparency
+    iv_metrics      IV rank vs. realised-vol proxy (context only)
+
+There is deliberately NO relaxed fallback: if no contract passes every
+filter, the stock is reported with NO_SUITABLE_OPTION_FOUND.
 """
 
 import json
@@ -19,30 +20,19 @@ from datetime import date, timedelta
 import requests
 
 from config import (
-    DATA_DIR, OPTION_DELTA_MAX, OPTION_DELTA_MIN,
-    OPTION_MAX_DAYS, OPTION_MAX_IV, OPTION_MAX_SPREAD_PCT,
-    OPTION_MIN_DAYS, OPTION_MIN_VOLUME, TRADIER_BASE_URL,
+    run_date,
+    DATA_DIR, NO_SUITABLE_OPTION, OPTION_MAX_DAYS, OPTION_MIN_DAYS, TRADIER_BASE_URL,
 )
+import option_selector
 
 
 def compute_iv_rank(ticker: str, current_atm_iv: float | None) -> dict:
-    """
-    Estimates IV Rank (0–100) using 252 days of realised volatility as a proxy
-    for the IV range, since we don't store historical IV series.
-
-    Method:
-      - Compute rolling 21-day annualised HV (≈ 30-calendar-day window)
-      - IV Rank = (current_IV − HV_52w_low) / (HV_52w_high − HV_52w_low) × 100
-      - Verdict guides Claude on strategy: cheap → naked call, expensive → spread
-
-    Returns {} on any error so the rest of the pipeline is unaffected.
-    """
+    """IV Rank proxy from 52 weeks of realised vol (context for the reader; not a filter)."""
     if current_atm_iv is None:
         return {}
     try:
         import numpy as np
         import yfinance as yf
-        from datetime import timedelta
 
         yf_t  = ticker.replace("/", "-")
         start = (date.today() - timedelta(days=400)).isoformat()
@@ -50,59 +40,68 @@ def compute_iv_rank(ticker: str, current_atm_iv: float | None) -> dict:
                             auto_adjust=True, progress=False)
         if hist.empty or len(hist) < 63:
             return {}
-
         closes = hist["Close"].squeeze().dropna()
         log_r  = np.log(closes / closes.shift(1)).dropna()
-
-        # Rolling 21-trading-day (≈ monthly) realised vol, annualised
         roll_hv = log_r.rolling(21).std() * np.sqrt(252)
-
         hv_52w = roll_hv.tail(252).dropna()
         if len(hv_52w) < 20:
             return {}
-
         low, high = float(hv_52w.min()), float(hv_52w.max())
-        hv_30d    = float(roll_hv.iloc[-1])
-
+        hv_30d = float(roll_hv.iloc[-1])
         if high <= low:
             return {}
-
         iv_rank = max(0.0, min(100.0, (current_atm_iv - low) / (high - low) * 100))
-        iv_hv   = round(current_atm_iv / hv_30d, 2) if hv_30d > 0 else None
-
-        if iv_rank >= 70:
-            verdict = "EXPENSIVE – prefer Bull Call Spread over naked call"
-        elif iv_rank >= 40:
-            verdict = "MODERATE – naked call acceptable"
-        else:
-            verdict = "CHEAP – naked call preferred, IV may expand"
-
+        verdict = ("EXPENSIVE – premium rich vs. realised vol" if iv_rank >= 70
+                   else "MODERATE" if iv_rank >= 40 else "CHEAP – premium low vs. realised vol")
         return {
-            "iv_rank":       round(iv_rank, 1),
-            "hv_30d_pct":    round(hv_30d * 100, 1),
-            "iv_hv_ratio":   iv_hv,
-            "verdict":       verdict,
+            "iv_rank":     round(iv_rank, 1),
+            "hv_30d_pct":  round(hv_30d * 100, 1),
+            "iv_hv_ratio": round(current_atm_iv / hv_30d, 2) if hv_30d > 0 else None,
+            "verdict":     verdict,
         }
     except Exception as e:
         print(f"    ⚠️  IV rank calc failed for {ticker}: {e}")
         return {}
 
 
+def market_status(headers: dict) -> dict:
+    """
+    Tradier's clock, so the report can say whether the option quotes are live or
+    a weekend snapshot. A chain pulled while the market is shut shows near-zero
+    volume for every strike, which must not be read as illiquidity.
+    """
+    from datetime import datetime, timezone
+    info = {"state": "unknown", "as_of": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "description": ""}
+    try:
+        r = requests.get(f"{TRADIER_BASE_URL}/markets/clock", headers=headers, timeout=10)
+        r.raise_for_status()
+        clock = (r.json() or {}).get("clock") or {}
+        info["state"] = (clock.get("state") or "unknown").lower()
+        info["description"] = clock.get("description", "")
+        if clock.get("date"):
+            info["trading_day"] = clock["date"]
+    except Exception as e:
+        print(f"  ⚠️  Market clock unavailable: {e}")
+    return info
+
+
 def get_headers() -> dict:
     api_key = os.environ.get("TRADIER_API_KEY", "")
     if not api_key:
         raise ValueError("TRADIER_API_KEY environment variable not set")
-    return {
-        "Authorization": f"Bearer {api_key}",
-        "Accept": "application/json",
-    }
+    return {"Authorization": f"Bearer {api_key}", "Accept": "application/json"}
+
+
+def normalize_ticker_for_tradier(ticker: str) -> str:
+    return ticker.strip().upper().replace(".", "/")
 
 
 def get_stock_quotes(tickers: list[str], headers: dict) -> dict[str, dict]:
-    url    = f"{TRADIER_BASE_URL}/markets/quotes"
-    params = {"symbols": ",".join(tickers), "greeks": "false"}
+    url = f"{TRADIER_BASE_URL}/markets/quotes"
     try:
-        resp = requests.get(url, params=params, headers=headers, timeout=15)
+        resp = requests.get(url, params={"symbols": ",".join(tickers), "greeks": "false"},
+                            headers=headers, timeout=15)
         resp.raise_for_status()
         quotes = resp.json().get("quotes", {}).get("quote", [])
         if isinstance(quotes, dict):
@@ -113,281 +112,121 @@ def get_stock_quotes(tickers: list[str], headers: dict) -> dict[str, dict]:
         return {}
 
 
-def normalize_ticker_for_tradier(ticker: str) -> str:
-    return ticker.strip().upper().replace(".", "/")
-
-
-def get_expiration_dates(ticker: str, headers: dict) -> list[str]:
-    url    = f"{TRADIER_BASE_URL}/markets/options/expirations"
-    params = {"symbol": ticker, "includeAllRoots": "true", "strikes": "false"}
-
+def get_expiration_dates(ticker: str, headers: dict, today: date) -> list[str]:
+    url = f"{TRADIER_BASE_URL}/markets/options/expirations"
     try:
-        resp = requests.get(url, params=params, headers=headers, timeout=15)
+        resp = requests.get(url, params={"symbol": ticker, "includeAllRoots": "true", "strikes": "false"},
+                            headers=headers, timeout=15)
         resp.raise_for_status()
         data = resp.json()
     except Exception as e:
         print(f"    ⚠️  Expiration fetch failed for {ticker}: {e}")
         return []
-
-    dates     = data.get("expirations", {})
-    date_list = dates.get("date", []) if dates else []
-    if isinstance(date_list, str):
-        date_list = [date_list]
-
-    today    = date.today()
-    min_date = today + timedelta(days=OPTION_MIN_DAYS)
-    max_date = today + timedelta(days=OPTION_MAX_DAYS)
-
-    return [d for d in date_list if min_date <= date.fromisoformat(d) <= max_date]
+    dates = (data.get("expirations") or {}).get("date", []) or []
+    if isinstance(dates, str):
+        dates = [dates]
+    lo, hi = today + timedelta(days=OPTION_MIN_DAYS), today + timedelta(days=OPTION_MAX_DAYS)
+    return sorted(d for d in dates if lo <= date.fromisoformat(d) <= hi)
 
 
 def get_option_chain(ticker: str, expiry: str, headers: dict) -> list[dict]:
-    url    = f"{TRADIER_BASE_URL}/markets/options/chains"
-    params = {"symbol": ticker, "expiration": expiry, "greeks": "true"}
-
+    url = f"{TRADIER_BASE_URL}/markets/options/chains"
     try:
-        resp = requests.get(url, params=params, headers=headers, timeout=15)
+        resp = requests.get(url, params={"symbol": ticker, "expiration": expiry, "greeks": "true"},
+                            headers=headers, timeout=20)
         resp.raise_for_status()
-        data = resp.json()
+        options = resp.json().get("options") or {}
     except Exception as e:
         print(f"    ⚠️  Chain fetch failed for {ticker} {expiry}: {e}")
         return []
-
-    options = data.get("options", {})
-    if not options:
-        return []
-
-    chain = options.get("option", [])
+    chain = options.get("option", []) if options else []
     return [chain] if isinstance(chain, dict) else chain
 
 
-def filter_options(chain: list[dict], direction: str = "BULLISH",
-                   current_price: float | None = None) -> list[dict]:
-    """
-    Filters to liquid, reasonably priced options matching our criteria.
-
-    Key changes from original:
-      - spread ≤ OPTION_MAX_SPREAD_PCT (8%, was 15%)
-      - volume  ≥ OPTION_MIN_VOLUME (300, was 100)
-      - IV      ≤ OPTION_MAX_IV (70%) when available
-      - OTM warning added as metadata when strike > spot + 10%
-    """
-    option_type      = "call" if direction == "BULLISH" else "put"
-    candidates       = []
-    greeks_available = False
-
-    for opt in chain:
-        if opt.get("option_type", "").lower() != option_type:
-            continue
-
-        volume = opt.get("volume", 0) or 0
-        oi     = opt.get("open_interest", 0) or 0
-
-        # Require meaningful liquidity
-        if volume < OPTION_MIN_VOLUME and oi < 500:
-            continue
-
-        bid = opt.get("bid") or 0
-        ask = opt.get("ask") or 0
-        mid = (bid + ask) / 2
-
-        if mid <= 0:
-            continue
-
-        # Strict spread filter
-        spread_ratio = (ask - bid) / mid
-        if spread_ratio > OPTION_MAX_SPREAD_PCT / 100:
-            continue
-
-        greeks = opt.get("greeks") or {}
-        delta  = greeks.get("delta")
-        iv     = greeks.get("smv_vol") or greeks.get("mid_iv")
-
-        if delta is not None:
-            greeks_available = True
-            if not (OPTION_DELTA_MIN <= abs(float(delta)) <= OPTION_DELTA_MAX):
-                continue
-
-        # Skip overpriced premium (high IV)
-        if iv is not None:
-            try:
-                if float(iv) > OPTION_MAX_IV:
-                    continue
-            except (TypeError, ValueError):
-                pass
-
-        strike     = opt.get("strike")
-        spread_pct = round(spread_ratio * 100, 1)
-
-        # OTM warning: flag if strike is >10% above current price
-        otm_warning = False
-        if strike and current_price and current_price > 0:
-            otm_pct = ((float(strike) / current_price) - 1) * 100
-            otm_warning = otm_pct > 10.0
-
-        candidates.append({
-            "symbol":           opt.get("symbol"),
-            "option_type":      opt.get("option_type"),
-            "strike":           strike,
-            "expiration_date":  opt.get("expiration_date"),
-            "bid":              bid,
-            "ask":              ask,
-            "mid":              round(mid, 2),
-            "spread_pct":       spread_pct,
-            "last":             opt.get("last"),
-            "volume":           volume,
-            "open_interest":    oi,
-            "implied_volatility": iv,
-            "delta":            delta,
-            "gamma":            greeks.get("gamma"),
-            "theta":            greeks.get("theta"),
-            "greeks_available": greeks_available,
-            "otm_warning":      otm_warning,
-        })
-
-    if not greeks_available and candidates:
-        print(f"    ⚠️  Greeks unavailable (pre-market?). Using volume/OI/spread filter only.")
-
-    candidates.sort(key=lambda x: x["volume"] or 0, reverse=True)
-    return candidates[:5]
-
-
-def fetch_options_for_ticker(ticker: str, direction: str, headers: dict,
-                             stock_quote: dict | None = None) -> dict:
-    """Full options lookup for one ticker across all valid expiry dates."""
+def lookup_ticker(ticker: str, headers: dict, quote: dict | None, today: date) -> dict:
     tradier_ticker = normalize_ticker_for_tradier(ticker)
-    current_price  = stock_quote.get("last") if stock_quote else None
-    change_pct     = stock_quote.get("change_percentage") if stock_quote else None
-    print(f"  📈 {ticker} ({tradier_ticker}) – ${current_price} ({change_pct}%) – direction: {direction}")
+    spot = (quote or {}).get("last")
+    print(f"  📈 {ticker} – spot ${spot}")
 
-    expiries = get_expiration_dates(tradier_ticker, headers)
+    expiries = get_expiration_dates(tradier_ticker, headers, today)
     if not expiries:
-        print(f"    ⚠️  No valid expiry dates found for {ticker}")
-        return {
-            "ticker":        ticker,
-            "current_price": current_price,
-            "change_pct":    change_pct,
-            "direction":     direction,
-            "error":         "no_valid_expiries",
-            "options":       [],
-        }
+        print(f"    ⚠️  no expiries in {OPTION_MIN_DAYS}–{OPTION_MAX_DAYS}d window")
+        return {"ticker": ticker, "current_price": spot, "status": NO_SUITABLE_OPTION,
+                "contract": None, "rejections": {"expiry_days": 0}, "expiries_checked": [],
+                "note": "no expiries in window", "iv_metrics": {}}
 
-    print(f"    Valid expiries ({OPTION_MIN_DAYS}-{OPTION_MAX_DAYS} days): {expiries}")
+    full_chain: list[dict] = []
+    for exp in expiries:
+        chain = get_option_chain(tradier_ticker, exp, headers)
+        full_chain.extend(c for c in chain if (c.get("option_type") or "").lower() == "call")
+    print(f"    {len(expiries)} expiries, {len(full_chain)} call contracts")
 
-    all_options = []
-    for expiry in expiries:
-        chain    = get_option_chain(tradier_ticker, expiry, headers)
-        filtered = filter_options(chain, direction=direction, current_price=current_price)
-        all_options.extend(filtered)
-        print(f"    {expiry}: {len(chain)} total → {len(filtered)} after filter "
-              f"(spread≤{OPTION_MAX_SPREAD_PCT}%, vol≥{OPTION_MIN_VOLUME}, IV≤{int(OPTION_MAX_IV*100)}%)")
+    selection = option_selector.select_call(full_chain, today, spot)
+    if selection["status"] == "OK":
+        c = selection["contract"]
+        print(f"    ✅ {c['symbol']}  Δ{c['delta']}  mid ${c['mid']}  spread {c['spread_pct']}%  "
+              f"vol {c['volume']} / OI {c['open_interest']}  ({selection['eligible_count']} eligible)")
+    else:
+        print(f"    ❌ {NO_SUITABLE_OPTION}  rejections={selection['rejections']}")
 
-    if not all_options:
-        print(f"    ⚠️  No options passed strict filters for {ticker}. Relaxing volume threshold.")
-        for expiry in expiries[:2]:
-            chain = get_option_chain(tradier_ticker, expiry, headers)
-            for opt in chain:
-                if opt.get("option_type", "").lower() == ("call" if direction == "BULLISH" else "put"):
-                    bid = opt.get("bid") or 0
-                    ask = opt.get("ask") or 0
-                    mid = (bid + ask) / 2
-                    all_options.append({
-                        "symbol":           opt.get("symbol"),
-                        "option_type":      opt.get("option_type"),
-                        "strike":           opt.get("strike"),
-                        "expiration_date":  opt.get("expiration_date"),
-                        "bid":              bid,
-                        "ask":              ask,
-                        "mid":              round(mid, 2) if mid > 0 else None,
-                        "volume":           opt.get("volume", 0),
-                        "open_interest":    opt.get("open_interest", 0),
-                        "implied_volatility": None,
-                        "delta":            None,
-                        "greeks_available": False,
-                        "otm_warning":      False,
-                        "note":             "fallback_relaxed_filter",
-                    })
-            if all_options:
-                break
-
-    all_options.sort(key=lambda x: x.get("volume") or 0, reverse=True)
-    top_options = all_options[:10]
-
-    # IV Rank: use ATM option (closest strike to current price) as IV anchor
+    # IV rank context from the ATM contract (any expiry)
     atm_iv = None
-    if current_price and top_options:
-        atm_opt = min(
-            (o for o in top_options if o.get("implied_volatility")),
-            key=lambda o: abs((o.get("strike") or 0) - current_price),
-            default=None,
-        )
-        if atm_opt:
+    if spot and full_chain:
+        with_iv = [c for c in full_chain if (c.get("greeks") or {}).get("smv_vol") or (c.get("greeks") or {}).get("mid_iv")]
+        if with_iv:
+            atm = min(with_iv, key=lambda c: (abs(float(c.get("strike") or 0) - float(spot)), c.get("symbol", "")))
+            g = atm.get("greeks") or {}
             try:
-                atm_iv = float(atm_opt["implied_volatility"])
+                atm_iv = float(g.get("smv_vol") or g.get("mid_iv"))
             except (TypeError, ValueError):
-                pass
-
-    iv_metrics = compute_iv_rank(ticker, atm_iv)
-    if iv_metrics:
-        print(f"    IV Rank: {iv_metrics['iv_rank']} | HV30: {iv_metrics['hv_30d_pct']}% | "
-              f"IV/HV: {iv_metrics.get('iv_hv_ratio')} | {iv_metrics['verdict']}")
+                atm_iv = None
 
     return {
         "ticker":           ticker,
-        "current_price":    current_price,
-        "change_pct":       change_pct,
-        "direction":        direction,
+        "current_price":    spot,
+        "change_pct":       (quote or {}).get("change_percentage"),
         "expiries_checked": expiries,
-        "iv_metrics":       iv_metrics,
-        "options":          top_options,
+        "iv_metrics":       compute_iv_rank(ticker, atm_iv),
+        **selection,
     }
 
 
-def run():
-    today_str = date.today().isoformat()
+def run(today_str: str | None = None) -> dict:
+    today_str = today_str or run_date()
+    today = date.fromisoformat(today_str)
+    print(f"\n{'='*60}\nTradier Call Selection – {today_str}\n{'='*60}")
 
-    print(f"\n{'='*60}")
-    print(f"Tradier Options Lookup – {today_str}")
-    print(f"{'='*60}")
-
-    r1_path = DATA_DIR / f"{today_str}_claude_round1.json"
-    if not r1_path.exists():
-        raise FileNotFoundError(f"Claude Round 1 results not found: {r1_path}")
-
-    with open(r1_path) as f:
-        r1 = json.load(f)
+    sig_path = DATA_DIR / f"{today_str}_signals.json"
+    if not sig_path.exists():
+        raise FileNotFoundError(f"Signals not found: {sig_path}")
+    signals = json.load(open(sig_path))
+    top = signals.get("top10", [])
+    if not top:
+        raise ValueError("Signal engine produced no Top-10")
 
     headers = get_headers()
-    top5    = r1.get("top5", [])
-
-    if not top5:
-        raise ValueError("Claude Round 1 returned no top5 picks")
-
-    tickers      = [s["ticker"] for s in top5]
-    stock_quotes = get_stock_quotes(tickers, headers)
-    print(f"📊 Live quotes fetched: {list(stock_quotes.keys())}")
+    clock = market_status(headers)
+    print(f"🕒 Market is {clock['state'].upper()}"
+          + (f" – {clock['description']}" if clock.get("description") else ""))
+    if clock["state"] != "open":
+        print("   Option volume reflects the last session, not live trading.")
+    tickers = [s["ticker"] for s in top]
+    quotes = get_stock_quotes([normalize_ticker_for_tradier(t) for t in tickers], headers)
 
     results = {}
-    for stock in top5:
-        ticker    = stock["ticker"]
-        direction = stock.get("direction", "BULLISH")
-        quote     = stock_quotes.get(ticker)
-        results[ticker] = fetch_options_for_ticker(ticker, direction, headers, stock_quote=quote)
+    for s in top:
+        t = s["ticker"]
+        results[t] = lookup_ticker(t, headers, quotes.get(normalize_ticker_for_tradier(t)), today)
 
-    output = {
-        "date":          today_str,
-        "top5_tickers":  [s["ticker"] for s in top5],
-        "options":       results,
-    }
-
-    output_path = DATA_DIR / f"{today_str}_options.json"
-    with open(output_path, "w") as f:
+    output = {"date": today_str, "tickers": tickers, "options": results,
+              "market": clock,
+              "filters": option_selector.FILTERS_DESCRIPTION}
+    out = DATA_DIR / f"{today_str}_options.json"
+    with open(out, "w") as f:
         json.dump(output, f, indent=2, default=str)
-
-    print(f"\n✅ Options data saved to {output_path}")
-    for ticker, data in results.items():
-        count = len(data.get("options", []))
-        print(f"   {ticker}: {count} option candidates")
+    ok = sum(1 for r in results.values() if r["status"] == "OK")
+    print(f"\n✅ Options saved to {out}  ({ok}/{len(results)} with a suitable Call)")
+    return output
 
 
 if __name__ == "__main__":

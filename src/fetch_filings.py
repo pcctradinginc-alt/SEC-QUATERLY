@@ -7,6 +7,7 @@ bypassing the unreliable index.json approach.
 """
 
 import json
+import re
 import time
 import xml.etree.ElementTree as ET
 from datetime import date, datetime
@@ -17,6 +18,7 @@ import requests
 import os
 
 from config import (
+    run_date,
     DATA_DIR, FILERS, OPENFIGI_API_KEY, OPENFIGI_BATCH, OPENFIGI_URL,
     SEC_HEADERS, SEC_RATE_LIMIT_SLEEP,
 )
@@ -33,9 +35,29 @@ def edgar_get(url: str) -> requests.Response:
     return resp
 
 
-# ── Step 1: Get latest 13F filing metadata ────────────────────────────────────
+# ── Step 1: Get the 13F filing FOR THE TARGET QUARTER ────────────────────────
 
-def get_latest_13f_filing(cik: str) -> dict | None:
+def target_report_date(as_of: str | None = None) -> str:
+    """
+    The quarter-end this run is about: the most recent quarter-end whose 13F
+    deadline (45 days later) has passed.
+
+    Taking whatever 13F a CIK filed most recently is wrong - a filer that has
+    not reported yet would contribute a year-old book, and that book would then
+    be diffed against the current quarter as if it were fresh.
+    """
+    override = os.environ.get("SEC_TARGET_REPORT_DATE", "").strip()
+    if override:
+        return override
+    today = date.fromisoformat(as_of or run_date())
+    ends = [date(today.year - 1, 12, 31), date(today.year, 3, 31),
+            date(today.year, 6, 30), date(today.year, 9, 30), date(today.year, 12, 31)]
+    due = [q for q in ends if (today - q).days >= 45]
+    return max(due).isoformat() if due else ends[0].isoformat()
+
+
+def get_latest_13f_filing(cik: str, want_report_date: str | None = None) -> dict | None:
+    """Latest 13F-HR / 13F-HR/A whose reportDate matches the target quarter."""
     url = f"https://data.sec.gov/submissions/CIK{cik}.json"
     try:
         data = edgar_get(url).json()
@@ -51,23 +73,43 @@ def get_latest_13f_filing(cik: str) -> dict | None:
 
     report_dates = filings.get("reportDate", [])
 
-    for i, form in enumerate(forms):
-        if form in ("13F-HR", "13F-HR/A"):
-            return {
-                "cik":             cik,
-                "accessionNumber": accessions[i],
-                "filingDate":      dates[i],
-                # reportDate = quarter-end (period of report), e.g. 2024-12-31.
-                # Always earlier than filingDate (which can be up to 45 days later).
-                # Use this as the price-comparison anchor so we measure from
-                # when the manager actually held the position, not when they disclosed it.
-                "reportDate":      report_dates[i] if i < len(report_dates) else dates[i],
-                "form":            form,
-                "isAmendment":     form == "13F-HR/A",
-                "primaryDocument": primary_docs[i] if i < len(primary_docs) else "",
-            }
+    want = want_report_date or target_report_date()
 
-    print(f"  ℹ️  No 13F-HR found for CIK {cik}")
+    # Collect every filing for the target quarter, then take the one filed last.
+    # A 13F-HR/A restates the original, so the newest filing is the truth; an
+    # amendment wins a tie on the same filing date. Relying on EDGAR's array
+    # order alone would leave that to an undocumented assumption.
+    matches, seen_quarters = [], []
+    for i, form in enumerate(forms):
+        if form not in ("13F-HR", "13F-HR/A"):
+            continue
+        rd = report_dates[i] if i < len(report_dates) else dates[i]
+        if rd != want:
+            seen_quarters.append(rd)
+            continue
+        matches.append({
+            "cik":             cik,
+            "accessionNumber": accessions[i],
+            "filingDate":      dates[i],
+            # reportDate = quarter-end (period of report). Always earlier than
+            # filingDate, and used as the price anchor and the Form 4 window start.
+            "reportDate":      rd,
+            "form":            form,
+            "isAmendment":     form == "13F-HR/A",
+            "primaryDocument": primary_docs[i] if i < len(primary_docs) else "",
+        })
+
+    if matches:
+        best = max(matches, key=lambda m: (m["filingDate"], m["isAmendment"]))
+        if len(matches) > 1:
+            print(f"  ↺ {len(matches)} filings for {want}; using {best['form']} "
+                  f"filed {best['filingDate']}")
+        return best
+
+    if seen_quarters:
+        print(f"  ⏭️  STALE_FILER: no 13F for {want} (newest on file: {max(seen_quarters)}) - excluded")
+    else:
+        print(f"  ℹ️  No 13F-HR found for CIK {cik}")
     return None
 
 
@@ -112,29 +154,85 @@ def get_filing_files(cik: str, accession: str) -> list[dict]:
     return []
 
 
+# The cover page is never the holdings table. Everything else is a candidate.
+_COVER_DOC_NAMES = ("primary_doc.xml", "primarydoc.xml")
+
+
 def find_infotable_filename(items: list[dict]) -> str | None:
-    """Find the information table XML from list of filing files."""
-    # Pass 1: name contains 'informationtable'
-    for item in items:
-        name = item.get("name", "").lower()
-        if "informationtable" in name and name.endswith(".xml"):
-            return item["name"]
+    """
+    Find the information-table XML among a filing's files.
 
-    # Pass 2: any xml that isn't the primary/cover/summary doc
-    skip_keywords = ["primary", "cover", "summary", "header", "form13f"]
-    for item in items:
-        name = item.get("name", "").lower()
-        if name.endswith(".xml") and not any(k in name for k in skip_keywords):
-            return item["name"]
+    Filers name this file inconsistently: `informationtable.xml`,
+    `form13fInfoTable.xml`, `Form13FInfoTable.xml`,
+    `form13f-1786738348_infotable.xml`, ... The common substring is
+    "infotable", so that is matched first (case-insensitively).
 
-    # Pass 3: second xml file (first is usually primary doc)
-    xml_files = [i["name"] for i in items if i.get("name","").lower().endswith(".xml")]
-    if len(xml_files) >= 2:
-        return xml_files[1]
-    if len(xml_files) == 1:
-        return xml_files[0]
+    The cover page (`primary_doc.xml`) is excluded at every step: it parses
+    as valid XML but contains no <infoTable> entries, so selecting it makes
+    the filer silently drop out of the run with zero holdings.
+    """
+    xml_files = [
+        i["name"] for i in items
+        if i.get("name", "").lower().endswith(".xml")
+        and i["name"].lower() not in _COVER_DOC_NAMES
+    ]
 
-    return None
+    # Pass 1: the usual naming - "infotable" covers "informationtable" too
+    for name in xml_files:
+        if "infotable" in name.lower() or "informationtable" in name.lower():
+            return name
+
+    # Pass 2: any remaining XML that is not a cover/summary/header document
+    skip_keywords = ("cover", "summary", "header")
+    for name in xml_files:
+        if not any(k in name.lower() for k in skip_keywords):
+            return name
+
+    # Pass 3: whatever XML is left (cover page already excluded above)
+    return xml_files[0] if xml_files else None
+
+
+_DATE_IN_NAME = re.compile(r"(20\d{2})[-_]?(\d{2})[-_]?(\d{2})|(\d{2})(\d{2})(20\d{2})")
+
+
+def verify_period_of_report(filing_meta: dict, filename: str) -> bool:
+    """
+    A filer may name its information table anything - SurgoCap ships a Q2-2026
+    filing whose table is called `Surgo_13F_09302025.xml`. The filename is not
+    evidence either way, so when it carries a date that contradicts the target
+    quarter, check the filing's own cover page (`primary_doc.xml`), which is the
+    authoritative period of report.
+    """
+    want = filing_meta.get("reportDate", "")
+    m = _DATE_IN_NAME.search(filename or "")
+    if not m or not want:
+        return True
+    groups = [g for g in m.groups() if g]
+    stamp = "".join(groups)
+    if want.replace("-", "") in stamp:
+        return True
+
+    cik_int = int(filing_meta["cik"])
+    acc = filing_meta["accessionNumber"].replace("-", "")
+    url = f"https://www.sec.gov/Archives/edgar/data/{cik_int}/{acc}/primary_doc.xml"
+    try:
+        text = edgar_get(url).text
+    except Exception:
+        return True                      # cover page unavailable: trust SEC metadata
+    found = re.search(r"<periodOfReport>([^<]+)</periodOfReport>", text)
+    if not found:
+        return True
+    period = found.group(1).strip()
+    normalised = period
+    if "-" in period and len(period) == 10 and period[2] == "-":      # MM-DD-YYYY
+        mm, dd, yyyy = period.split("-")
+        normalised = f"{yyyy}-{mm}-{dd}"
+    ok = normalised == want
+    if not ok:
+        print(f"    ⚠️  {filename}: cover page reports period {normalised}, expected {want}")
+    else:
+        print(f"    ✓ filename suggests another period; cover page confirms {want}")
+    return ok
 
 
 def download_infotable(filing_meta: dict) -> str | None:
@@ -151,6 +249,8 @@ def download_infotable(filing_meta: dict) -> str | None:
             "informationtable.xml",
             f"{acc_nodash}-informationtable.xml",
             "form13fInfoTable.xml",
+            "Form13FInfoTable.xml",
+            "Form13fInfoTable.xml",
             "infotable.xml",
         ]
         for candidate in candidates:
@@ -164,6 +264,11 @@ def download_infotable(filing_meta: dict) -> str | None:
                 continue
 
         print(f"    ⚠️  Could not find infotable XML for {accession}")
+        return None
+
+    if not verify_period_of_report(filing_meta, infotable_filename):
+        print(f"    ⚠️  Rejecting {infotable_filename}: it does not belong to "
+              f"{filing_meta.get('reportDate')}")
         return None
 
     xml_url = f"https://www.sec.gov/Archives/edgar/data/{cik_int}/{acc_nodash}/{infotable_filename}"
@@ -196,7 +301,19 @@ def parse_infotable(xml_text: str) -> list[dict]:
     holdings = []
     for entry in root.findall(f".//{prefix}infoTable", ns):
         def _t(tag_name):
+            """
+            Search anywhere below <infoTable>, not just its direct children.
+
+            The share count lives nested:
+                <shrsOrPrnAmt><sshPrnamt>12561737</sshPrnamt></shrsOrPrnAmt>
+            A direct-child lookup returns nothing and silently yields 0 shares -
+            which made every position look NEW, produced zero EXITs across the
+            whole universe and disabled the share-count delta the ranking is
+            built on.
+            """
             el = entry.find(f"{prefix}{tag_name}", ns)
+            if el is None:
+                el = entry.find(f".//{prefix}{tag_name}", ns)
             return el.text.strip() if el is not None and el.text else ""
 
         try:
@@ -301,7 +418,8 @@ def _build_sec_name_map() -> dict[str, str]:
     Returns {normalised_name: ticker} for ~10k US-listed companies.
     Used as fallback when OpenFIGI CUSIP mapping fails.
     """
-    url = "https://data.sec.gov/files/company_tickers.json"
+    # NOTE: this file is served from www.sec.gov - data.sec.gov returns 404.
+    url = "https://www.sec.gov/files/company_tickers.json"
     try:
         resp = edgar_get(url)
         data = resp.json()
@@ -434,7 +552,7 @@ def check_recent_splits(tickers: list[str]) -> dict[str, float]:
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def run():
-    today_str   = date.today().isoformat()
+    today_str   = run_date()
     output_path = DATA_DIR / f"{today_str}_raw_holdings.json"
 
     all_data   = {}
@@ -444,12 +562,15 @@ def run():
     print(f"SEC EDGAR Fetch – {today_str}")
     print(f"{'='*60}")
 
+    want = target_report_date(today_str)
+    print(f"Target quarter (period of report): {want}\n")
+
     for name, cik in FILERS.items():
         print(f"\n▶ {name} (CIK: {cik})")
 
-        filing_meta = get_latest_13f_filing(cik)
+        filing_meta = get_latest_13f_filing(cik, want)
         if not filing_meta:
-            all_data[name] = {"error": "no_filing", "cik": cik}
+            all_data[name] = {"error": "stale_or_missing_filing", "cik": cik}
             continue
 
         print(f"  Filing: {filing_meta['form']} on {filing_meta['filingDate']}"
@@ -462,6 +583,8 @@ def run():
 
         holdings = parse_infotable(xml_text)
         if not holdings:
+            print(f"  ⚠️  {name}: downloaded XML contained no <infoTable> rows - "
+                  f"wrong document selected? Filer contributes NOTHING to this run.")
             all_data[name] = {"error": "no_holdings_parsed", "cik": cik, "meta": filing_meta}
             continue
 
@@ -472,6 +595,10 @@ def run():
         # Cap at top 500 by value so they don't flood the CUSIP pool.
         MAX_POSITIONS_PER_FILER = 500
         original_count = len(holdings)
+        # Portfolio weights must divide by the FULL reported book. Capping first
+        # shrinks the denominator and inflates every remaining position's weight
+        # (a $3bn slice of a $100bn book would read as 4.3% of $70bn).
+        full_value = sum(h["value_usd_thousands"] for h in holdings)
         if original_count > MAX_POSITIONS_PER_FILER:
             holdings = sorted(holdings, key=lambda h: h["value_usd_thousands"], reverse=True)
             holdings = holdings[:MAX_POSITIONS_PER_FILER]
@@ -486,6 +613,9 @@ def run():
             "cik":        cik,
             "meta":       filing_meta,
             "holdings":   holdings,
+            "full_reported_value": full_value,
+            "full_position_count": original_count,
+            "is_capped":  original_count > MAX_POSITIONS_PER_FILER,
             "total_value":sum(h["value_usd_thousands"] for h in holdings),
             "fetched_at": datetime.utcnow().isoformat(),
         }
@@ -515,6 +645,7 @@ def run():
 
     output = {
         "date":            today_str,
+        "report_date":     want,
         "cusip_to_ticker": cusip_to_ticker,
         "recent_splits":   splits,
         "filers":          all_data,
@@ -529,6 +660,12 @@ def run():
     filers_ok = sum(1 for v in all_data.values() if "holdings" in v)
     print(f"\n✅ Saved to {output_path}")
     print(f"   Filers with data: {filers_ok} / {len(FILERS)}")
+
+    dropped = {n: v.get("error") for n, v in all_data.items() if "holdings" not in v}
+    if dropped:
+        print("   Filers with NO data:")
+        for n, err in sorted(dropped.items()):
+            print(f"     - {n}: {err}")
 
     missing = len(FILERS) - filers_ok
     if missing > len(FILERS) * 0.3:

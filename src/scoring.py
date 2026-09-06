@@ -25,6 +25,7 @@ from collections import defaultdict
 from datetime import date
 
 from config import (
+    run_date,
     ALPHA_WEIGHTS, CLUSTER_MIN_FUNDS, CROWDING_HOTEL_PENALTY,
     CROWDING_HOTEL_TICKERS, CROWDING_LABEL_BANDS,
     CROWDING_PENALTY_PER_FUND_OVER_MAX, DATA_DIR, DOUBLE_DOWN_MIN_DELTA,
@@ -75,7 +76,7 @@ def fetch_price_changes(tickers: list[str], filing_dates: dict[str, str]) -> dic
 
     # Download from the oldest filing date so every ticker has data from its filing onward
     oldest    = min(dates)
-    today_str = date.today().isoformat()
+    today_str = run_date()
 
     # yfinance uses BRK-B format, not BRK/B (Tradier format)
     yf_tickers = [t.replace("/", "-") for t in tickers]
@@ -123,7 +124,7 @@ def fetch_price_changes(tickers: list[str], filing_dates: dict[str, str]) -> dic
 
             filing_close  = round(float(series_after_filing.iloc[0]), 2)
             current_price = round(float(series_after_filing.iloc[-1]), 2)
-            days_since    = (date.today() - filing_date).days
+            days_since    = (date.fromisoformat(run_date()) - filing_date).days
 
             if filing_close <= 0:
                 result[ticker] = empty.copy()
@@ -155,7 +156,13 @@ def enrich_with_price_action(scored: list[dict]) -> list[dict]:
         if t and t not in filing_dates:
             filing_dates[t] = entry.get("filing_date", "")
 
-    tickers = [t for t in filing_dates if t]
+    # Only real, tradable symbols go to the price feed. An unmapped CUSIP
+    # ("82452JAD1") is not a ticker; sending it produced a hundred failed
+    # downloads per run and no price action either way.
+    tickers = [t for t in filing_dates if t and len(t) <= 6 and t[:1].isalpha()]
+    skipped = len(filing_dates) - len(tickers)
+    if skipped:
+        print(f"  ⏭️  {skipped} unmapped CUSIP keys skipped for price action (no tradable ticker)")
     if not tickers:
         return scored
 
@@ -298,7 +305,10 @@ def build_scored_universe(
         quality_score   = mq_info.get("quality_score", 0.5)
         fresh_info      = freshness_by_filer.get(filer_name, {})
         freshness_score = fresh_info.get("freshness_score", 0.5)
+        # report_date = quarter-end (price anchor + Form 4 window start);
+        # filing_date_actual = the day the 13F hit EDGAR (freshness age).
         filing_date     = filer_data.get("report_date") or filer_data.get("filing_date", "")
+        filing_date_actual = filer_data.get("filing_date", "")
 
         for pos in filer_data["positions"]:
             tx_type = pos["delta"]["type"]
@@ -332,7 +342,9 @@ def build_scored_universe(
                 "value_usd_k":            pos["value_usd_k"],
                 "put_value_usd_k":        pos.get("put_value_usd_k", 0),
                 "rank_in_port":           pos.get("rank"),
-                "filing_date":            filing_date,
+                "filing_date":            filing_date,          # = report_date (quarter-end), legacy name
+                "report_date":            filing_date,
+                "filing_date_actual":     filing_date_actual,
                 "position_change_raw":    position_change_raw,
                 "manager_quality_score":  quality_score,
                 "freshness_score":        freshness_score,
@@ -556,6 +568,8 @@ def aggregate_by_ticker(scored: list[dict]) -> list[dict]:
             "freshness_score":        entry["freshness_score"],
             "weight_vs_median":       entry.get("weight_vs_median"),
             "position_tier":          entry.get("position_tier"),
+            "report_date":            entry.get("report_date"),
+            "filing_date_actual":     entry.get("filing_date_actual"),
         })
         if entry["alpha_score"] >= agg["alpha_score"]:
             agg["alpha_score"]     = entry["alpha_score"]
@@ -648,7 +662,7 @@ def build_sell_signals(parsed: dict, manager_quality: dict[str, dict]) -> list[d
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def run():
-    today_str = date.today().isoformat()
+    today_str = run_date()
 
     print(f"\n{'='*60}")
     print(f"13F Alpha Score Engine – {today_str}")
@@ -700,9 +714,19 @@ def run():
     print(f"\n{'─'*60}")
     print(f"{'Rank':<5}{'Ticker':<8}{'Score':<8}{'Filers':<8}{'Crowd':<10}{'Flags'}")
     print(f"{'─'*60}")
-    for i, agg in enumerate(aggregated[:20], 1):
+    # Unresolved CUSIPs stay in the book for AUM and weights, but they are not
+    # tradable securities and must not be presented as ranked candidates.
+    def _tradable(t: str) -> bool:
+        return bool(t) and len(t) <= 6 and t[:1].isalpha()
+
+    shown = [a for a in aggregated if _tradable(a["ticker"])][:20]
+    hidden = sum(1 for a in aggregated if not _tradable(a["ticker"]))
+    for i, agg in enumerate(shown, 1):
         print(f"{i:<5}{agg['ticker']:<8}{agg['alpha_score']:<8.1f}"
               f"{agg['filer_count']:<8}{agg['crowding_label']:<10}{', '.join(agg['flags'])}")
+    if hidden:
+        print(f"\n  ({hidden} holdings without a resolved tradable ticker are excluded "
+              f"from the candidate ranking)")
 
     output = {
         "date":             today_str,
@@ -710,6 +734,7 @@ def run():
         "aggregated":       aggregated,
         "clusters":         clusters,
         "top20":            aggregated[:20],
+        "top40":            aggregated[:40],
         "mq_signals":       mq_signals,
         "manager_quality":  manager_quality,
         "sell_signals":     sell_signals,

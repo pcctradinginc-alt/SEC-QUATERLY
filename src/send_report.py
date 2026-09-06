@@ -1,655 +1,632 @@
 """
 send_report.py
-Generates the HTML report and sends it via Gmail.
+Renders the Top-10 signal report as a clean, responsive HTML e-mail
+(minimalist, Apple-style: generous whitespace, SF system font stack,
+hairline dividers, restrained colour) and sends it via Gmail.
 
-Fixes from architecture audit:
-  R-14  Validates report is non-empty before sending
-  R-06  Report only sends if analysis JSON is structurally complete
+Layout is table-based with inline styles for e-mail-client compatibility;
+a small <style> block adds mobile tweaks for clients that honour it.
 """
 
+import html
 import json
+import re
 import os
 import smtplib
 from datetime import date
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from pathlib import Path
 
 from config import (
-    DATA_DIR, FILERS, GMAIL_SMTP_HOST, GMAIL_SMTP_PORT,
-    REPORT_SUBJECT, REPORTS_DIR,
+    run_date,
+    DATA_DIR, GMAIL_SMTP_HOST, GMAIL_SMTP_PORT, NO_SUITABLE_OPTION,
+    REPORT_SUBJECT, REPORTS_DIR, SIGNAL_WEIGHTS,
 )
 
+# ── palette (Apple HIG-inspired) ─────────────────────────────────────────────
+INK      = "#1d1d1f"
+INK2     = "#6e6e73"
+INK3     = "#86868b"
+LINE     = "#e5e5ea"
+CARD     = "#ffffff"
+BG       = "#f5f5f7"
+BLUE     = "#0071e3"
+GREEN    = "#34c759"
+ORANGE   = "#ff9500"
+RED      = "#ff3b30"
+PURPLE   = "#5e5ce6"
 
-def load_final_analysis(today_str: str) -> dict:
-    path = DATA_DIR / f"{today_str}_final_analysis.json"
-    if not path.exists():
-        raise FileNotFoundError(f"Final analysis not found: {path}")
-    with open(path) as f:
-        return json.load(f)
+FONT = "-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',Helvetica,Arial,sans-serif"
+MONO = "'SF Mono',SFMono-Regular,Menlo,Consolas,monospace"
 
-
-def load_backtest(today_str: str) -> dict | None:
-    path = DATA_DIR / f"{today_str}_backtest.json"
-    if not path.exists():
-        return None
-    with open(path) as f:
-        return json.load(f)
-
-
-def flag_badge(flag: str) -> str:
-    colors = {
-        "HIGH_CONVICTION": "#dc2626",
-        "CLUSTER":         "#7c3aed",
-        "NEW_POSITION":    "#059669",
-        "AGGRESSIVE_ADD":  "#d97706",
-        "TOP10_ENTRY":     "#0284c7",
-        "EARLY_SMART_MONEY_ACCUMULATION": "#be123c",
-    }
-    color = colors.get(flag, "#6b7280")
-    return f'<span style="background:{color};color:white;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600;margin-right:4px">{flag}</span>'
+FACTOR_ORDER = ["activity", "conviction", "manager_quality", "consensus",
+                "insider", "accumulation", "freshness", "crowding"]
+FACTOR_LABELS = {
+    "activity": "NEW / ADD activity", "conviction": "Portfolio conviction",
+    "manager_quality": "Manager quality", "accumulation": "Multi-quarter accumulation",
+    "consensus": "Smart-money consensus", "insider": "Insider buying (Form 4)",
+    "freshness": "Filing freshness", "crowding": "Low crowding",
+}
 
 
-def _signal_badge(signal: str) -> str:
-    colors = {
-        "VERY_STRONG_BUY": ("#fee2e2", "#dc2626", "🔥 VERY STRONG BUY"),
-        "STRONG":          ("#ffedd5", "#c2410c", "📈 STRONG"),
-        "MODERATE":        ("#fef9c3", "#a16207", "➕ MODERATE"),
-        "WEAK":            ("#f1f5f9", "#64748b", "〰️ WEAK"),
-        "NEGATIVE":        ("#e5e7eb", "#374151", "🔻 NEGATIVE"),
-    }
-    bg, color, label = colors.get(signal or "", ("#f1f5f9", "#64748b", signal or "n/a"))
-    return (f'<span style="background:{bg};color:{color};padding:4px 12px;border-radius:12px;'
-            f'font-size:12px;font-weight:700">{label}</span>')
+def esc(x) -> str:
+    return html.escape(str(x if x is not None else ""))
 
 
-def _crowding_badge(label: str) -> str:
-    colors = {
-        "LOW":      ("#f0fdf4", "#166534"),
-        "MODERATE": ("#fffbeb", "#92400e"),
-        "HIGH":     ("#fff1f2", "#be123c"),
-        "EXTREME":  ("#fef2f2", "#991b1b"),
-    }
-    bg, color = colors.get(label or "", ("#f1f5f9", "#64748b"))
-    return (f'<span style="background:{bg};color:{color};padding:2px 10px;border-radius:10px;'
-            f'font-size:11px;font-weight:700">CROWDING: {label or "n/a"}</span>')
+_DANGLING_SUFFIX_RE = re.compile(r"[\s,]+(FORMERLY|FKA|F/K/A)\s*$", re.I)
 
 
-def _bullet_list(items: list[str], color: str = "#374151") -> str:
-    if not items:
-        return ""
-    lis = "".join(f'<li style="margin-bottom:4px">{i}</li>' for i in items[:5])
-    return f'<ul style="margin:4px 0 0 0;padding-left:18px;color:{color};font-size:13px;line-height:1.5">{lis}</ul>'
+def clean_issuer_name(name: str) -> str:
+    """
+    13F filers type the issuer name by hand and often truncate it: Elevance
+    arrives as "ELEVANCE HEALTH INC FORMERLY" (from "... FORMERLY ANTHEM INC").
+    Drop a trailing "formerly" that names nothing; leave everything else alone.
+    """
+    return _DANGLING_SUFFIX_RE.sub("", (name or "").strip()).strip()
 
 
-def _manager_activity_table(rows: list[dict]) -> str:
-    """Section 20 table: Manager | Quality | Status | Weight before | Weight now | Shares Δ | Active Weight proxy."""
-    if not rows:
-        return ""
-    trs = ""
-    for r in rows:
-        weight_before = r.get("weight_before_pct")
-        weight_now    = r.get("weight_now_pct")
-        shares_chg    = r.get("shares_change_pct")
-        wvm           = r.get("weight_vs_median")
-        trs += (
-            "<tr>"
-            f"<td style='padding:5px 8px;color:#111827;font-weight:600'>{r.get('manager','')}</td>"
-            f"<td style='padding:5px 8px;color:#6b7280'>{r.get('quality_score','?')}</td>"
-            f"<td style='padding:5px 8px;color:#6b7280'>{r.get('status','')}</td>"
-            f"<td style='padding:5px 8px;color:#6b7280'>{f'{weight_before:.2f}%' if weight_before is not None else '—'}</td>"
-            f"<td style='padding:5px 8px;color:#111827'>{f'{weight_now:.2f}%' if weight_now is not None else '—'}</td>"
-            f"<td style='padding:5px 8px;color:#6b7280'>{f'{shares_chg:+.0f}%' if shares_chg is not None else 'NEW'}</td>"
-            f"<td style='padding:5px 8px;color:#6b7280'>{f'{wvm:.1f}x median' if wvm is not None else '—'}</td>"
-            "</tr>"
-        )
+def grade_color(grade: str) -> str:
+    return {"VERY_STRONG": GREEN, "STRONG": BLUE, "MODERATE": ORANGE, "WEAK": INK3}.get(grade, INK3)
+
+
+def pill(text: str, color: str, bg: str | None = None) -> str:
+    bg = bg or f"{color}1a"
+    return (f'<span style="display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;'
+            f'font-weight:600;letter-spacing:.02em;color:{color};background:{bg};margin:0 6px 6px 0">{esc(text)}</span>')
+
+
+def bar(label: str, value: float, weight: int, points: float) -> str:
+    width = max(2, int(round(value)))
     return f"""
-    <div style="overflow-x:auto;margin-bottom:12px">
-    <table style="width:100%;border-collapse:collapse;font-size:12px;background:#f9fafb;border-radius:8px;">
-      <thead><tr style="text-align:left;color:#9ca3af;font-size:10px;text-transform:uppercase">
-        <th style="padding:5px 8px">Manager</th><th style="padding:5px 8px">Quality</th>
-        <th style="padding:5px 8px">Status</th><th style="padding:5px 8px">Weight before</th>
-        <th style="padding:5px 8px">Weight now</th><th style="padding:5px 8px">Shares Δ</th>
-        <th style="padding:5px 8px">vs. Manager Median</th>
-      </tr></thead>
-      <tbody>{trs}</tbody>
-    </table>
+      <tr>
+        <td style="padding:5px 0;font-size:12px;color:{INK2};width:44%">{esc(label)}</td>
+        <td style="padding:5px 8px;width:36%">
+          <div style="background:{LINE};border-radius:4px;height:6px;overflow:hidden">
+            <div style="width:{width}%;height:6px;background:{BLUE};border-radius:4px"></div>
+          </div>
+        </td>
+        <td style="padding:5px 0;font-size:12px;color:{INK};text-align:right;white-space:nowrap">
+          <span style="font-weight:600">{points:.1f}</span><span style="color:{INK3}"> / {weight}</span>
+        </td>
+      </tr>"""
+
+
+def section_title(text: str, sub: str = "") -> str:
+    sub_html = f'<div style="font-size:13px;color:{INK2};margin-top:4px">{esc(sub)}</div>' if sub else ""
+    return (f'<div style="margin:36px 0 14px"><div style="font-size:20px;font-weight:600;color:{INK};'
+            f'letter-spacing:-.01em">{esc(text)}</div>{sub_html}</div>')
+
+
+# ── blocks ────────────────────────────────────────────────────────────────────
+
+def summary_table(top: list[dict]) -> str:
+    rows = ""
+    for s in top:
+        o = s.get("option") or {}
+        c = o.get("contract")
+        if c:
+            opt = f'<span class="mono" style="font-family:{MONO};font-size:11px">{esc(c["symbol"])}</span>'
+        elif o.get("status") == "NOT_EVALUATED":
+            opt = f'<span style="color:{INK3};font-size:11px">not evaluated</span>'
+        else:
+            opt = f'<span style="color:{INK3};font-size:11px">no Call</span>'
+        ins = s["factors"].get("insider", 0)
+        stance = ((s.get("insider") or {}).get("summary") or {}).get("net_stance")
+        if stance == "NET_BUYING":
+            ins_html = f'<span style="color:{GREEN};font-weight:600">{ins:.0f}</span>'
+        elif stance == "NET_SELLING":
+            ins_html = f'<span style="color:{ORANGE}">{ins:.0f} sell</span>'
+        else:
+            ins_html = f'<span style="color:{INK3}">–</span>' 
+        rows += f"""
+        <tr>
+          <td class="r" style="padding:10px 0;font-size:13px;color:{INK3};width:28px">{s['rank']}</td>
+          <td class="r" style="padding:10px 6px;font-size:14px;font-weight:600;color:{INK}">{esc(s['ticker'])}
+            <div style="font-size:11px;color:{INK3};font-weight:400">{esc(clean_issuer_name(s['name'])[:34])}</div></td>
+          <td class="r" style="padding:10px 6px;font-size:15px;font-weight:600;color:{grade_color(s['grade'])};text-align:right">{s['signal_score']:.0f}</td>
+          <td class="r" style="padding:10px 6px;font-size:12px;text-align:center">{ins_html}</td>
+          <td class="r" style="padding:10px 0 10px 6px;text-align:right;word-break:break-all">{opt}</td>
+        </tr>"""
+    return f"""
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">
+      <tr class="k">
+        <td style="padding:0 0 6px">#</td><td style="padding:0 6px 6px">Stock</td>
+        <td style="padding:0 6px 6px;text-align:right">Score</td>
+        <td style="padding:0 6px 6px;text-align:center">Insider</td>
+        <td style="padding:0 0 6px 6px;text-align:right">Call</td>
+      </tr>{rows}
+    </table>"""
+
+
+def buyers_table(filers: list[dict]) -> str:
+    rows = ""
+    for f in sorted(filers, key=lambda r: -(r.get("port_weight_pct") or 0)):
+        d = f.get("delta_pct")
+        chg = "NEW" if f.get("delta_type") == "NEW" else (f"{d:+.0f}%" if d is not None else "")
+        chg_color = GREEN if f.get("delta_type") == "NEW" else INK
+        rows += f"""
+        <tr>
+          <td class="r" style="padding:6px 0;font-size:12px;color:{INK}">{esc(f['filer'])}</td>
+          <td class="r" style="padding:6px 6px;font-size:12px;color:{INK};text-align:right">{(f.get('port_weight_pct') or 0):.1f}%</td>
+          <td class="r" style="padding:6px 6px;font-size:12px;color:{chg_color};text-align:right;font-weight:600">{esc(chg)}</td>
+          <td class="r" style="padding:6px 0 6px 6px;font-size:12px;color:{INK2};text-align:right">{(f.get('manager_quality_score') or 0):.2f}</td>
+        </tr>"""
+    return f"""
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-top:6px">
+      <tr class="k">
+        <td style="padding:0 0 4px">Manager</td><td style="padding:0 6px 4px;text-align:right">Weight</td>
+        <td style="padding:0 6px 4px;text-align:right">Change</td><td style="padding:0 0 4px 6px;text-align:right">Quality</td>
+      </tr>{rows}
+    </table>"""
+
+
+def insider_block(s: dict) -> str:
+    ins  = s.get("insider") or {}
+    summ = ins.get("summary") or {}
+    buy_val  = summ.get("buy_value_usd", 0) or 0
+    sell_val = summ.get("sell_value_usd", 0) or 0
+    stance   = summ.get("net_stance")
+    read = (s.get("commentary") or {}).get("insider_read", "")
+
+    # The headline must state the NET stance. Reporting "insider buying
+    # confirmed" for a name whose insiders sold more than they bought reads as
+    # confirmation of the 13F signal when the data says the opposite.
+    if stance == "NET_BUYING":
+        head_color = GREEN
+        head = f"Net insider buying · ${buy_val:,.0f} bought"
+        if sell_val:
+            head += f" vs ${sell_val:,.0f} sold"
+    elif stance == "NET_SELLING":
+        head_color = ORANGE
+        head = f"Net insider selling · ${sell_val:,.0f} sold"
+        head += f" vs ${buy_val:,.0f} bought" if buy_val else " · no purchases"
+    elif stance == "BALANCED":
+        head_color = INK2
+        head = f"Insider buying and selling balanced · ${buy_val:,.0f} each way"
+    elif ins.get("error"):
+        head_color, head = INK3, "Insider data unavailable"
+    else:
+        head_color, head = INK3, "No open-market insider transactions"
+
+    rows = ""
+    for b in (summ.get("buys") or [])[-4:][::-1]:
+        rows += (f'<div style="font-size:12px;color:{INK2};margin-top:4px">'
+                 f'<span style="color:{GREEN};font-weight:600">BUY</span> {esc(b["date"])} · '
+                 f'{esc(b["insider"][:38])} ({esc(b["role"][:26])}) · '
+                 f'{b["shares"]:,.0f} sh @ ${b["price"]:,.2f} = '
+                 f'<span style="color:{INK};font-weight:600">${b["value_usd"]:,.0f}</span></div>')
+    for x in (summ.get("sells") or [])[-2:][::-1]:
+        rows += (f'<div style="font-size:12px;color:{INK2};margin-top:4px">'
+                 f'<span style="color:{ORANGE};font-weight:600">SELL</span> {esc(x["date"])} · '
+                 f'{esc(x["insider"][:38])} ({esc(x["role"][:26])}) · '
+                 f'{x["shares"]:,.0f} sh @ ${x["price"]:,.2f} = ${x["value_usd"]:,.0f}</div>')
+
+    # Transparency: say when filings were excluded, and why.
+    notes = []
+    planned = summ.get("planned_sell_value_usd", 0) or 0
+    if planned:
+        notes.append(f"${planned:,.0f} of the sales ran under pre-arranged Rule 10b5-1 plans "
+                     f"and are not scored as a bearish signal")
+    disc = summ.get("discretionary_sell_value_usd")
+    if planned and disc:
+        notes.append(f"${disc:,.0f} was discretionary selling")
+    foreign = ins.get("foreign_issuer_skipped") or {}
+    if foreign:
+        notes.append(f"{sum(foreign.values())} filing(s) excluded: this company reporting as an "
+                     f"insider of {', '.join(sorted(foreign)[:4])}, not trades in its own stock")
+    skipped = summ.get("skipped_securities") or {}
+    if skipped:
+        notes.append(f"{sum(skipped.values())} non-common-stock line(s) excluded "
+                     f"({', '.join(sorted(skipped)[:2])})")
+    notes_html = "".join(
+        f'<div style="font-size:11px;color:{INK3};margin-top:6px">{esc(n)}</div>' for n in notes)
+
+    return f"""
+    <div style="border:1px solid {LINE};border-radius:12px;padding:14px 16px;margin-top:14px">
+      <div class="k2">SEC Form 4 · common stock · since {esc(ins.get('since', 'quarter-end'))}</div>
+      <div style="font-size:14px;font-weight:600;color:{head_color};margin-top:4px">{esc(head)}</div>
+      {rows}
+      {f'<div style="font-size:12px;color:{INK2};margin-top:8px">{esc(read)}</div>' if read else ''}
+      {notes_html}
     </div>"""
 
 
-def _post_filing_block(perf: dict) -> str:
-    """
-    Renders a compact coloured bar showing price movement since the 13F filing date.
-    Three zones:
-      green  : ≤ +15%  → fresh signal, thesis not yet priced in
-      amber  : +15–25% → already running, watch closely
-      red    : > +25%  → likely priced in / FOMO territory
-    """
-    pct   = perf.get("pct_change")
-    days  = perf.get("days_since_filing")
-    fc    = perf.get("filing_close")
-    cp    = perf.get("current_price")
-
-    if pct is None:
-        return ""
-
-    if pct > 25:
-        bg, border, text_color = "#fef2f2", "#fca5a5", "#991b1b"
-        label  = f"⚠️ +{pct:.1f}% seit Filing – FOMO-Risiko, Thesis möglicherweise eingepreist"
-        icon   = "🔴"
-    elif pct > 15:
-        bg, border, text_color = "#fffbeb", "#fcd34d", "#92400e"
-        label  = f"⚡ +{pct:.1f}% seit Filing – bereits gelaufen, erhöhtes Einstiegsrisiko"
-        icon   = "🟡"
-    elif pct >= 0:
-        bg, border, text_color = "#f0fdf4", "#bbf7d0", "#166534"
-        label  = f"✅ +{pct:.1f}% seit Filing – Signal noch frisch"
-        icon   = "🟢"
-    else:
-        bg, border, text_color = "#f0fdf4", "#bbf7d0", "#166534"
-        label  = f"↘ {pct:.1f}% seit Filing – günstiger als zum Signal-Zeitpunkt"
-        icon   = "🟢"
-
-    days_str  = f"{days}d" if days is not None else "?d"
-    price_str = (
-        f"${fc} → ${cp}" if fc is not None and cp is not None else ""
-    )
-
-    return (
-        f'<div style="background:{bg};border:1px solid {border};border-radius:8px;'
-        f'padding:10px 14px;margin-bottom:12px;display:flex;'
-        f'align-items:center;justify-content:space-between;">'
-        f'<span style="color:{text_color};font-size:13px;font-weight:600">{label}</span>'
-        f'<span style="color:{text_color};font-size:12px;white-space:nowrap;margin-left:12px">'
-        f'{price_str} &nbsp;·&nbsp; {days_str} ago</span>'
-        f'</div>'
-    )
+def quote_note(s: dict) -> str:
+    """Say plainly whether the option quotes were taken with the market open."""
+    m = (s.get("_market") or {})
+    state = (m.get("state") or "").lower()
+    if state == "open":
+        return "Live quotes from the analysis run. Verify before trading."
+    if state:
+        return (f"Market {state.upper()} at the time of the run"
+                f"{' · ' + m['description'] if m.get('description') else ''} – "
+                f"volume reflects the last session, not live trading. Verify before trading.")
+    return "Delayed snapshot from the analysis run. Verify before trading."
 
 
-def _multi_quarter_block(mq: dict) -> str:
-    """
-    Renders a compact banner when a stock has been built over multiple quarters.
-    Only shown when build_quarters >= 2; becomes more prominent at >= 3 and >= 5.
-    """
-    if not mq:
-        return ""
-    bq = mq.get("build_quarters", 0)
-    if bq < 2:
-        return ""
+def option_block(s: dict) -> str:
+    o = s.get("option") or {}
+    c = o.get("contract")
+    # Deterministic, from the selected contract - never model-generated.
+    note = o.get("rule_rationale", "")
+    if not c:
+        rej = o.get("rejections") or {}
+        rej_txt = ", ".join(f"{k} {v}" for k, v in rej.items()) if rej else "no chain inside the expiry window"
+        if o.get("status") == "NOT_EVALUATED":
+            body = "Option chain not evaluated in this run (no Tradier key)."
+        else:
+            body = ("No option currently satisfies the minimum liquidity, delta and "
+                    f"spread requirements · rejected on: {rej_txt}.")
+        return f"""
+    <div style="background:{BG};border-radius:12px;padding:16px;margin-top:14px">
+      <div class="k2">Call option</div>
+      <div style="font-family:{MONO};font-size:14px;font-weight:600;color:{INK};margin-top:4px">{esc(o.get('status') if o.get('status') != 'NOT_EVALUATED' else 'NOT_EVALUATED')}</div>
+      <div style="font-size:12px;color:{INK2};margin-top:6px">{esc(body)}</div>
+      {f'<div style="font-size:12px;color:{INK2};margin-top:6px">{esc(note)}</div>' if note else ''}
+    </div>"""
 
-    avg_delta  = mq.get("avg_delta_pct")
-    silent     = mq.get("silent_build", False)
-    flags      = mq.get("flags", [])
-
-    if bq >= 5:
-        bg, border, color, icon = "#fdf4ff", "#d8b4fe", "#6b21a8", "🔥"
-    elif bq >= 3:
-        bg, border, color, icon = "#eff6ff", "#bfdbfe", "#1e40af", "📈"
-    else:
-        bg, border, color, icon = "#f0fdf4", "#bbf7d0", "#166534", "➕"
-
-    delta_str = f" · Ø&nbsp;+{avg_delta:.0f}%&nbsp;/&nbsp;Quartal" if avg_delta else ""
-    silent_badge = (
-        '&nbsp;<span style="background:#7c3aed;color:white;padding:1px 7px;'
-        'border-radius:10px;font-size:10px;font-weight:700">SILENT BUILD</span>'
-        if silent else ""
-    )
-    strong_badge = (
-        '&nbsp;<span style="background:#dc2626;color:white;padding:1px 7px;'
-        'border-radius:10px;font-size:10px;font-weight:700">STRONG BUILD</span>'
-        if "STRONG_BUILD" in flags else ""
-    )
-
-    return (
-        f'<div style="background:{bg};border:1px solid {border};border-radius:8px;'
-        f'padding:9px 14px;margin-bottom:12px;">'
-        f'<span style="color:{color};font-size:13px;font-weight:600">'
-        f'{icon} {bq} Quartale in Folge aufgebaut{delta_str}'
-        f'</span>{silent_badge}{strong_badge}'
-        f'</div>'
-    )
-
-
-def generate_backtest_html(backtest: dict) -> str:
-    """Renders a compact performance summary block for the report."""
-    s = backtest.get("summary", {})
-    rows = backtest.get("results", [])
-
-    if not s.get("completed_90d"):
-        return ""
-
-    wr90  = s.get("win_rate_90d_pct")
-    wr180 = s.get("win_rate_180d_pct")
-    ar90  = s.get("avg_return_90d_pct")
-    ar180 = s.get("avg_return_180d_pct")
-
-    def _color(val):
-        if val is None:
-            return "#6b7280"
-        return "#059669" if val > 0 else "#dc2626"
-
-    def _fmt(val):
-        if val is None:
-            return "pending"
-        return f"+{val:.1f}%" if val > 0 else f"{val:.1f}%"
-
-    # Recent signals table (last 10 completed)
-    completed = [r for r in rows if r.get("status_d90") in ("win", "loss")][-10:]
-    rows_html = ""
-    for r in reversed(completed):
-        ret   = r.get("return_d90_pct")
-        color = _color(ret)
-        rows_html += (
-            f"<tr>"
-            f"<td style='padding:4px 8px;color:#374151'>{r['report_date']}</td>"
-            f"<td style='padding:4px 8px;font-weight:600;color:#111827'>{r['ticker']}</td>"
-            f"<td style='padding:4px 8px;color:#6b7280;font-size:12px'>{r.get('primary_flag','')}</td>"
-            f"<td style='padding:4px 8px;font-weight:700;color:{color}'>{_fmt(ret)}</td>"
-            f"</tr>"
-        )
-
+    iv = o.get("iv_metrics") or {}
+    iv_txt = f" · IV rank {iv.get('iv_rank')}" if iv.get("iv_rank") is not None else ""
+    money = c.get("moneyness_pct")
+    money_txt = f"{money:+.1f}% vs spot" if money is not None else ""
+    spot = (s.get("option") or {}).get("current_price")
+    cells = [
+        ("Stock now", f"${spot:,.2f}" if spot else "n/a", "underlying"),
+        ("Strike", f"${c['strike']:g}", money_txt),
+        ("Expiry", esc(c["expiration"]), f"{c['dte']} days"),
+        ("Delta", f"{c['delta']:.2f}", (f"IV {c['implied_volatility']:.0%}" if c.get("implied_volatility") else "")),
+        ("Bid / Ask", f"${c['bid']:.2f} / ${c['ask']:.2f}", f"spread {c['spread_pct']}%"),
+        ("Mid", f"${c['mid']:.2f}", "entry reference"),
+        ("Liquidity", f"{c['volume']:,} / {c['open_interest']:,}", "vol / OI"),
+        ("Max risk", f"${c['max_risk_per_contract']:,.0f}", f"BE ${c['breakeven']:,.2f}"),
+    ]
+    tds = [f'<td class="cell" style="padding:8px 8px 8px 0;vertical-align:top;width:33%">'
+           f'<div class="k">{esc(k)}</div>'
+           f'<div style="font-size:15px;font-weight:600;color:{INK};margin-top:2px">{v}</div>'
+           f'<div style="font-size:11px;color:{INK3}">{esc(sub)}</div></td>' for k, v, sub in cells]
     return f"""
-    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:20px;margin-bottom:20px;">
-      <div style="font-size:14px;font-weight:700;color:#1e293b;margin-bottom:14px">
-        📈 Historical Performance (90-day stock returns)
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;">
-        <div style="text-align:center">
-          <div style="font-size:22px;font-weight:800;color:{_color(ar90)}">{_fmt(ar90)}</div>
-          <div style="font-size:11px;color:#64748b">Avg 90d Return</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-size:22px;font-weight:800;color:#1e293b">{wr90 if wr90 is not None else '—'}{'%' if wr90 else ''}</div>
-          <div style="font-size:11px;color:#64748b">90d Win Rate</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-size:22px;font-weight:800;color:{_color(ar180)}">{_fmt(ar180)}</div>
-          <div style="font-size:11px;color:#64748b">Avg 180d Return</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-size:22px;font-weight:800;color:#1e293b">{s.get('total_signals','—')}</div>
-          <div style="font-size:11px;color:#64748b">Total Signals</div>
-        </div>
-      </div>
-      {'<table style="width:100%;border-collapse:collapse;font-size:13px">' + rows_html + '</table>' if rows_html else ''}
-      <div style="font-size:11px;color:#94a3b8;margin-top:10px">
-        ⚠️ Past stock returns do not predict option profits. Options can expire worthless even when the stock moves in the right direction.
-      </div>
+    <div style="background:{BG};border-radius:12px;padding:16px;margin-top:14px">
+      <div class="k2">Call option · long call{iv_txt}</div>
+      <div style="font-family:{MONO};font-size:15px;font-weight:600;color:{INK};margin-top:4px">{esc(c['symbol'])}</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-top:6px">
+        <tr>{''.join(tds[:3])}</tr><tr>{''.join(tds[3:])}</tr>
+      </table>
+      {f'<div style="font-size:12px;color:{INK2};margin-top:8px;line-height:1.5">{esc(note)}</div>' if note else ''}
+      <div style="font-size:11px;color:{INK3};margin-top:8px">{esc(quote_note(s))}</div>
     </div>"""
 
 
-def _option_trade_block(opt: dict) -> str:
-    """Renders the recommended option trade card, including spread legs when applicable."""
-    strategy    = opt.get("strategy", "LONG_CALL")
-    is_spread   = strategy == "BULL_CALL_SPREAD" or opt.get("short_leg_symbol")
-    iv_note     = opt.get("iv_rank_note", "")
+def stock_card(s: dict) -> str:
+    c = s.get("commentary") or {}
+    why = c.get("why_strongest") or s["why"]["summary"]
+    verdict = c.get("verdict")
+    perf = s.get("post_filing_perf") or {}
+    pct = perf.get("pct_change")
+    perf_pill = ""
+    if pct is not None:
+        col = RED if pct >= 25 else ORANGE if pct >= 15 else GREEN
+        perf_pill = pill(f"{pct:+.0f}% since quarter-end", col)
 
-    symbol_label = "BUY LEG" if is_spread else "SYMBOL"
-    symbol_val   = opt.get("option_symbol", "")
-    extra_row    = ""
-    if is_spread and opt.get("short_leg_symbol"):
-        extra_row = f"""
-              <div style="grid-column:1/-1;background:#fef2f2;border-radius:6px;padding:8px 10px;
-                          font-size:12px;color:#991b1b;">
-                <strong>SELL LEG:</strong>
-                <span style="font-family:monospace">{opt.get("short_leg_symbol","")}</span>
-                &nbsp; strike ${opt.get("short_strike","?")}
-                &nbsp;·&nbsp; Bull Call Spread reduces net premium paid
-              </div>"""
+    bullets = "".join(f'<li style="margin:4px 0">{esc(b)}</li>' for b in s["why"]["bullets"][:4])
+    risks = "".join(f'<li style="margin:4px 0">{esc(r)}</li>' for r in (c.get("risks") or [])[:3])
+    bars = "".join(
+        bar(FACTOR_LABELS[k], s["factors"][k], SIGNAL_WEIGHTS[k], s["contributions"][k]) for k in FACTOR_ORDER
+    )
+    penalty = s.get("price_penalty") or 0
+    penalty_row = (f'<tr><td colspan="3" style="padding:6px 0 0;font-size:12px;color:{RED}">'
+                   f'Price-action penalty −{penalty:.0f}</td></tr>' if penalty else "")
 
-    strategy_badge = ""
-    if is_spread:
-        strategy_badge = (
-            '<span style="background:#7c3aed;color:white;padding:2px 8px;border-radius:10px;'
-            'font-size:10px;font-weight:700;margin-left:8px">BULL CALL SPREAD</span>'
-        )
+    return f"""
+    <div class="card" style="background:{CARD};border:1px solid {LINE};border-radius:18px;padding:24px;margin-bottom:18px">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td style="vertical-align:top">
+          <div style="font-size:12px;color:{INK3}">No. {s['rank']}</div>
+          <div style="font-size:26px;font-weight:700;color:{INK};letter-spacing:-.02em;margin-top:2px">{esc(s['ticker'])}</div>
+          <div style="font-size:13px;color:{INK2};margin-top:2px">{esc(clean_issuer_name(s['name']))}</div>
+        </td>
+        <td style="vertical-align:top;text-align:right;white-space:nowrap">
+          <div style="font-size:34px;font-weight:700;color:{grade_color(s['grade'])};letter-spacing:-.03em;line-height:1">{s['signal_score']:.0f}</div>
+          <div style="font-size:10px;color:{INK3};text-transform:uppercase;letter-spacing:.08em;margin-top:4px">Signal score</div>
+          <div style="font-size:11px;color:{INK3};margin-top:3px;white-space:nowrap">13F {s.get('score_13f', 0):.0f} · insider {s.get('insider_score', 0):.0f}{f" · +{s['confluence_bonus']:.0f} confluence" if s.get('confluence_bonus') else ""}</div>
+        </td>
+      </tr></table>
 
-    iv_note_html = (
-        f'<div style="font-size:12px;color:#6b7280;margin-top:6px">'
-        f'<strong>IV Note:</strong> {iv_note}</div>'
-    ) if iv_note else ""
+      <div style="margin-top:14px">
+        {pill(s.get('signal_label') or s['grade'].replace('_', ' '), PURPLE) if s.get('signal_label') else ''}
+        {pill(s['grade'].replace('_', ' '), grade_color(s['grade']))}
+        {pill(f"Crowding {s.get('crowding_label') or '–'}", INK2)}
+        {pill(f"{s['filer_count']} buyer{'s' if s['filer_count'] != 1 else ''}", INK2)}
+        {pill("also " + ", ".join(a["ticker"] for a in s["same_issuer_alternates"]), INK2) if s.get("same_issuer_alternates") else ""}
+        {pill(f"Verdict: {verdict.replace('_', ' ').title()}", PURPLE) if verdict else ''}
+        {perf_pill}
+      </div>
 
-    return f'''
-          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:16px;">
-            <div style="font-size:12px;font-weight:700;color:#166534;text-transform:uppercase;margin-bottom:10px">
-              📈 RECOMMENDED OPTION TRADE{strategy_badge}
-            </div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
-              <div>
-                <div style="font-size:10px;color:#6b7280">{symbol_label}</div>
-                <div style="font-weight:700;color:#111827;font-family:monospace">{symbol_val}</div>
-              </div>
-              <div>
-                <div style="font-size:10px;color:#6b7280">TYPE / STRIKE</div>
-                <div style="font-weight:600;color:#111827">{opt.get("option_type","")} @ ${opt.get("strike","")}</div>
-              </div>
-              <div>
-                <div style="font-size:10px;color:#6b7280">EXPIRY</div>
-                <div style="font-weight:600;color:#111827">{opt.get("expiration","")}</div>
-              </div>
-              <div>
-                <div style="font-size:10px;color:#6b7280">NET PREMIUM / CONTRACT</div>
-                <div style="font-weight:700;color:#059669">${opt.get("entry_price_mid","?")}</div>
-              </div>
-              <div>
-                <div style="font-size:10px;color:#6b7280">MAX RISK / CONTRACT</div>
-                <div style="font-weight:600;color:#dc2626">${opt.get("max_risk_per_contract","?")}</div>
-              </div>
-              <div>
-                <div style="font-size:10px;color:#6b7280">PROFIT TARGET</div>
-                <div style="font-weight:600;color:#059669">{opt.get("profit_target","")}</div>
-              </div>
-              {extra_row}
-            </div>
-            <div style="font-size:13px;color:#374151;margin-bottom:8px">
-              <strong>Rationale:</strong> {opt.get("option_rationale","")}
-            </div>
-            {iv_note_html}
-            <div style="font-size:12px;color:#6b7280;margin-top:6px">
-              Stop Loss: {opt.get("stop_loss","")} &nbsp;|&nbsp;
-              Greeks: {opt.get("greeks_note","Unknown")}
-            </div>
-          </div>'''
+      <div class="k2" style="margin-top:16px">Why it qualifies</div>
+      <div style="font-size:15px;line-height:1.55;color:{INK};margin-top:6px">{esc(why)}</div>
+      <ul style="margin:8px 0 0;padding-left:18px;font-size:13px;color:{INK2};line-height:1.5">{bullets}</ul>
+
+      <div class="k2" style="margin-top:18px">Score breakdown</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="tb" style="border-collapse:collapse;margin-top:4px">{bars}{penalty_row}</table>
+
+      <div class="k2" style="margin-top:18px">13F buyers</div>
+      {buyers_table(s['filers'])}
+
+      {insider_block(s)}
+      {option_block(s)}
+
+      {f'<div class="k2" style="margin-top:16px">Risks and possible misreads</div><ul style="margin:6px 0 0;padding-left:18px;font-size:13px;color:{INK2};line-height:1.5">{risks}</ul>' if risks else ''}
+    </div>"""
 
 
-def generate_sell_signals_html(sell_signals: list[dict]) -> str:
-    """Section 14: notable exits/reductions – negative signals, shown separately from the buy-side Top 5."""
+def sell_block(sell_signals: list[dict]) -> str:
     if not sell_signals:
         return ""
+    rows = ""
+    for s in sell_signals[:8]:
+        detail = (f"exited former #{s.get('prior_rank', '?')} position" if s.get("type") == "EXIT"
+                  else f"reduced {s.get('delta_pct', 0):.0f}%")
+        rows += (f'<tr><td class="r" style="padding:7px 0;font-size:13px;font-weight:600;color:{INK}">{esc(s.get("ticker"))}</td>'
+                 f'<td class="r" style="padding:7px 6px;font-size:12px;color:{INK2}">{esc(s.get("filer"))}</td>'
+                 f'<td class="r" style="padding:7px 0;font-size:12px;color:{INK2};text-align:right">{esc(detail)}</td></tr>')
+    return section_title("Notable exits and reductions", "Informational only – not part of the Top 10") + \
+        f'<div style="background:{CARD};border:1px solid {LINE};border-radius:18px;padding:18px 24px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">{rows}</table></div>'
 
-    rows_html = ""
-    for s in sell_signals[:10]:
-        if s["type"] == "EXIT":
-            detail = (f"Exited a former rank #{s.get('prior_rank','?')} position"
-                      + (" (was TOP-5!)" if s.get("was_top5_position") else ""))
-        else:
-            detail = f"Reduced {s.get('delta_pct','?')}%"
-        parallel = (f" · parallel selling with {', '.join(s['parallel_sellers'])}"
-                    if s.get("parallel_selling") else "")
-        rows_html += (
-            "<tr>"
-            f"<td style='padding:5px 8px;font-weight:700;color:#111827'>{s.get('ticker','')}</td>"
-            f"<td style='padding:5px 8px;color:#6b7280'>{s.get('filer','')} (q={s.get('manager_quality_score','?')})</td>"
-            f"<td style='padding:5px 8px;color:#991b1b'>{s.get('type','')}</td>"
-            f"<td style='padding:5px 8px;color:#6b7280;font-size:12px'>{detail}{parallel}</td>"
-            "</tr>"
-        )
+
+def track_record_block(bt: dict | None) -> str:
+    """Running record against the S&P 500, shown on every report."""
+    s = (bt or {}).get("summary") or {}
+    done = s.get("completed_90d") or 0
+    if not done:
+        return (f'<div style="font-size:11px;color:{INK3};margin-top:18px;padding:0 4px">'
+                f'Track record: no signal has completed its 90-day window yet.</div>')
+
+    ret, bench = s.get("avg_return_90d_pct"), s.get("avg_benchmark_90d_pct")
+    excess, beat = s.get("avg_excess_90d_pct"), s.get("beat_benchmark_90d_pct")
+    col = GREEN if (excess or 0) > 0 else ORANGE
+    eng = (s.get("by_engine") or {})
+    eng_txt = " · ".join(
+        f"{'current engine' if k.startswith('v2') else 'legacy engine'}: "
+        f"{v['signals']} signals, {v.get('avg_excess_90d_pct', 0) or 0:+.1f}% vs {esc(s.get('benchmark', 'SPY'))}"
+        for k, v in sorted(eng.items()))
 
     return f"""
-    <div style="background:#fff1f2;border:1px solid #fecdd3;border-radius:12px;padding:20px;margin-bottom:20px;">
-      <div style="font-size:14px;font-weight:700;color:#9f1239;margin-bottom:10px">
-        📉 Notable Exits &amp; Reductions (Section 14 – negative signals, informational only)
+    <div style="background:{CARD};border:1px solid {LINE};border-radius:18px;padding:18px 24px;margin-top:18px">
+      <div class="k2">Track record · 90 days · vs {esc(s.get('benchmark', 'SPY'))}</div>
+      <div style="font-size:14px;color:{INK};margin-top:6px">
+        <span style="font-weight:600;color:{col}">{excess:+.1f}% excess</span> on average
+        ({ret:+.1f}% signal vs {bench:+.1f}% benchmark) across {done} completed signals ·
+        {beat if beat is not None else '–'}% beat the benchmark
       </div>
-      <div style="overflow-x:auto">
-      <table style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead><tr style="text-align:left;color:#9ca3af;font-size:10px;text-transform:uppercase">
-          <th style="padding:5px 8px">Ticker</th><th style="padding:5px 8px">Manager</th>
-          <th style="padding:5px 8px">Type</th><th style="padding:5px 8px">Detail</th>
-        </tr></thead>
-        <tbody>{rows_html}</tbody>
-      </table>
-      </div>
-      <div style="font-size:11px;color:#9f1239;margin-top:8px">
-        Not part of the Top 5 buy ideas above – shown for risk context (a quality manager
-        exiting a name our Top 5 also holds is worth knowing about).
+      {f'<div style="font-size:11px;color:{INK3};margin-top:6px">{esc(eng_txt)}</div>' if eng_txt else ''}
+      <div style="font-size:11px;color:{INK3};margin-top:6px">
+        Stock returns, not option returns. The current engine has only just begun its forward record;
+        legacy rows come from the earlier LLM-selected top-5 pipeline and are not evidence for it.
       </div>
     </div>"""
 
 
-def generate_html_report(analysis: dict, backtest: dict | None = None) -> str:
-    today_str      = analysis["date"]
-    top5           = analysis.get("round1_top5", [])
-    options_recs   = analysis.get("options_recs", [])
-    market_context = analysis.get("market_context", "")
-    portfolio_note = analysis.get("portfolio_note", "")
-    disclaimer     = analysis.get("disclaimer", "")
+def methodology_block(a: dict) -> str:
+    w = a.get("weights", SIGNAL_WEIGHTS)
+    wrows = "".join(
+        f'<tr><td style="padding:4px 0;font-size:12px;color:{INK2}">{esc(FACTOR_LABELS[k])}</td>'
+        f'<td style="padding:4px 0;font-size:12px;color:{INK};text-align:right">{v}</td></tr>'
+        for k, v in w.items()
+    )
+    filters = a.get("filters") or {}
+    frows = "".join(f'<li style="margin:3px 0">{esc(v)}</li>' for v in filters.values())
+    llm = a.get("llm") or {}
+    src = a.get("commentary_source") or "rule-based"
+    route = " → ".join(f"{x.get('tier')}{' ✓' if x.get('ok') or x.get('cached') else ''}" for x in llm.get("route", []) if x.get("tier"))
+    return section_title("Methodology") + f"""
+    <div style="background:{CARD};border:1px solid {LINE};border-radius:18px;padding:22px 24px">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+        <td class="stack" style="vertical-align:top;width:50%;padding-right:12px">
+          <div class="k2">Signal score weights (0–100)</div>
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:6px">{wrows}</table>
+          <div style="font-size:11px;color:{INK3};margin-top:8px">Each factor is a fixed 0–100 transform; identical inputs always produce the identical ranking. A capped price-action penalty is subtracted for names that already ran.</div>
+        </td>
+        <td class="stack" style="vertical-align:top;width:50%;padding-left:12px">
+          <div class="k2">Call option filters</div>
+          <ul style="margin:6px 0 0;padding-left:18px;font-size:12px;color:{INK2}">{frows or '<li>not evaluated</li>'}</ul>
+          <div style="font-size:11px;color:{INK3};margin-top:8px">One Call per stock; if none passes every filter the report says {esc(NO_SUITABLE_OPTION)}.</div>
+        </td>
+      </tr></table>
+      <div style="border-top:1px solid {LINE};margin-top:16px;padding-top:12px;font-size:11px;color:{INK3};line-height:1.6">
+        Commentary: {esc(src)}{f' · route {esc(route)}' if route else ''} · API calls {llm.get('api_calls', 0)} · cache hits {llm.get('cache_hits', 0)} · est. cost ${llm.get('spent_usd', 0):.4f}<br>
+        Input fingerprint <span style="font-family:{MONO}">{esc((a.get('input_fingerprint') or '')[:16])}</span> · ranking fingerprint <span style="font-family:{MONO}">{esc((a.get('ranking_fingerprint') or '')[:16])}</span>
+      </div>
+    </div>"""
 
-    backtest_html     = generate_backtest_html(backtest) if backtest else ""
-    sell_signals_html = generate_sell_signals_html(analysis.get("sell_signals", []))
 
-    # Build options recommendations section
-    options_html = ""
-    options_by_ticker = {r["stock_ticker"]: r for r in options_recs}
+# ── page ──────────────────────────────────────────────────────────────────────
 
-    for stock in top5:
-        ticker = stock["ticker"]
-        opt    = options_by_ticker.get(ticker, {})
-        primary_flag = stock.get("primary_flag", "")
-        flags_html = flag_badge(primary_flag) if primary_flag else ""
-        for extra_flag in ("EARLY_SMART_MONEY_ACCUMULATION",):
-            if extra_flag != primary_flag and stock.get("early_smart_money") and extra_flag == "EARLY_SMART_MONEY_ACCUMULATION":
-                flags_html += flag_badge(extra_flag)
+def _hoist_repeated_styles(doc: str, min_count: int = 6) -> str:
+    """E-mail size guard: inline style values repeated ≥ min_count times become
+    classes in the <style> block (Gmail clips messages above ~100 KB)."""
+    from collections import Counter
+    counts = Counter(re.findall(r' style="([^"]{20,})"', doc))
+    rules, mapping = [], {}
+    for i, (val, n) in enumerate(sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))):
+        if n < min_count:
+            break
+        cls = f"s{i}"
+        mapping[val] = cls
+        rules.append(f".{cls}{{{val}}}")
+    if not rules:
+        return doc
 
-        # Buyers list – prefer enriched filer_details (port weight + delta) if available
-        filer_details = stock.get("filer_details", [])
-        if filer_details:
-            buyer_items = []
-            for fd in filer_details:
-                name       = fd.get("filer", "")
-                port_pct   = fd.get("port_weight_pct")
-                delta_type = fd.get("delta_type", "")
-                delta_pct  = fd.get("delta_pct")
+    def repl(m):
+        cls = mapping.get(m.group(3))
+        if cls is None:
+            return m.group(0)
+        existing = m.group(2)
+        return f' class="{existing} {cls}"' if existing else f' class="{cls}"'
 
-                detail_parts = []
-                if port_pct is not None:
-                    detail_parts.append(f"{port_pct:.2f}% of port")
-                if delta_type == "NEW":
-                    detail_parts.append("NEW")
-                elif delta_pct is not None:
-                    detail_parts.append(f"{delta_pct:+.0f}%")
+    doc = re.sub(r'( class="([^"]*)")? style="([^"]{20,})"', repl, doc)
+    return doc.replace("</style>", "\n" + "\n".join(rules) + "\n</style>", 1)
 
-                detail = f" ({', '.join(detail_parts)})" if detail_parts else ""
-                buyer_items.append(f"<span style='white-space:nowrap'>{name}{detail}</span>")
-            buyers_html = " &nbsp;·&nbsp; ".join(buyer_items)
-        else:
-            buyers_html = ", ".join(stock.get("key_buyers", []))
 
-        signal_row = _signal_badge(stock.get("signal", "")) if stock.get("signal") else ""
-        crowding_row = _crowding_badge(stock.get("crowding_label")) if stock.get("crowding_label") else ""
+def _minify(doc: str) -> str:
+    doc = re.sub(r">\s+<", "><", doc)
+    doc = re.sub(r"\n\s*\n", "\n", doc)
+    doc = re.sub(r"[ \t]{2,}", " ", doc)
+    return _hoist_repeated_styles(doc)
 
-        narrative_blocks = ""
-        for title, key in [
-            ("Conviction", "conviction_narrative"),
-            ("Accumulation", "accumulation_narrative"),
-            ("Smart Money Consensus", "consensus_narrative"),
-            ("Institutional Ownership", "institutional_ownership_narrative"),
-            ("Freshness", "freshness_narrative"),
-        ]:
-            text = stock.get(key)
-            if text:
-                narrative_blocks += (
-                    f'<div style="margin-bottom:10px">'
-                    f'<div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase">{title}</div>'
-                    f'<div style="font-size:13px;color:#374151;margin-top:2px">{text}</div>'
-                    f'</div>'
-                )
 
-        why_html   = _bullet_list(stock.get("why_interesting", []), color="#166534")
-        risks_html = _bullet_list(stock.get("risks", []), color="#92400e")
-        manager_table_html = _manager_activity_table(stock.get("manager_activity", []))
-        fazit = stock.get("fazit", "")
+def generate_html_report(a: dict) -> str:
+    return _minify(_generate_html_report(a))
 
-        options_html += f"""
-        <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;margin-bottom:20px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-            <div>
-              <span style="font-size:22px;font-weight:700;color:#111827">{ticker}</span>
-              <span style="font-size:14px;color:#6b7280;margin-left:8px">{stock.get('company_name','')}</span>
-            </div>
-            <div style="text-align:right">
-              <div style="font-size:28px;font-weight:700;color:#7c3aed">{stock.get('alpha_score', stock.get('conviction_score', ''))}<span style="font-size:14px;color:#9ca3af">/100</span></div>
-              <div style="font-size:11px;color:#9ca3af">13F ALPHA SCORE</div>
-            </div>
-          </div>
 
-          <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-            {signal_row}{crowding_row}{flags_html}
-          </div>
+def _generate_html_report(a: dict) -> str:
+    top = a.get("top10", [])
+    today_str = a["date"]
+    market = a.get("market") or {}
+    for _s in top:
+        _s["_market"] = market
+    cards = "".join(stock_card(s) for s in top)
+    n_ins = sum(1 for s in top
+                if ((s.get("insider") or {}).get("summary") or {}).get("net_stance") == "NET_BUYING")
+    quarter = a.get("quarter_label") or ""
+    scored_n = a.get("stocks_scored")
+    n_opt = sum(1 for s in top if (s.get("option") or {}).get("contract"))
+    evaluated = any((s.get("option") or {}).get("status") != "NOT_EVALUATED" for s in top)
+    opt_line = f"{n_opt} of 10 with a qualifying Call" if evaluated else "options not evaluated"
+    ctx = a.get("market_context", "")
 
-          {_post_filing_block(stock.get("post_filing_perf", {}))}
-          {_multi_quarter_block(stock.get("mq_signal", {}))}
-
-          {manager_table_html}
-
-          <div style="background:#f9fafb;border-radius:8px;padding:16px;margin-bottom:16px;">
-            <div style="font-size:12px;font-weight:600;color:#6b7280;text-transform:uppercase;margin-bottom:6px">Investment Thesis</div>
-            <div style="color:#374151;font-size:14px;line-height:1.6">{stock.get('thesis','')}</div>
-          </div>
-
-          {narrative_blocks}
-
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-            <div style="background:#eff6ff;border-radius:8px;padding:12px;">
-              <div style="font-size:11px;color:#3b82f6;font-weight:600">KEY BUYERS</div>
-              <div style="color:#1e40af;font-size:13px;margin-top:4px;line-height:1.7">{buyers_html}</div>
-            </div>
-            <div style="background:#fef3c7;border-radius:8px;padding:12px;">
-              <div style="font-size:11px;color:#d97706;font-weight:600">RISK NOTE</div>
-              <div style="color:#92400e;font-size:13px;margin-top:4px">{stock.get('risk_factors','')}</div>
-            </div>
-          </div>
-
-          {f'<div style="margin-bottom:12px"><div style="font-size:11px;font-weight:700;color:#166534;text-transform:uppercase">Why this is interesting</div>{why_html}</div>' if why_html else ""}
-          {f'<div style="margin-bottom:16px"><div style="font-size:11px;font-weight:700;color:#92400e;text-transform:uppercase">Risks / possible misreads</div>{risks_html}</div>' if risks_html else ""}
-
-          {f'<div style="background:#f3f4f6;border-radius:8px;padding:14px;margin-bottom:16px;font-size:13px;color:#374151;font-style:italic">{fazit}</div>' if fazit else ""}
-
-          {"" if not opt else _option_trade_block(opt)}
-        </div>
-        """
-
-    html = f"""<!DOCTYPE html>
-<html>
+    return f"""<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SEC 13F Smart Money Report</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
+<title>13F Signal Engine – {esc(today_str)}</title>
+<style>
+  body {{ margin:0; padding:0; background:{BG}; -webkit-font-smoothing:antialiased; }}
+  .wrap {{ max-width:680px; margin:0 auto; padding:32px 20px 48px; }}
+  a {{ color:{BLUE}; text-decoration:none; }}
+  .tb, .card, td, div {{ font-family:{FONT}; }}
+  .k {{ font-size:10px; color:{INK3}; text-transform:uppercase; letter-spacing:.08em; }}
+  .k2 {{ font-size:11px; color:{INK3}; text-transform:uppercase; letter-spacing:.08em; }}
+  .r {{ border-top:1px solid {LINE}; }}
+  .m {{ font-family:{MONO}; }}
+  @media only screen and (max-width: 520px) {{
+    .wrap {{ padding:20px 12px 40px !important; }}
+    .card {{ padding:18px !important; border-radius:14px !important; }}
+    .stack {{ display:block !important; width:100% !important; padding:0 0 14px !important; }}
+    .cell {{ width:50% !important; }}
+    .m, .mono {{ font-size:10px !important; }}
+    .hero {{ font-size:30px !important; }}
+  }}
+</style>
 </head>
-<body style="margin:0;padding:0;background:#f3f4f6;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+<body style="margin:0;padding:0;background:{BG}; color:{INK}">
+<div class="wrap">
 
-  <div style="max-width:800px;margin:0 auto;padding:20px;">
-
-    <!-- Header -->
-    <div style="background:linear-gradient(135deg,#1e1b4b 0%,#312e81 50%,#4f46e5 100%);border-radius:16px;padding:32px;margin-bottom:20px;color:white;">
-      <div style="font-size:12px;color:#a5b4fc;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">
-        QUARTERLY INSTITUTIONAL INTELLIGENCE
-      </div>
-      <div style="font-size:28px;font-weight:800;margin-bottom:4px">SEC 13F Smart Money Report</div>
-      <div style="font-size:16px;color:#c7d2fe">{today_str} &nbsp;·&nbsp; {len(FILERS)} Monitored Institutions &nbsp;·&nbsp; Top 5 Picks</div>
+  <div style="padding:8px 0 22px">
+    <div style="font-size:11px;color:{INK3};text-transform:uppercase;letter-spacing:.12em">SEC 13F Signal Engine</div>
+    <div class="hero" style="font-size:38px;font-weight:700;letter-spacing:-.03em;line-height:1.1;color:{INK};margin-top:8px">Top 10 institutional signals</div>
+    <div style="font-size:15px;color:{INK2};margin-top:10px;line-height:1.5">
+      {esc(today_str)}{f" · {esc(quarter)}" if quarter else ""} · {a.get('filer_count', '')} filers · {f"{scored_n:,} stocks scored · " if scored_n else ""}{n_ins} of {len(top)} with net insider buying · {opt_line}
     </div>
-
-    <!-- Market Context -->
-    <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:12px;padding:20px;margin-bottom:20px;">
-      <div style="font-size:12px;font-weight:700;color:#92400e;text-transform:uppercase;margin-bottom:8px">Market Context</div>
-      <div style="color:#78350f;font-size:14px;line-height:1.6">{market_context}</div>
-    </div>
-
-    {backtest_html}
-
-    <!-- Top 5 Picks -->
-    <div style="font-size:20px;font-weight:700;color:#111827;margin-bottom:16px">
-      🎯 Top 5 Conviction Picks + Option Trades
-    </div>
-
-    {options_html}
-
-    {sell_signals_html}
-
-    <!-- Portfolio Note -->
-    {f'<div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:20px;margin-bottom:20px;"><div style="font-size:12px;font-weight:700;color:#0369a1;text-transform:uppercase;margin-bottom:8px">Portfolio Sizing Note</div><div style="color:#0c4a6e;font-size:14px">{portfolio_note}</div></div>' if portfolio_note else ''}
-
-    <!-- Disclaimer -->
-    <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:20px;">
-      <div style="font-size:11px;color:#6b7280;line-height:1.6">
-        ⚠️ <strong>DISCLAIMER:</strong> {disclaimer}<br><br>
-        <strong>Data limitations:</strong> 13F filings reflect long equity positions over $200K with up to 45-day delay.
-        Portfolio weights use long-only reported AUM (cash, shorts, bonds excluded – weights are systematically overstated).
-        Stock splits have been adjusted. Option prices are from Tradier at time of analysis and change constantly.
-        This report is generated automatically and does not constitute investment advice.
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <div style="text-align:center;font-size:11px;color:#9ca3af;padding:16px;">
-      Generated automatically by SEC 13F Smart Money Analyzer &nbsp;·&nbsp;
-      Data: SEC EDGAR + Tradier &nbsp;·&nbsp; Analysis: Claude AI
-    </div>
-
   </div>
+
+  <div class="card" style="background:{CARD};border:1px solid {LINE};border-radius:18px;padding:18px 24px 8px;overflow-x:auto">
+    {summary_table(top)}
+  </div>
+
+  {f'<div style="font-size:15px;color:{INK};line-height:1.6;margin:26px 4px 0">{esc(ctx)}</div>' if ctx else ''}
+
+  {section_title("The signals", "Which stocks combine high-conviction institutional accumulation with confirming insider activity, and which Call expresses each")}
+  {cards}
+
+  {sell_block(a.get('sell_signals', []))}
+  {track_record_block(a.get('backtest'))}
+  {methodology_block(a)}
+
+  <div style="font-size:11px;color:{INK3};line-height:1.6;margin-top:28px;padding:0 4px">
+    {esc(a.get('disclaimer', ''))} 13F filings show long US equity positions over $200K with up to a 45-day lag; portfolio weights use long-only reported AUM. Form 4 data covers open-market purchases and sales reported to the SEC since the last 13F quarter-end. Generated automatically.
+  </div>
+</div>
 </body>
 </html>"""
 
-    return html
 
+# ── e-mail ────────────────────────────────────────────────────────────────────
 
-def send_gmail(html_content: str, today_str: str):
+def resolve_recipient(env: dict | None = None) -> str:
     """
-    Sends the report via Gmail using App Password (no OAuth required).
-    Both GMAIL_ADDRESS and GMAIL_APP_PASSWORD come from GitHub Secrets.
+    REPORT_RECIPIENT is optional. GitHub Actions still defines the variable for
+    an unset secret, as the EMPTY STRING - and os.environ.get() returns that
+    empty value instead of the default, which sends the report to "" and gets a
+    555 from Gmail. Fall back on any blank/whitespace value, not just a missing key.
     """
-    gmail_address  = os.environ.get("GMAIL_ADDRESS", "")
-    gmail_password = os.environ.get("GMAIL_APP_PASSWORD", "")
+    env = os.environ if env is None else env
+    return (env.get("REPORT_RECIPIENT") or "").strip() or (env.get("GMAIL_ADDRESS") or "").strip()
 
+
+def send_gmail(html_content: str, today_str: str) -> None:
+    gmail_address  = os.environ.get("GMAIL_ADDRESS", "").strip()
+    gmail_password = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
     if not gmail_address or not gmail_password:
-        raise ValueError("GMAIL_ADDRESS and GMAIL_APP_PASSWORD must be set as GitHub Secrets")
-
-    subject = REPORT_SUBJECT.format(date=today_str)
+        raise ValueError("GMAIL_ADDRESS and GMAIL_APP_PASSWORD must be set")
+    recipient = resolve_recipient()
+    if "@" not in recipient:
+        raise ValueError(
+            f"Refusing to send: resolved recipient {recipient!r} is not an e-mail address "
+            "(set REPORT_RECIPIENT, or leave it unset to use GMAIL_ADDRESS)"
+        )
 
     msg = MIMEMultipart("alternative")
-    msg["Subject"] = subject
+    msg["Subject"] = REPORT_SUBJECT.format(date=today_str)
     msg["From"]    = gmail_address
-    msg["To"]      = gmail_address  # send to yourself
-
+    msg["To"]      = recipient
+    msg.attach(MIMEText("Your mail client does not render HTML. Open the attached report in a browser.", "plain"))
     msg.attach(MIMEText(html_content, "html"))
 
     with smtplib.SMTP(GMAIL_SMTP_HOST, GMAIL_SMTP_PORT) as server:
         server.ehlo()
         server.starttls()
         server.login(gmail_address, gmail_password)
-        server.sendmail(gmail_address, gmail_address, msg.as_string())
+        server.sendmail(gmail_address, [recipient], msg.as_string())
+    print(f"  ✅ Email sent to {recipient}")
 
-    print(f"  ✅ Email sent to {gmail_address}")
 
+def run(today_str: str | None = None, send: bool = True) -> str:
+    today_str = today_str or run_date()
+    print(f"\n{'='*60}\nReport – {today_str}\n{'='*60}")
 
-def run():
-    today_str = date.today().isoformat()
+    path = DATA_DIR / f"{today_str}_final_analysis.json"
+    if not path.exists():
+        raise FileNotFoundError(f"Final analysis not found: {path}")
+    analysis = json.load(open(path))
+    top = analysis.get("top10", [])
+    if not top:
+        raise RuntimeError("Report validation failed: empty Top 10 – aborting send")
+    for s in top:
+        if not (s.get("option") or {}).get("status"):
+            raise RuntimeError(f"Report validation failed: {s['ticker']} has no option status")
+    print(f"✅ Validation passed: {len(top)} stocks")
 
-    print(f"\n{'='*60}")
-    print(f"Report Generation & Gmail – {today_str}")
-    print(f"{'='*60}")
-
-    analysis = load_final_analysis(today_str)
-
-    # R-14 Fix: Validate before sending
-    recs = analysis.get("options_recs", [])
-    top5 = analysis.get("round1_top5", [])
-
-    if not top5 or not recs:
-        raise RuntimeError(
-            f"Report validation failed: top5={len(top5)}, options_recs={len(recs)}. "
-            "Aborting email send."
-        )
-
-    print(f"✅ Validation passed: {len(top5)} stocks, {len(recs)} option recommendations")
-
-    # Generate HTML
-    backtest = load_backtest(today_str)
-    if backtest:
-        print(f"📊 Backtest data loaded ({backtest['summary'].get('total_signals',0)} signals tracked)")
-    html = generate_html_report(analysis, backtest)
-
-    # Save report to /reports/
+    bt_path = DATA_DIR / f"{today_str}_backtest.json"
+    if bt_path.exists():
+        try:
+            analysis["backtest"] = json.load(open(bt_path))
+        except (OSError, json.JSONDecodeError):
+            pass
+    html_out = generate_html_report(analysis)
+    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
     report_path = REPORTS_DIR / f"{today_str}_report.html"
     with open(report_path, "w") as f:
-        f.write(html)
-    print(f"💾 HTML report saved to {report_path}")
+        f.write(html_out)
+    print(f"💾 HTML report saved to {report_path} ({len(html_out)//1024} KB)")
 
-    # Send email
-    print(f"📧 Sending via Gmail...")
-    send_gmail(html, today_str)
-
-    print(f"\n🎉 Pipeline complete for {today_str}")
+    if send:
+        send_gmail(html_out, today_str)
+    else:
+        print("  (email send skipped)")
+    return html_out
 
 
 if __name__ == "__main__":
-    run()
+    import sys
+    run(send="--no-send" not in sys.argv)

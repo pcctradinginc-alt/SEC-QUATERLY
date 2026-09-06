@@ -7,9 +7,35 @@ All CIKs, thresholds, and API endpoints defined here.
 from pathlib import Path
 
 # ── Directory layout ──────────────────────────────────────────────────────────
+import os
 BASE_DIR    = Path(__file__).parent.parent
-DATA_DIR    = BASE_DIR / "data" / "holdings"
-REPORTS_DIR = BASE_DIR / "reports"
+# SEC_DATA_DIR / SEC_REPORTS_DIR let tests and local dry-runs write elsewhere.
+# `or` (not a get() default): an env var defined but empty must fall back too,
+# otherwise Path("") silently becomes the current directory.
+DATA_DIR    = Path(os.environ.get("SEC_DATA_DIR")    or BASE_DIR / "data" / "holdings")
+REPORTS_DIR = Path(os.environ.get("SEC_REPORTS_DIR") or BASE_DIR / "reports")
+
+
+def run_date() -> str:
+    """
+    ISO date used to key every data file.
+
+    SEC_RUN_DATE wins. Otherwise, when a specific quarter is being rebuilt
+    (SEC_TARGET_REPORT_DATE), the run is dated shortly after that quarter's
+    filing deadline so the baseline lands in its own file and sorts before the
+    current run instead of overwriting it.
+    """
+    from datetime import date as _date, timedelta as _td
+    explicit = os.environ.get("SEC_RUN_DATE", "").strip()
+    if explicit:
+        return explicit
+    target = os.environ.get("SEC_TARGET_REPORT_DATE", "").strip()
+    if target:
+        try:
+            return (_date.fromisoformat(target) + _td(days=46)).isoformat()
+        except ValueError:
+            pass
+    return _date.today().isoformat()
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -31,11 +57,11 @@ FILERS = {
     "Gates Foundation Trust":         "0001166559",
     "Harvard Management Co":          "0001082621",
     "Brown University":               "0001664741",
-    "Duke University":                "0001439873",
+    "Duke University (DUMAC)":        "0001584258",  # was 0001439873 = Duke Univ. 13G-only filer
     "Scion Asset Management (Burry)": "0001649339",  # was mislabeled "TCI Fund (Chris Hohn)"
     "Pershing Square (Ackman)":       "0001336528",
     "Tiger Global (Coleman)":         "0001167483",
-    "Coatue (Laffont)":               "0001766502",
+    "Coatue (Laffont)":               "0001135730",  # was 0001766502 = Chewy, Inc. (mislabeled)
     "D1 Capital (Sundheim)":          "0001747057",
     "Viking Global (Halvorsen)":      "0001103804",
     "AQR Capital (Asness)":           "0001167557",
@@ -93,7 +119,7 @@ FILER_QUALITY: dict[str, float] = {
     "Harvard Management Co":      1.3,
     "Gates Foundation Trust":     1.3,
     "Brown University":           1.2,
-    "Duke University":            1.2,
+    "Duke University (DUMAC)":    1.2,
     "TCI Fund Management (Hohn)": 1.2,
     "Viking Global (Halvorsen)":  1.1,
     "AQR Capital (Asness)":       1.0,
@@ -258,28 +284,99 @@ ALPHA_WEIGHTS = {
 # ── Tradier API ───────────────────────────────────────────────────────────────
 TRADIER_BASE_URL    = "https://api.tradier.com/v1"   # Live account
 # TRADIER_BASE_URL  = "https://sandbox.tradier.com/v1"  # Paper account
-OPTION_MIN_VOLUME   = 300    # was 100 – stricter liquidity requirement
-OPTION_MAX_SPREAD_PCT = 8.0  # skip options with bid-ask spread > 8% of mid
-OPTION_DELTA_MIN    = 0.30
-OPTION_DELTA_MAX    = 0.70
-OPTION_MIN_DAYS     = 90
-OPTION_MAX_DAYS     = 180
-OPTION_MAX_IV       = 0.70   # skip options with IV > 70% (overpriced premium)
+# Predefined Call filters. A contract must pass ALL of them to be eligible;
+# if none does, the engine reports NO_SUITABLE_OPTION_FOUND for that stock.
+OPTION_MIN_DAYS        = 90     # expiry window (days to expiration)
+OPTION_MAX_DAYS        = 180
+OPTION_DELTA_MIN       = 0.30   # call delta window
+OPTION_DELTA_MAX       = 0.70
+OPTION_DELTA_TARGET    = 0.45   # selection prefers delta closest to this
+OPTION_MAX_SPREAD_PCT  = 8.0    # (ask - bid) / mid
+OPTION_MIN_VOLUME      = 300    # today's contract volume
+OPTION_MIN_OPEN_INT    = 500    # open interest (always enforced)
+# Daily volume resets every morning, so a chain pulled soon after the open
+# under-reports it for every strike. A contract with at least this much open
+# interest is treated as liquid even if today's volume is still below the
+# floor above; open interest itself is never waived.
+OPTION_OI_WAIVES_VOLUME = 2500
+OPTION_MAX_IV          = 0.70   # skip overpriced premium (IV > 70%)
+NO_SUITABLE_OPTION     = "NO_SUITABLE_OPTION_FOUND"
 
-# ── Claude API ────────────────────────────────────────────────────────────────
-# Round 1 (top-20 screening): Haiku is sufficient and ~20× cheaper than Sonnet
-# Round 2 (precise option selection): Sonnet for nuanced financial reasoning
-CLAUDE_MODEL_R1   = "claude-haiku-4-5-20251001"
-CLAUDE_MODEL_R2   = "claude-sonnet-4-6"
-CLAUDE_MODEL      = CLAUDE_MODEL_R2   # backward-compat alias
-CLAUDE_MAX_TOKENS = 4096
-# Round 1 now returns the full Section-20 structured format (manager activity
-# table + 5 narrative fields + bullet lists per stock, x5 stocks) - needs more room.
-CLAUDE_MAX_TOKENS_R1 = 8192
-CLAUDE_RETRY_COUNT = 3
-CLAUDE_RETRY_DELAY = 5   # seconds
+# ── Signal Engine (deterministic 0-100 model) ───────────────────────────────
+# Final SIGNAL SCORE = Σ weight_i × factor_i  (factors are each 0-100, fixed
+# absolute transforms - NOT universe-relative min-max - so a stock's score
+# does not change just because a different set of peers was scored).
+# Weights sum to 100. Crowding is a positive factor (LOW crowding = 100).
+# A capped price-action penalty is subtracted afterwards (see below).
+TOP_N = 10
+SIGNAL_WEIGHTS = {
+    "activity":        15,   # NEW / ADD activity strength
+    "conviction":      15,   # portfolio weight / rank of the position
+    "manager_quality": 15,   # dynamic manager quality of the buyers
+    "accumulation":    10,   # multi-quarter build
+    "consensus":       15,   # quality-weighted smart-money agreement
+    "insider":         15,   # Form 4 open-market buying since quarter-end
+    "freshness":       10,   # filing delay × turnover decay
+    "crowding":         5,   # inverse crowding (LOW = 100, EXTREME = 0)
+}
+assert sum(SIGNAL_WEIGHTS.values()) == 100
+SIGNAL_PRICE_PENALTY_CAP = 15.0   # max points removed for "already ran" names
+# How many pre-ranked tickers get the (network-heavy) Form 4 look-up. Insider
+# data can now move a name by up to 25 points (15 weight + 10 confluence), so a
+# cut that is too tight hides exactly the setup the engine looks for. Each extra
+# ticker costs roughly 40 EDGAR requests.
+SIGNAL_CANDIDATE_POOL    = 60
+CROWDING_FACTOR_BY_LABEL = {"LOW": 100.0, "MODERATE": 60.0, "HIGH": 25.0, "EXTREME": 0.0}
+
+# ── Insider activity (SEC Form 4) ────────────────────────────────────────────
+INSIDER_MAX_FORM4_PER_TICKER = 40     # newest Form 4s inspected per ticker
+INSIDER_MIN_PURCHASE_USD     = 25_000 # ignore token-sized buys
+INSIDER_CACHE_DIR            = BASE_DIR / "data" / "insider_cache"
+INSIDER_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+# Sub-score anchors. The insider score is the sum of four capped components
+# (value 40 + cluster 25 + role 25 + stake 10), minus a penalty that counts only
+# DISCRETIONARY selling - a Rule 10b5-1 sale was scheduled months in advance and
+# says nothing about today's conviction (SEC Form 4 flag <aff10b5One>).
+INSIDER_VALUE_FULL_USD       = 2_000_000   # ≥ $2M of buying = full value credit
+INSIDER_CLUSTER_FULL_COUNT   = 3           # ≥ 3 distinct insiders buying = full cluster credit
+INSIDER_CLUSTER_WINDOW_DAYS  = 30          # buys this close together count as cluster buying
+INSIDER_STAKE_FULL_PCT       = 25.0        # a buy lifting an insider's own stake by ≥25% = full credit
+# Role weighting: the people closest to the numbers carry the most signal.
+INSIDER_ROLE_POINTS = {"CEO": 25.0, "CFO": 25.0, "OFFICER": 18.0, "DIRECTOR": 12.0, "TEN_PCT": 6.0, "OTHER": 6.0}
+INSIDER_DISCRETIONARY_SELL_PENALTY = 25.0  # max points removed for genuine discretionary selling
+
+# ── Confluence: 13F accumulation confirmed by insider buying ─────────────────
+# A weighted sum treats "great 13F, no insider" the same as "mediocre 13F, great
+# insider". The bonus is an explicit interaction term for the setup the engine
+# is actually looking for, and is capped so it can never dominate the ranking.
+CONFLUENCE_MAX_BONUS      = 10.0
+CONFLUENCE_MIN_13F_SCORE  = 55.0   # the 13F side must be strong on its own
+CONFLUENCE_MIN_INSIDER    = 40.0   # and the insider side must be a real confirmation
+
+# ── Claude API: cost-aware model routing & cascading ─────────────────────────
+# Every LLM task is routed to the cheapest tier that historically passes
+# validation; on validation failure the router escalates one tier
+# (cascade). Responses are cached on disk by content hash, so re-running on
+# identical data costs zero tokens and yields identical narratives.
+LLM_MODELS = {
+    "haiku":  {"id": "claude-haiku-4-5",  "in_per_mtok": 1.00, "out_per_mtok": 5.00,  "cache_read_per_mtok": 0.10},
+    "sonnet": {"id": "claude-sonnet-5",   "in_per_mtok": 2.00, "out_per_mtok": 10.00, "cache_read_per_mtok": 0.20},
+    "opus":   {"id": "claude-opus-5",     "in_per_mtok": 5.00, "out_per_mtok": 25.00, "cache_read_per_mtok": 0.50},
+}
+# task -> ordered cascade of tiers (cheapest first)
+LLM_TASK_ROUTES = {
+    "market_context":   ["haiku"],
+    "explain_signals":  ["haiku", "sonnet", "opus"],
+    "option_rationale": ["haiku", "sonnet"],
+}
+LLM_MAX_RUN_COST_USD = 1.50     # hard budget per pipeline run; beyond it -> rule-based fallback
+LLM_CACHE_DIR        = BASE_DIR / "data" / "llm_cache"
+LLM_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+CLAUDE_MAX_TOKENS    = 8192
+CLAUDE_RETRY_COUNT   = 3
+CLAUDE_RETRY_DELAY   = 5   # seconds
 
 # ── Gmail ─────────────────────────────────────────────────────────────────────
 GMAIL_SMTP_HOST = "smtp.gmail.com"
 GMAIL_SMTP_PORT = 587
-REPORT_SUBJECT  = "📊 SEC 13F Smart Money Report – {date}"
+REPORT_SUBJECT  = "13F Signal Engine – Top 10 – {date}"
