@@ -631,6 +631,11 @@ def build_sell_signals(parsed: dict, manager_quality: dict[str, dict]) -> list[d
                 "manager_quality_score": quality,
                 "current_rank":          pos.get("rank"),
                 "port_weight_pct":       pos["port_weight_pct"],
+                # Conviction BEFORE the cut is what makes a reduction meaningful:
+                # trimming a former top-3 holding is not the same as trimming a
+                # rounding-error position.
+                "prior_port_weight":     pos.get("prior_port_weight"),
+                "prior_rank":            pos.get("prior_rank"),
                 "delta_pct":             delta_pct,
                 "severity_score":        round(quality * abs(delta_pct) / 100.0, 3),
             })

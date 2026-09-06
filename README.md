@@ -53,6 +53,25 @@ peers happened to be scored. Weights sum to 100 (`config.SIGNAL_WEIGHTS`):
 | Filing freshness | 10 | `exp(-k · turnover · filing delay)` and the age of the filing |
 | Institutional crowding | 5 | inverse of the crowding proxy (hedge-fund-hotel list + oversized cluster) |
 
+**Institutional dissent penalty (max −15).** Managers disagree, and the bull
+score cannot express that. When tracked managers sell the same name others are
+accumulating, a capped penalty is subtracted — deliberately *not* a ninth
+factor, because buying and selling are not symmetric and a sell factor would
+double-count what Activity and Consensus already measure.
+
+Counting sellers is not enough: a full exit from a former top-3 position by a
+patient manager means something, a 22 % trim of a 0.4 % holding by a 200-name
+quant book does not. Each sale is weighed by severity (EXIT > deep cut > small
+trim), by the conviction the position carried *before* the sale, and by the
+seller's quality. Independent sellers combine with diminishing returns, and the
+result is modulated by how much of the tracked activity in that name is selling.
+Sales that cannot be read as a decision never count: corporate actions, capped
+books where a rank drop is indistinguishable from a sale, filers with no prior
+baseline, reductions under 20 %, and a manager appearing on both sides of one
+issuer (a share-class swap, netted to the buy side). Related vehicles count once,
+as on the buy side. Stances: `NO_DISSENT`, `MINOR_DISSENT`, `MIXED`,
+`STRONG_DISSENT`, `SELL_DOMINANT`.
+
 **Confluence bonus (max +10).** A weighted sum rates "excellent 13F, no insider"
 the same as "average 13F, excellent insider". The engine is looking for the two
 firing *together*, so the 13F side and the insider side are scored separately
@@ -62,7 +81,14 @@ deterministic `signal_class`, the strongest being
 `EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION`.
 
 A capped **price-action penalty** (max −15) is subtracted for names that already
-ran ≥15 % / ≥25 % since the quarter-end. Ties break on insider score, then
+ran ≥15 % / ≥25 % since the quarter-end. The final score is therefore:
+
+```
+base score (8 factors, 0–100) + confluence − price action − institutional dissent
+```
+
+and the report shows that derivation line by line. The eight factor weights are
+unchanged, so scores stay comparable with earlier runs. Ties break on insider score, then
 consensus, then ticker A→Z. CUSIP-only rows (no resolvable ticker) are scored
 but never enter the Top 10 because they cannot be traded or looked up.
 

@@ -40,7 +40,7 @@ from datetime import date
 from config import (
     run_date,
     CONFLUENCE_MAX_BONUS, CONFLUENCE_MIN_13F_SCORE, CONFLUENCE_MIN_INSIDER,
-    CORPORATE_STRATEGIC_FILERS, CROWDING_FACTOR_BY_LABEL, DATA_DIR,
+    CORPORATE_STRATEGIC_FILERS, CROWDING_FACTOR_BY_LABEL, DATA_DIR, DISSENT_MAX_PENALTY,
     economic_group, PRICE_ACTION_DOWNGRADE_PCT,
     PRICE_ACTION_WARN_PCT, SIGNAL_CANDIDATE_POOL, SIGNAL_PRICE_PENALTY_CAP,
     SIGNAL_WEIGHTS, TOP_N,
@@ -351,7 +351,8 @@ def _filer_rows(agg: dict, scored_flat: list[dict]) -> list[dict]:
 
 
 def score_ticker(agg: dict, scored_flat: list[dict], mq_signals: dict,
-                 insider: dict | None, today: date) -> dict:
+                 insider: dict | None, today: date,
+                 sell_by_ticker: dict[str, list[dict]] | None = None) -> dict:
     filers = _filer_rows(agg, scored_flat)
     factors: dict[str, float] = {}
     reasons: dict[str, list[str]] = {}
@@ -379,7 +380,15 @@ def score_ticker(agg: dict, scored_flat: list[dict], mq_signals: dict,
     bonus, bonus_reason = confluence_bonus(score_13f, insider_sc)
 
     penalty, penalty_reason = price_penalty(agg.get("post_filing_perf"))
-    score = round(_clamp(raw + bonus - penalty), 1)
+
+    # Managers disagreeing about the same name is information the bull score
+    # cannot express, so it is subtracted rather than averaged in.
+    import dissent as dissent_mod
+    dissent_info = dissent_mod.compute(
+        (sell_by_ticker or {}).get(agg["ticker"], []), filers)
+    dissent_penalty = dissent_info["penalty"]
+
+    score = round(_clamp(raw + bonus - penalty - dissent_penalty), 1)
 
     top_drivers = sorted(contributions.items(), key=lambda kv: (-kv[1], kv[0]))[:3]
     why_bullets = []
@@ -389,6 +398,8 @@ def score_ticker(agg: dict, scored_flat: list[dict], mq_signals: dict,
         why_bullets.append(reasons["insider"][0])
     if bonus_reason:
         why_bullets.append(bonus_reason)
+    if dissent_penalty > 0:
+        why_bullets.append(dissent_info["reason"])
     if penalty_reason:
         why_bullets.append(penalty_reason)
 
@@ -399,6 +410,8 @@ def score_ticker(agg: dict, scored_flat: list[dict], mq_signals: dict,
         "score_13f":         score_13f,
         "insider_score":     insider_sc,
         "confluence_bonus":  bonus,
+        "dissent_penalty":   dissent_penalty,
+        "institutional_dissent": dissent_info,
         "grade":             _grade(score),
         "factors":           factors,
         "contributions":     contributions,
@@ -445,8 +458,14 @@ def compute_signals(scores: dict, insider_by_ticker: dict[str, dict], today: dat
     scored_flat = scores.get("scored_flat", [])
     mq_signals  = scores.get("mq_signals", {})
 
+    sell_by_ticker: dict[str, list[dict]] = defaultdict(list)
+    for s in scores.get("sell_signals", []):
+        if s.get("ticker"):
+            sell_by_ticker[s["ticker"]].append(s)
+
     rows = [
-        score_ticker(agg, scored_flat, mq_signals, insider_by_ticker.get(agg["ticker"]), today)
+        score_ticker(agg, scored_flat, mq_signals, insider_by_ticker.get(agg["ticker"]),
+                     today, sell_by_ticker)
         for agg in aggregated
         if agg.get("ticker") and agg.get("filers")
     ]
@@ -483,6 +502,7 @@ def compute_signals(scores: dict, insider_by_ticker: dict[str, dict], today: dat
     fingerprint_src = json.dumps(
         {"aggregated": aggregated, "mq": mq_signals,
          "insider": {t: (v.get("summary"), v.get("score")) for t, v in sorted(insider_by_ticker.items())},
+         "sell_signals": scores.get("sell_signals", []),
          "weights": SIGNAL_WEIGHTS, "date": today.isoformat()},
         sort_keys=True, default=str,
     )

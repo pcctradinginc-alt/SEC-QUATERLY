@@ -480,6 +480,7 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
                 "direction":          direction,
                 "port_weight_pct":    round(port_weight_pct, 3),
                 "prior_port_weight":  round(prior_port_weight, 3) if prior_port_weight else None,
+                "prior_rank":         prior_pos.get("rank") if prior_pos else None,
                 "delta":              delta,
                 "is_first_run":       prior is None,
                 "net_bullish":        True,

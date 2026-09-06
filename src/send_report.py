@@ -169,6 +169,78 @@ def buyers_table(filers: list[dict]) -> str:
     </table>"""
 
 
+def dissent_block(s: dict) -> str:
+    """Managers selling the same name the Top-10 buyers are accumulating."""
+    di = s.get("institutional_dissent") or {}
+    if not di.get("seller_count"):
+        return ""
+
+    colour = {"MINOR_DISSENT": INK2, "MIXED": ORANGE,
+              "STRONG_DISSENT": RED, "SELL_DOMINANT": RED}.get(di.get("stance"), INK2)
+    label = (di.get("stance") or "").replace("_", " ").title()
+
+    rows = ""
+    for x in di.get("sellers", [])[:4]:
+        if x.get("type") == "EXIT":
+            what = "fully exited"
+            if x.get("prior_rank"):
+                detail = f"former #{x['prior_rank']} position"
+            elif (x.get("prior_weight_pct") or 0) >= 0.05:
+                detail = f"{x['prior_weight_pct']:.1f}% position"
+            else:
+                detail = "position closed"
+        else:
+            what = f"cut {abs(x.get('delta_pct') or 0):.0f}%"
+            detail = f"{(x.get('prior_weight_pct') or 0):.1f}% position"
+        rows += (f'<div style="font-size:12px;color:{INK2};margin-top:4px">'
+                 f'<span style="color:{colour};font-weight:600">{esc(what.upper())}</span> '
+                 f'{esc(x.get("filer", ""))} · {esc(detail)} · '
+                 f'quality {(x.get("manager_quality_score") or 0):.2f}</div>')
+
+    return f"""
+    <div style="border:1px solid {LINE};border-radius:12px;padding:14px 16px;margin-top:14px">
+      <div class="k2">Institutional dissent · 13F sellers</div>
+      <div style="font-size:14px;font-weight:600;color:{colour};margin-top:4px">
+        {esc(label)} · −{di.get('penalty', 0):.1f} points
+      </div>
+      {rows}
+      <div style="font-size:12px;color:{INK2};margin-top:8px">{esc(di.get('reason', ''))}</div>
+    </div>"""
+
+
+def score_derivation(s: dict) -> str:
+    """Every adjustment between the factor sum and the printed score."""
+    base = sum((s.get("contributions") or {}).values())
+    bonus = s.get("confluence_bonus") or 0
+    price = s.get("price_penalty") or 0
+    diss = s.get("dissent_penalty") or 0
+    if not (bonus or price or diss):
+        return ""
+
+    def row(label, value, colour):
+        sign = "+" if value > 0 else "−"
+        return (f'<tr><td style="padding:3px 0;font-size:12px;color:{INK2}">{esc(label)}</td>'
+                f'<td style="padding:3px 0;font-size:12px;color:{colour};text-align:right">'
+                f'{sign}{abs(value):.1f}</td></tr>')
+
+    rows = (f'<tr><td style="padding:3px 0;font-size:12px;color:{INK2}">13F / Form 4 factors</td>'
+            f'<td style="padding:3px 0;font-size:12px;color:{INK};text-align:right">{base:.1f}</td></tr>')
+    if bonus:
+        rows += row("Confluence bonus", bonus, GREEN)
+    if price:
+        rows += row("Price-action penalty", -price, ORANGE)
+    if diss:
+        rows += row("Institutional dissent", -diss, RED)
+    rows += (f'<tr><td style="padding:6px 0 0;font-size:12px;color:{INK};font-weight:600;'
+             f'border-top:1px solid {LINE}">Final signal score</td>'
+             f'<td style="padding:6px 0 0;font-size:12px;color:{INK};font-weight:700;'
+             f'text-align:right;border-top:1px solid {LINE}">{s["signal_score"]:.1f}</td></tr>')
+    return f"""
+      <div class="k2" style="margin-top:16px">How the score is reached</div>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="tb"
+             style="border-collapse:collapse;margin-top:4px">{rows}</table>"""
+
+
 def insider_block(s: dict) -> str:
     ins  = s.get("insider") or {}
     summ = ins.get("summary") or {}
@@ -345,6 +417,7 @@ def stock_card(s: dict) -> str:
         {pill(s['grade'].replace('_', ' '), grade_color(s['grade']))}
         {pill(f"Crowding {s.get('crowding_label') or '–'}", INK2)}
         {pill(f"{s['filer_count']} buyer{'s' if s['filer_count'] != 1 else ''}", INK2)}
+        {pill((s.get('institutional_dissent') or {}).get('stance', '').replace('_', ' ').title(), RED) if (s.get('dissent_penalty') or 0) >= 7 else ''}
         {pill("also " + ", ".join(a["ticker"] for a in s["same_issuer_alternates"]), INK2) if s.get("same_issuer_alternates") else ""}
         {pill(f"Verdict: {verdict.replace('_', ' ').title()}", PURPLE) if verdict else ''}
         {perf_pill}
@@ -361,6 +434,8 @@ def stock_card(s: dict) -> str:
       {buyers_table(s['filers'])}
 
       {insider_block(s)}
+      {dissent_block(s)}
+      {score_derivation(s)}
       {option_block(s)}
 
       {f'<div class="k2" style="margin-top:16px">Risks and possible misreads</div><ul style="margin:6px 0 0;padding-left:18px;font-size:13px;color:{INK2};line-height:1.5">{risks}</ul>' if risks else ''}
