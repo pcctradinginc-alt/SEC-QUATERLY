@@ -602,9 +602,11 @@ def run():
 
     print(f"\n✅ Parsed holdings saved to {output_path}")
 
-    # Fail closed: a comparison that cannot be trusted must not reach scoring.
+    # The verdict is printed here for visibility, but the hard stop lives in its
+    # own pipeline step (data_quality.py) so a deliberate baseline rebuild can
+    # parse a quarter that has no predecessor on file.
     import data_quality
-    data_quality.gate(today_str, parsed)
+    data_quality.gate(today_str, parsed, strict=False)
 
 
 if __name__ == "__main__":

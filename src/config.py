@@ -17,9 +17,25 @@ REPORTS_DIR = Path(os.environ.get("SEC_REPORTS_DIR") or BASE_DIR / "reports")
 
 
 def run_date() -> str:
-    """ISO date used to key every data file. SEC_RUN_DATE overrides today (re-runs, tests)."""
-    from datetime import date as _date
-    return os.environ.get("SEC_RUN_DATE") or _date.today().isoformat()
+    """
+    ISO date used to key every data file.
+
+    SEC_RUN_DATE wins. Otherwise, when a specific quarter is being rebuilt
+    (SEC_TARGET_REPORT_DATE), the run is dated shortly after that quarter's
+    filing deadline so the baseline lands in its own file and sorts before the
+    current run instead of overwriting it.
+    """
+    from datetime import date as _date, timedelta as _td
+    explicit = os.environ.get("SEC_RUN_DATE", "").strip()
+    if explicit:
+        return explicit
+    target = os.environ.get("SEC_TARGET_REPORT_DATE", "").strip()
+    if target:
+        try:
+            return (_date.fromisoformat(target) + _td(days=46)).isoformat()
+        except ValueError:
+            pass
+    return _date.today().isoformat()
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 

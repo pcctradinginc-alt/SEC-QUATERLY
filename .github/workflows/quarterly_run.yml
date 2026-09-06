@@ -19,6 +19,14 @@ on:
         description: 'Build the report but do not e-mail it'
         required: false
         default: 'false'
+      target_report_date:
+        description: 'Rebuild a specific 13F quarter, e.g. 2026-03-31 (baseline mode)'
+        required: false
+        default: ''
+      baseline_only:
+        description: 'Fetch and parse only, then commit - used to rebuild a prior quarter'
+        required: false
+        default: 'false'
 
 jobs:
   analyze:
@@ -28,6 +36,7 @@ jobs:
     # current date, so a per-step timezone would break the hand-off near midnight.
     env:
       TZ: Europe/Berlin
+      SEC_TARGET_REPORT_DATE: ${{ github.event.inputs.target_report_date }}
 
     steps:
       - name: Checkout repository
@@ -60,35 +69,35 @@ jobs:
         run: python src/parse_13f.py
 
       - name: 3 · Data-quality gate (fails closed)
-        if: steps.date_check.outputs.should_run == 'true'
+        if: steps.date_check.outputs.should_run == 'true' && github.event.inputs.baseline_only != 'true'
         run: python src/data_quality.py
 
       - name: 4 · Alpha components, crowding, sell signals
-        if: steps.date_check.outputs.should_run == 'true'
+        if: steps.date_check.outputs.should_run == 'true' && github.event.inputs.baseline_only != 'true'
         run: python src/scoring.py
 
       - name: 5 · Deterministic SIGNAL SCORE + Form 4 insider look-up → Top 10
-        if: steps.date_check.outputs.should_run == 'true'
+        if: steps.date_check.outputs.should_run == 'true' && github.event.inputs.baseline_only != 'true'
         run: python src/signal_engine.py
 
       - name: 6 · Tradier Call selection (predefined filters)
-        if: steps.date_check.outputs.should_run == 'true'
+        if: steps.date_check.outputs.should_run == 'true' && github.event.inputs.baseline_only != 'true'
         env:
           TRADIER_API_KEY: ${{ secrets.TRADIER_API_KEY }}
         run: python src/options_lookup.py
 
       - name: 7 · Commentary (cost-routed Haiku → Sonnet → Opus cascade)
-        if: steps.date_check.outputs.should_run == 'true'
+        if: steps.date_check.outputs.should_run == 'true' && github.event.inputs.baseline_only != 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: python src/explain_signals.py
 
       - name: 8 · Backtest past Top-10s
-        if: steps.date_check.outputs.should_run == 'true'
+        if: steps.date_check.outputs.should_run == 'true' && github.event.inputs.baseline_only != 'true'
         run: python src/backtest.py
 
       - name: 9 · Render and e-mail the report
-        if: steps.date_check.outputs.should_run == 'true'
+        if: steps.date_check.outputs.should_run == 'true' && github.event.inputs.baseline_only != 'true'
         env:
           GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
