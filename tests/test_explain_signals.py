@@ -34,6 +34,33 @@ def test_accepts_faithful_wording():
 
 def test_money_parser():
     assert ex._money_figures("$1.4M and $250,072 and $2B") == [1_400_000.0, 250_072.0, 2e9]
+    assert ex._money_figures("$5.2 million") == [5_200_000.0]
+
+
+def test_money_parser_does_not_read_a_following_word_as_a_magnitude():
+    """"$10.55 mid" is ten dollars fifty-five, not 10.55 million."""
+    assert ex._money_figures("$10.55 mid") == [10.55]
+    assert ex._money_figures("$2.96 Bid / Ask") == [2.96]
+
+
+CONTRACT = {"status": "OK", "contract": {
+    "mid": 10.55, "max_risk_per_contract": 1055.0, "breakeven": 120.55,
+    "strike": 110.0, "delta": 0.456}}
+NO_OPTION = {"status": "NO_SUITABLE_OPTION_FOUND", "contract": None}
+
+
+def test_option_note_must_match_the_selected_contract():
+    assert ex._option_facts_ok("Jan 2027 110 call at delta 0.46 costs $10.55 mid.", CONTRACT)[0]
+    ok, why = ex._option_facts_ok("The delta 0.80 call is the pick.", CONTRACT)
+    assert not ok and "delta" in why
+    ok, why = ex._option_facts_ok("Premium of $99.99 per contract.", CONTRACT)
+    assert not ok and "not part of the selected contract" in why
+
+
+def test_option_note_may_not_invent_a_contract():
+    assert ex._option_facts_ok("No suitable call option found; the chain is illiquid.", NO_OPTION)[0]
+    ok, why = ex._option_facts_ok("We recommend buying the 110 strike at delta 0.45.", NO_OPTION)
+    assert not ok and "none qualified" in why
 
 
 def test_validator_rejects_a_contradicting_stock():

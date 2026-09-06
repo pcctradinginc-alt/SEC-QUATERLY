@@ -305,7 +305,11 @@ SIGNAL_WEIGHTS = {
 }
 assert sum(SIGNAL_WEIGHTS.values()) == 100
 SIGNAL_PRICE_PENALTY_CAP = 15.0   # max points removed for "already ran" names
-SIGNAL_CANDIDATE_POOL    = 40     # how many tickers get the (network-heavy) insider look-up
+# How many pre-ranked tickers get the (network-heavy) Form 4 look-up. Insider
+# data can now move a name by up to 25 points (15 weight + 10 confluence), so a
+# cut that is too tight hides exactly the setup the engine looks for. Each extra
+# ticker costs roughly 40 EDGAR requests.
+SIGNAL_CANDIDATE_POOL    = 60
 CROWDING_FACTOR_BY_LABEL = {"LOW": 100.0, "MODERATE": 60.0, "HIGH": 25.0, "EXTREME": 0.0}
 
 # ── Insider activity (SEC Form 4) ────────────────────────────────────────────

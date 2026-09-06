@@ -83,6 +83,19 @@ verbatim, so the report never depends on an API call.
 
 ---
 
+### Matching a filer to its own prior quarter
+
+The prior quarter is joined on **CIK, not on the display name**. The names in
+`config.FILERS` are ours and they change: relabelling "TCI Fund (Chris Hohn)" to
+"Scion Asset Management (Burry)" would make every carried-over holding look like
+a brand-new position. The reverse is worse - "Coatue (Laffont)" kept its label
+while its CIK was corrected away from Chewy's, and a name-keyed join would diff
+Chewy's book against Coatue's and invent a full set of EXITs and NEW positions.
+A changed CIK under an unchanged name means a different entity, so that filer is
+treated as having no prior quarter.
+
+---
+
 ## Insider activity (SEC Form 4)
 
 `insider_activity.py` resolves each candidate ticker to its issuer CIK
@@ -255,7 +268,7 @@ each was re-verified against the EDGAR submissions feed):
 |---|---|
 | 13F data is up to 45 days old and shows no shorts, hedges or cash | freshness factor, price-action penalty, disclaimer |
 | Weights use long-only reported AUM | overstated for diversified managers – noted in the report |
-| Only the 40 top pre-ranked tickers get the Form 4 look-up | a name outside that pool cannot enter the Top 10 on insider strength alone |
+| Only the 60 top pre-ranked tickers get the Form 4 look-up | a name outside that pool cannot enter the Top 10 on insider strength alone; raised from 40 because insider data can now move a name by up to 25 points |
 | Share classes of one issuer share a Top-10 slot | the higher-scoring class is kept; the other is listed as an alternate. Folding requires the issuer name **and** the ticker family to match, because every iShares fund reports the issuer name "ISHARES INC" |
 | A filer absent from the prior quarter makes all its positions look NEW | expected once after the universe is expanded; self-corrects next quarter |
 | Crowding is a proxy (hotel list + tracked-fund cluster) | no market-wide ownership feed is wired up |

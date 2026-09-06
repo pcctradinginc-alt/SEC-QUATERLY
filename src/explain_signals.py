@@ -133,15 +133,25 @@ _NO_SALES_CLAIMS = (
 _BOUGHT_CLAIMS = ("insiders bought", "insiders purchased", "insiders added", "insider buying confirmed")
 
 
+# A magnitude suffix must be a standalone K/M/B or a spelled-out word - not the
+# first letter of the next word, or "$10.55 mid" parses as 10.55 million.
+_MONEY_RE = re.compile(
+    r"\$\s*([\d,]+(?:\.\d+)?)\s*(?:(K|M|B)(?![A-Za-z])|(thousand|million|billion)\b)?",
+    re.I,
+)
+_MULTIPLIER = {"k": 1e3, "m": 1e6, "b": 1e9,
+               "thousand": 1e3, "million": 1e6, "billion": 1e9}
+
+
 def _money_figures(text: str) -> list[float]:
     """Every $ amount in the text, normalised to dollars ($1.4M -> 1_400_000)."""
     out = []
-    for num, suffix in re.findall(r"\$\s*([\d,]+(?:\.\d+)?)\s*([KMB]?)", text or "", re.I):
+    for num, short, word in _MONEY_RE.findall(text or ""):
         try:
             v = float(num.replace(",", ""))
         except ValueError:
             continue
-        out.append(v * {"k": 1e3, "m": 1e6, "b": 1e9}.get(suffix.lower(), 1.0))
+        out.append(v * _MULTIPLIER.get((short or word).lower(), 1.0))
     return out
 
 
@@ -162,8 +172,44 @@ def _insider_facts_ok(text: str, ins: dict) -> tuple[bool, str]:
     return True, "ok"
 
 
-def make_validator(expected_tickers: list[str], insider_by_ticker: dict[str, dict] | None = None):
+def _option_facts_ok(text: str, opt: dict) -> tuple[bool, str]:
+    """
+    Reject narrative that misdescribes the selected contract. The contract itself
+    is chosen deterministically from the live chain, so it is always tradable -
+    but the prose about it still has to match its numbers.
+    """
+    low = (text or "").lower()
+    contract = (opt or {}).get("contract")
+    status = (opt or {}).get("status")
+
+    if status == NO_SUITABLE_OPTION and any(
+            w in low for w in ("delta", "strike", "expiry", "we recommend buying")):
+        return False, "describes a contract although none qualified"
+    if not contract:
+        return True, "ok"
+
+    allowed = [contract.get("mid", 0), contract.get("max_risk_per_contract", 0),
+               contract.get("breakeven", 0), contract.get("strike", 0), 0.0]
+    for v in _money_figures(text):
+        if not any(abs(v - a) <= max(a * 0.02, 1.0) for a in allowed):
+            return False, f"dollar figure ${v:,.0f} is not part of the selected contract"
+
+    for label, key in (("delta", "delta"), ("strike", "strike")):
+        for found in re.findall(rf"{label}\s*(?:of\s*)?([\d.]+)", low):
+            try:
+                val = float(found)
+            except ValueError:
+                continue
+            actual = float(contract.get(key) or 0)
+            if abs(val - actual) > max(actual * 0.02, 0.02):
+                return False, f"{label} {val} does not match the selected contract ({actual})"
+    return True, "ok"
+
+
+def make_validator(expected_tickers: list[str], insider_by_ticker: dict[str, dict] | None = None,
+                   options_by_ticker: dict[str, dict] | None = None):
     insider_by_ticker = insider_by_ticker or {}
+    options_by_ticker = options_by_ticker or {}
 
     def validate(data: dict) -> tuple[bool, str]:
         if not isinstance(data, dict):
@@ -193,6 +239,12 @@ def make_validator(expected_tickers: list[str], insider_by_ticker: dict[str, dic
                     ok, why = _insider_facts_ok(str(s.get(field, "")), ins)
                     if not ok:
                         return False, f"{s.get('ticker')}: {field} {why}"
+
+            opt = options_by_ticker.get(str(s.get("ticker", "")).upper())
+            if opt is not None:
+                ok, why = _option_facts_ok(str(s.get("option_note", "")), opt)
+                if not ok:
+                    return False, f"{s.get('ticker')}: option_note {why}"
         mc = str(data.get("market_context", ""))
         if len(mc) < 20 or len(mc.split()) > 90:
             return False, "market_context length"
@@ -248,13 +300,14 @@ def run(today_str: str | None = None) -> dict:
     insider_summaries = {
         s["ticker"].upper(): ((s.get("insider") or {}).get("summary") or {}) for s in top
     }
+    option_by_ticker = {t.upper(): o for t, o in ((options or {}).get("options") or {}).items()}
 
     commentary, meta = llm_router.route(
         task="explain_signals",
         system=SYSTEM_PROMPT,
         user=build_user_prompt(signals, options),
         tool=TOOL,
-        validator=make_validator(tickers, insider_summaries),
+        validator=make_validator(tickers, insider_summaries, option_by_ticker),
         max_tokens=6000,
     )
     if commentary is None:

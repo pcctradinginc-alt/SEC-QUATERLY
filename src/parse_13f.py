@@ -66,6 +66,44 @@ def load_prior_quarter(today_str: str) -> dict | None:
     return None  # First run
 
 
+def _match_prior_filer(prior: dict | None, filer_name: str, cik: str) -> dict | None:
+    """
+    Find last quarter's entry for this filer, keyed on CIK rather than on the
+    display name.
+
+    The name is ours and it changes: relabelling "TCI Fund (Chris Hohn)" to
+    "Scion Asset Management (Burry)" would make every one of Burry's carried-over
+    holdings look like a brand-new position. The reverse is worse - "Coatue
+    (Laffont)" kept its name while its CIK was corrected from Chewy's, so a
+    name-keyed join would diff Chewy's book against Coatue's and invent a full
+    set of EXITs and NEW positions. The CIK is the SEC's identifier and is
+    stable, so a changed CIK means a genuinely different entity: no prior.
+    """
+    if not prior:
+        return None
+    filers = prior.get("filers", {})
+
+    if cik:
+        for prior_name, prior_filer in filers.items():
+            raw = str(prior_filer.get("cik", "") or "").strip()
+            if raw and raw.zfill(10) == str(cik).zfill(10):
+                if prior_name != filer_name:
+                    print(f"    ℹ️  {filer_name}: prior quarter matched by CIK {cik} "
+                          f"(was filed under '{prior_name}')")
+                return prior_filer
+
+    candidate = filers.get(filer_name)
+    if candidate is None:
+        return None
+    prior_cik_raw = str(candidate.get("cik", "") or "").strip()
+    prior_cik = prior_cik_raw.zfill(10) if prior_cik_raw else ""
+    if cik and prior_cik and prior_cik != str(cik).zfill(10):
+        print(f"    ⚠️  {filer_name}: prior quarter has CIK {prior_cik}, now {cik} - "
+              f"different entity, treating as no prior quarter")
+        return None
+    return candidate
+
+
 def build_position_lookup(filer_data: dict) -> dict:
     """
     Build a dict: {ticker_or_cusip → holding_dict} for one filer.
@@ -295,8 +333,8 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
         # case where a CUSIP itself changed (e.g. share reclassification).
         prior_lookup_by_key   = {}
         prior_lookup_by_cusip = {}
-        if prior and filer_name in prior.get("filers", {}):
-            prior_filer = prior["filers"][filer_name]
+        prior_filer = _match_prior_filer(prior, filer_name, filer_data.get("cik", ""))
+        if prior_filer is not None:
             if "positions" in prior_filer:
                 for pos in prior_filer["positions"]:
                     key = pos.get("ticker") or pos.get("cusip") or ""
@@ -344,8 +382,8 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
 
             # Prior portfolio weight
             prior_port_weight = None
-            if prior_pos and prior:
-                prior_aum = prior["filers"].get(filer_name, {}).get("reported_aum_k", 0)
+            if prior_pos and prior_filer:
+                prior_aum = prior_filer.get("reported_aum_k", 0)
                 if prior_aum > 0:
                     prior_port_weight = (prior_pos.get("value_usd_thousands", 0) / prior_aum) * 100.0
 
