@@ -566,6 +566,10 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
     return {
         "date":            today_str,
         "period_of_report": raw.get("report_date", ""),
+        # Was this dataset itself produced by a real quarter-over-quarter diff?
+        # A baseline built without its own predecessor marks every holding NEW,
+        # and those NEW labels are artifacts, not investment decisions.
+        "has_prior_baseline": prior is not None,
         "report_date":     raw.get("report_date", ""),   # legacy alias
         "generated_at":    datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "prior_date":    prior["date"] if prior else None,

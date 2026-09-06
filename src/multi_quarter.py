@@ -14,14 +14,35 @@ from pathlib import Path
 from config import DATA_DIR, MULTI_QUARTER_BUILD_MIN, MULTI_QUARTER_MAX
 
 
+def _had_real_comparison(parsed: dict, sample: int = 400) -> bool:
+    """True when this dataset was itself diffed against its own prior quarter."""
+    if parsed.get("has_prior_baseline") is not None:
+        return bool(parsed["has_prior_baseline"])
+    seen = non_new = 0                       # older files carry no flag: infer it
+    for f in parsed.get("filers", {}).values():
+        if f.get("exited_positions"):
+            return True
+        for pos in f.get("positions", []):
+            seen += 1
+            if pos["delta"]["type"] != "NEW":
+                non_new += 1
+            if seen >= sample:
+                break
+        if seen >= sample:
+            break
+    return seen > 0 and non_new > seen * 0.05
+
+
 def load_historical_parsed(today_str: str) -> list[dict]:
     """
     Up to MULTI_QUARTER_MAX previous quarters, newest quarter first.
 
     Selection is per REPORTING QUARTER, not per file. Running the pipeline
     twice writes two files for the same quarter, and counting both would report
-    two quarters of accumulation where only one exists. Files whose share counts
-    are all zero cannot show a build either and are skipped.
+    two quarters of accumulation where only one exists. Two kinds of dataset are
+    skipped outright: those whose share counts are all zero, and those that were
+    never diffed against a prior quarter of their own - the latter mark every
+    holding NEW, which would fabricate accumulation across the whole universe.
     """
     from parse_13f import has_usable_share_counts, infer_report_date
 
@@ -41,6 +62,11 @@ def load_historical_parsed(today_str: str) -> list[dict]:
         except (json.JSONDecodeError, OSError):
             continue
         if not has_usable_share_counts(data):
+            continue
+        # A quarter that had no baseline of its own labels everything NEW.
+        # Counting it as a build quarter would manufacture accumulation for the
+        # entire universe, so such datasets are loaded for nothing here.
+        if not _had_real_comparison(data):
             continue
         quarter = infer_report_date(data) or c.name[:10]
         # Newest file wins for a given quarter (a re-run supersedes the earlier one)
