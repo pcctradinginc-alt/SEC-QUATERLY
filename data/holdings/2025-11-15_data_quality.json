@@ -1,0 +1,30 @@
+{
+  "passed": false,
+  "failures": [
+    "loaded prior period UNKNOWN is not the required 2025-06-30",
+    "no current position matched the prior quarter"
+  ],
+  "warnings": [
+    "zero EXITs across the whole universe (every comparable filer has a capped book)"
+  ],
+  "summary": {
+    "counts": {
+      "NEW": 3453,
+      "ADDED": 0,
+      "REDUCED": 0,
+      "UNCHANGED": 0,
+      "SOLD": 0
+    },
+    "exits": 0,
+    "total_positions": 3453,
+    "matched_positions": 0,
+    "new_ratio": 1.0,
+    "filers_with_prior": 0,
+    "filers_without_prior": 51,
+    "capped_without_exits": 3
+  },
+  "current_period": "2025-09-30",
+  "prior_period": "",
+  "expected_prior": "2025-06-30",
+  "checked_at": "2026-09-06"
+}
