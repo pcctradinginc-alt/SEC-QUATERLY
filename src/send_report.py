@@ -203,6 +203,13 @@ def insider_block(s: dict) -> str:
 
     # Transparency: say when filings were excluded, and why.
     notes = []
+    planned = summ.get("planned_sell_value_usd", 0) or 0
+    if planned:
+        notes.append(f"${planned:,.0f} of the sales ran under pre-arranged Rule 10b5-1 plans "
+                     f"and are not scored as a bearish signal")
+    disc = summ.get("discretionary_sell_value_usd")
+    if planned and disc:
+        notes.append(f"${disc:,.0f} was discretionary selling")
     foreign = ins.get("foreign_issuer_skipped") or {}
     if foreign:
         notes.append(f"{sum(foreign.values())} filing(s) excluded: this company reporting as an "
@@ -247,11 +254,14 @@ def option_block(s: dict) -> str:
     iv_txt = f" · IV rank {iv.get('iv_rank')}" if iv.get("iv_rank") is not None else ""
     money = c.get("moneyness_pct")
     money_txt = f"{money:+.1f}% vs spot" if money is not None else ""
+    spot = (s.get("option") or {}).get("current_price")
     cells = [
+        ("Stock now", f"${spot:,.2f}" if spot else "n/a", "underlying"),
         ("Strike", f"${c['strike']:g}", money_txt),
         ("Expiry", esc(c["expiration"]), f"{c['dte']} days"),
         ("Delta", f"{c['delta']:.2f}", (f"IV {c['implied_volatility']:.0%}" if c.get("implied_volatility") else "")),
-        ("Mid", f"${c['mid']:.2f}", f"spread {c['spread_pct']}%"),
+        ("Bid / Ask", f"${c['bid']:.2f} / ${c['ask']:.2f}", f"spread {c['spread_pct']}%"),
+        ("Mid", f"${c['mid']:.2f}", "entry reference"),
         ("Liquidity", f"{c['volume']:,} / {c['open_interest']:,}", "vol / OI"),
         ("Max risk", f"${c['max_risk_per_contract']:,.0f}", f"BE ${c['breakeven']:,.2f}"),
     ]
@@ -302,10 +312,12 @@ def stock_card(s: dict) -> str:
         <td style="vertical-align:top;text-align:right;white-space:nowrap">
           <div style="font-size:34px;font-weight:700;color:{grade_color(s['grade'])};letter-spacing:-.03em;line-height:1">{s['signal_score']:.0f}</div>
           <div style="font-size:10px;color:{INK3};text-transform:uppercase;letter-spacing:.08em;margin-top:4px">Signal score</div>
+          <div style="font-size:11px;color:{INK3};margin-top:3px;white-space:nowrap">13F {s.get('score_13f', 0):.0f} · insider {s.get('insider_score', 0):.0f}{f" · +{s['confluence_bonus']:.0f} confluence" if s.get('confluence_bonus') else ""}</div>
         </td>
       </tr></table>
 
       <div style="margin-top:14px">
+        {pill(s.get('signal_label') or s['grade'].replace('_', ' '), PURPLE) if s.get('signal_label') else ''}
         {pill(s['grade'].replace('_', ' '), grade_color(s['grade']))}
         {pill(f"Crowding {s.get('crowding_label') or '–'}", INK2)}
         {pill(f"{s['filer_count']} buyer{'s' if s['filer_count'] != 1 else ''}", INK2)}
@@ -423,6 +435,8 @@ def _generate_html_report(a: dict) -> str:
     cards = "".join(stock_card(s) for s in top)
     n_ins = sum(1 for s in top
                 if ((s.get("insider") or {}).get("summary") or {}).get("net_stance") == "NET_BUYING")
+    quarter = a.get("quarter_label") or ""
+    scored_n = a.get("stocks_scored")
     n_opt = sum(1 for s in top if (s.get("option") or {}).get("contract"))
     evaluated = any((s.get("option") or {}).get("status") != "NOT_EVALUATED" for s in top)
     opt_line = f"{n_opt} of 10 with a qualifying Call" if evaluated else "options not evaluated"
@@ -461,7 +475,7 @@ def _generate_html_report(a: dict) -> str:
     <div style="font-size:11px;color:{INK3};text-transform:uppercase;letter-spacing:.12em">SEC 13F Signal Engine</div>
     <div class="hero" style="font-size:38px;font-weight:700;letter-spacing:-.03em;line-height:1.1;color:{INK};margin-top:8px">Top 10 institutional signals</div>
     <div style="font-size:15px;color:{INK2};margin-top:10px;line-height:1.5">
-      {esc(today_str)} · {a.get('filer_count', '')} tracked filers · {n_ins} of {len(top)} with net insider buying · {opt_line}
+      {esc(today_str)}{f" · {esc(quarter)}" if quarter else ""} · {a.get('filer_count', '')} filers · {f"{scored_n:,} stocks scored · " if scored_n else ""}{n_ins} of {len(top)} with net insider buying · {opt_line}
     </div>
   </div>
 

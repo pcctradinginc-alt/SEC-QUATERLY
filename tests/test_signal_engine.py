@@ -89,8 +89,10 @@ def test_scores_bounded_and_weights_sum():
         assert 0.0 <= row["signal_score"] <= 100.0
         for k, v in row["factors"].items():
             assert 0.0 <= v <= 100.0, k
-        expected = sum(row["contributions"].values()) - row["price_penalty"]
+        expected = sum(row["contributions"].values()) + row["confluence_bonus"] - row["price_penalty"]
         assert abs(row["signal_score"] - max(0.0, min(100.0, expected))) < 0.06
+        assert 0.0 <= row["confluence_bonus"] <= 10.0
+        assert 0.0 <= row["score_13f"] <= 100.0
 
 
 def test_top10_excludes_cusip_keys_and_has_sequential_ranks():
@@ -191,6 +193,39 @@ def test_etfs_of_one_sponsor_are_not_merged():
     r = se.compute_signals(s, {}, TODAY)
     assert [x["ticker"] for x in r["top10"]] == ["EWZ", "EWY", "INDA", "IWM", "VZ", "V"]
     assert r["excluded_same_issuer"] == []
+
+
+def test_confluence_bonus_rewards_the_combination():
+    """A weighted sum rates 'great 13F, no insider' the same as the reverse; the
+    engine is looking for both firing together, so co-occurrence earns a bonus."""
+    cb = se.confluence_bonus
+    assert cb(80.0, 80.0)[0] > 0
+    assert cb(80.0, 0.0)[0] == 0.0          # no insider confirmation
+    assert cb(20.0, 90.0)[0] == 0.0         # 13F side too weak to matter
+    assert cb(100.0, 100.0)[0] == 10.0      # capped
+    assert cb(60.0, 45.0)[0] <= cb(90.0, 90.0)[0]
+
+
+def test_signal_class_is_deterministic_and_named():
+    r = se.compute_signals(make_scores(), INSIDER, TODAY)
+    for t in r["top10"]:
+        assert t["signal_class"]
+        assert t["signal_label"]
+    again = se.compute_signals(make_scores(), INSIDER, TODAY)
+    assert [t["signal_class"] for t in r["top10"]] == [t["signal_class"] for t in again["top10"]]
+
+
+def test_insider_confirmation_upgrades_the_signal_class():
+    agg = _agg("AAA", [_filer("Fund A", 12.0, q=0.95), _filer("Fund B", 6.0, q=0.9)])
+    scores = {"aggregated": [agg], "scored_flat": [], "mq_signals": {}}
+    strong_insider = {"AAA": {"score": 90.0, "reasons": ["CEO bought"],
+                              "summary": {"buy_value_usd": 3_000_000, "distinct_buyers": ["X", "Y"]}}}
+    with_ins = se.compute_signals(scores, strong_insider, TODAY)["ranking"][0]
+    without = se.compute_signals(scores, {}, TODAY)["ranking"][0]
+    assert with_ins["confluence_bonus"] > 0
+    assert "INSIDER_CONFIRMATION" in with_ins["signal_class"]
+    assert without["confluence_bonus"] == 0.0
+    assert "INSIDER_CONFIRMATION" not in without["signal_class"]
 
 
 def test_json_roundtrip_stable():

@@ -104,19 +104,72 @@ def test_parse_and_window():
 
 def test_insider_score_transform():
     s = ia.summarize_form4s([{"filing_date": "2026-08-22", "accession": "acc-1", **ia.parse_form4(FORM4)}], "2026-06-30")
+    assert s["top_role"] == "CEO"
     score, reasons = ia.insider_score(s)
-    # 55 * 502500/2M + 30 * 1/3 + 15 = 13.82 + 10 + 15 = 38.8
-    assert score == 38.8
+    # value 40*502500/2M=10.05 + cluster 25*1/3=8.33 + role CEO 25 + stake 0
+    assert score == 43.4
     assert any("open-market insider purchases" in r for r in reasons)
     assert ia.insider_score({}) == (0.0, ["No Form 4 open-market insider transactions since quarter-end"])
 
 
-def test_net_sellers_are_capped():
-    s = {"buy_count": 1, "buy_value_usd": 3_000_000, "sell_count": 3, "sell_value_usd": 50_000_000,
-         "net_value_usd": -47_000_000, "distinct_buyers": ["A", "B", "C"], "officer_or_director_buyers": ["A"]}
-    score, reasons = ia.insider_score(s)
-    assert score == 20.0
-    assert any("net sellers" in r for r in reasons)
+def test_seniority_is_weighted():
+    """A CEO buying carries more signal than a director buying the same amount."""
+    base = dict(buy_count=1, buy_value_usd=500_000, sell_count=0, sell_value_usd=0,
+                discretionary_sell_value_usd=0, planned_sell_value_usd=0,
+                distinct_buyers=["A"], officer_or_director_buyers=["A"],
+                cluster_buying=False, max_stake_change_pct=0.0)
+    ceo = ia.insider_score({**base, "top_role": "CEO"})[0]
+    officer = ia.insider_score({**base, "top_role": "OFFICER"})[0]
+    director = ia.insider_score({**base, "top_role": "DIRECTOR"})[0]
+    assert ceo > officer > director
+
+
+def test_planned_10b5_1_sales_do_not_count_against_the_signal():
+    """Carvana's insiders sold under pre-arranged plans; that is not a bearish
+    discretionary decision and must not be scored like one."""
+    common = dict(buy_count=1, buy_value_usd=1_500_000, sell_count=5, sell_value_usd=27_000_000,
+                  distinct_buyers=["A"], officer_or_director_buyers=["A"], top_role="DIRECTOR",
+                  cluster_buying=False, max_stake_change_pct=0.0)
+    planned = ia.insider_score({**common, "planned_sell_value_usd": 27_000_000,
+                                "discretionary_sell_value_usd": 0})[0]
+    discretionary = ia.insider_score({**common, "planned_sell_value_usd": 0,
+                                      "discretionary_sell_value_usd": 27_000_000})[0]
+    assert planned > discretionary
+    assert abs(discretionary - max(0.0, planned - 25.0)) < 0.05   # full penalty, nothing else changed
+    reasons = ia.insider_score({**common, "planned_sell_value_usd": 27_000_000,
+                                "discretionary_sell_value_usd": 0})[1]
+    assert any("Rule 10b5-1" in r for r in reasons)
+
+
+def test_cluster_buying_and_stake_change():
+    tight = {"filing_date": "2026-08-10", "accession": "a", **ia.parse_form4(FORM4)}
+    second = ia.parse_form4(FORM4.replace("DOE JANE", "ROE RICHARD"))
+    s = ia.summarize_form4s([tight, {"filing_date": "2026-08-12", "accession": "b", **second}], "2026-06-30")
+    assert s["cluster_buying"] is True
+    assert len(s["cluster_buyers"]) == 2
+
+    far = ia.parse_form4(FORM4.replace("DOE JANE", "ROE RICHARD").replace("2026-08-20", "2026-08-01"))
+    s2 = ia.summarize_form4s([tight, {"filing_date": "2026-08-01", "accession": "b", **far}], "2026-06-30")
+    assert s2["cluster_buying"] is True   # 19 days apart is still a cluster
+
+
+def test_stake_change_is_computed():
+    xml = FORM4.replace("""        <transactionAcquiredDisposedCode><value>A</value></transactionAcquiredDisposedCode>
+      </transactionAmounts>
+    </nonDerivativeTransaction>
+    <nonDerivativeTransaction>
+      <securityTitle><value>Common Stock</value></securityTitle>
+      <transactionDate><value>2026-05-01</value></transactionDate>""",
+    """        <transactionAcquiredDisposedCode><value>A</value></transactionAcquiredDisposedCode>
+      </transactionAmounts>
+      <postTransactionAmounts><sharesOwnedFollowingTransaction><value>50000</value></sharesOwnedFollowingTransaction></postTransactionAmounts>
+    </nonDerivativeTransaction>
+    <nonDerivativeTransaction>
+      <securityTitle><value>Common Stock</value></securityTitle>
+      <transactionDate><value>2026-05-01</value></transactionDate>""")
+    s = ia.summarize_form4s([{"filing_date": "2026-08-22", "accession": "a", **ia.parse_form4(xml)}], "2026-06-30")
+    # bought 10,000 and ended with 50,000 -> stake up 25% on a 40,000 base
+    assert s["max_stake_change_pct"] == 25.0
 
 
 def test_router_cascades_and_caches(monkeypatch, tmp_path):

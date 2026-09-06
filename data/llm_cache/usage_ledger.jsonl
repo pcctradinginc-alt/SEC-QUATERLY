@@ -2,3 +2,4 @@
 {"cache_read": 0, "cache_write": 0, "cost_usd": 0.01877, "input_tokens": 5558, "ok": true, "output_tokens": 2643, "task": "explain_signals", "tier": "haiku", "ts": "2026-09-05T20:46:50.597385+00:00", "why": "ok"}
 {"cache_read": 0, "cache_write": 0, "cost_usd": 0.01919, "input_tokens": 5819, "ok": false, "output_tokens": 2675, "task": "explain_signals", "tier": "haiku", "ts": "2026-09-05T21:47:37.409331+00:00", "why": "INTC: verdict"}
 {"cache_read": 0, "cache_write": 1327, "cost_usd": 0.04266, "input_tokens": 6048, "ok": true, "output_tokens": 3056, "task": "explain_signals", "tier": "sonnet", "ts": "2026-09-05T21:48:08.103717+00:00", "why": "ok"}
+{"cache_read": 0, "cache_write": 0, "cost_usd": 0.0, "error": "no_credentials", "input_tokens": 0, "ok": false, "output_tokens": 0, "task": "explain_signals", "tier": "haiku", "ts": "2026-09-06T06:22:43.863291+00:00", "why": "no_credentials"}

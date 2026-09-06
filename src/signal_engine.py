@@ -39,6 +39,7 @@ from datetime import date
 
 from config import (
     run_date,
+    CONFLUENCE_MAX_BONUS, CONFLUENCE_MIN_13F_SCORE, CONFLUENCE_MIN_INSIDER,
     CROWDING_FACTOR_BY_LABEL, DATA_DIR, PRICE_ACTION_DOWNGRADE_PCT,
     PRICE_ACTION_WARN_PCT, SIGNAL_CANDIDATE_POOL, SIGNAL_PRICE_PENALTY_CAP,
     SIGNAL_WEIGHTS, TOP_N,
@@ -247,6 +248,44 @@ def factor_crowding(label: str, penalty: float | None) -> tuple[float, list[str]
     return round(score, 1), reasons
 
 
+def confluence_bonus(score_13f: float, insider: float) -> tuple[float, str | None]:
+    """
+    Explicit interaction term: a weighted sum alone rates "excellent 13F, no
+    insider" the same as "average 13F, excellent insider". The engine is looking
+    for the two firing TOGETHER, so co-occurrence earns a capped bonus that
+    scales with whichever side is weaker.
+    """
+    if score_13f < CONFLUENCE_MIN_13F_SCORE or insider < CONFLUENCE_MIN_INSIDER:
+        return 0.0, None
+    reach_13f = (score_13f - CONFLUENCE_MIN_13F_SCORE) / max(1.0, 100.0 - CONFLUENCE_MIN_13F_SCORE)
+    reach_ins = (insider - CONFLUENCE_MIN_INSIDER) / max(1.0, 100.0 - CONFLUENCE_MIN_INSIDER)
+    bonus = round(CONFLUENCE_MAX_BONUS * min(1.0, 0.5 + 0.5 * min(reach_13f, reach_ins)), 1)
+    return bonus, (f"Institutional accumulation and insider buying confirm each other "
+                   f"(13F {score_13f:.0f}, insider {insider:.0f}) → +{bonus:.0f} confluence")
+
+
+def classify_signal(row: dict, bonus: float) -> tuple[str, str]:
+    """Deterministic signal class + human label for the report badge."""
+    f = row["factors"]
+    ins = (row.get("insider") or {}).get("summary") or {}
+    early = "EARLY_SMART_MONEY_ACCUMULATION" in row.get("flags", [])
+    confirmed = bonus > 0 and (ins.get("buy_value_usd", 0) or 0) > 0
+
+    if early and confirmed:
+        return "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION", "Early smart money + insider confirmation"
+    if confirmed:
+        return "ACCUMULATION_WITH_INSIDER_CONFIRMATION", "Accumulation + insider confirmation"
+    if early:
+        return "EARLY_SMART_MONEY_ACCUMULATION", "Early smart money accumulation"
+    if f["accumulation"] >= 50:
+        return "MULTI_QUARTER_ACCUMULATION", "Multi-quarter accumulation"
+    if f["consensus"] >= 80:
+        return "SMART_MONEY_CONSENSUS", "Smart-money consensus"
+    if f["conviction"] >= 90 and f["activity"] >= 90:
+        return "LARGE_NEW_POSITION", "Large new position"
+    return "SINGLE_MANAGER_CONVICTION", "Single-manager conviction"
+
+
 def price_penalty(perf: dict) -> tuple[float, str | None]:
     pct = (perf or {}).get("pct_change")
     if pct is None:
@@ -295,8 +334,17 @@ def score_ticker(agg: dict, scored_flat: list[dict], mq_signals: dict,
 
     contributions = {k: round(SIGNAL_WEIGHTS[k] * factors[k] / 100.0, 2) for k in SIGNAL_WEIGHTS}
     raw = sum(contributions.values())
+
+    # The 13F side and the insider side are computed as SEPARATE signals first
+    # (spec: never blend the two before each stands on its own), then combined.
+    weight_13f = sum(w for k, w in SIGNAL_WEIGHTS.items() if k != "insider")
+    score_13f  = round(sum(v for k, v in contributions.items() if k != "insider")
+                       / weight_13f * 100.0, 1)
+    insider_sc = factors["insider"]
+    bonus, bonus_reason = confluence_bonus(score_13f, insider_sc)
+
     penalty, penalty_reason = price_penalty(agg.get("post_filing_perf"))
-    score = round(_clamp(raw - penalty), 1)
+    score = round(_clamp(raw + bonus - penalty), 1)
 
     top_drivers = sorted(contributions.items(), key=lambda kv: (-kv[1], kv[0]))[:3]
     why_bullets = []
@@ -304,13 +352,18 @@ def score_ticker(agg: dict, scored_flat: list[dict], mq_signals: dict,
         why_bullets.extend(reasons[k][:1])
     if factors["insider"] > 0 and "insider" not in [k for k, _ in top_drivers]:
         why_bullets.append(reasons["insider"][0])
+    if bonus_reason:
+        why_bullets.append(bonus_reason)
     if penalty_reason:
         why_bullets.append(penalty_reason)
 
-    return {
+    row = {
         "ticker":            agg["ticker"],
         "name":              agg.get("name", ""),
         "signal_score":      score,
+        "score_13f":         score_13f,
+        "insider_score":     insider_sc,
+        "confluence_bonus":  bonus,
         "grade":             _grade(score),
         "factors":           factors,
         "contributions":     contributions,
@@ -332,6 +385,8 @@ def score_ticker(agg: dict, scored_flat: list[dict], mq_signals: dict,
         "alpha_score_legacy": agg.get("alpha_score"),
         "option_eligible":   _is_option_eligible_ticker(agg["ticker"]),
     }
+    row["signal_class"], row["signal_label"] = classify_signal(row, bonus)
+    return row
 
 
 def _summary_sentence(agg: dict, factors: dict, top_drivers: list, insider: dict | None) -> str:

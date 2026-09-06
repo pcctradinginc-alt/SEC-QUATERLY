@@ -280,8 +280,18 @@ def run(today_str: str | None = None) -> dict:
     except (OSError, json.JSONDecodeError):
         pass
 
+    # Quarter actually analysed (13F period-of-report), and how many names the
+    # deterministic engine scored before the Top 10 was cut.
+    report_dates = [f.get("report_date") for s in top for f in s.get("filers", []) if f.get("report_date")]
+    quarter_label = ""
+    if report_dates:
+        rd = max(report_dates)
+        quarter_label = f"Q{(int(rd[5:7]) - 1) // 3 + 1} {rd[:4]} filings"
+
     final = {
         "date":               today_str,
+        "quarter_label":      quarter_label,
+        "stocks_scored":      len(signals.get("ranking", [])),
         "top10":              merged,
         "market_context":     commentary.get("market_context", ""),
         "commentary_source":  commentary.get("_source"),

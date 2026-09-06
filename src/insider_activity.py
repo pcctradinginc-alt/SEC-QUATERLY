@@ -24,9 +24,10 @@ from datetime import date
 import requests
 
 from config import (
-    INSIDER_CACHE_DIR, INSIDER_CLUSTER_FULL_COUNT, INSIDER_MAX_FORM4_PER_TICKER,
-    INSIDER_MIN_PURCHASE_USD, INSIDER_VALUE_FULL_USD, SEC_HEADERS,
-    SEC_RATE_LIMIT_SLEEP,
+    INSIDER_CACHE_DIR, INSIDER_CLUSTER_FULL_COUNT, INSIDER_CLUSTER_WINDOW_DAYS,
+    INSIDER_DISCRETIONARY_SELL_PENALTY, INSIDER_MAX_FORM4_PER_TICKER,
+    INSIDER_MIN_PURCHASE_USD, INSIDER_ROLE_POINTS, INSIDER_STAKE_FULL_PCT,
+    INSIDER_VALUE_FULL_USD, SEC_HEADERS, SEC_RATE_LIMIT_SLEEP,
 )
 
 EDGAR_TICKER_MAP_URL = "https://www.sec.gov/files/company_tickers.json"
@@ -181,6 +182,9 @@ def parse_form4(xml_text: str) -> dict:
         "name":   (root.findtext("issuer/issuerName") or "").strip(),
         "symbol": (root.findtext("issuer/issuerTradingSymbol") or "").strip().upper(),
     }
+    # Document-level Rule 10b5-1 flag: the trade was scheduled under a plan
+    # adopted long before, so it carries no information about today's view.
+    planned = (root.findtext("aff10b5One") or "").strip() in ("1", "true")
 
     owners = []
     for ro in root.findall("reportingOwner"):
@@ -208,9 +212,40 @@ def parse_form4(xml_text: str) -> dict:
             "price":     price,
             "value_usd": round(shares * price, 2),
             "security":  _val(tx, "securityTitle"),
+            "planned":   planned,
+            "shares_after": _num(_val(tx, "postTransactionAmounts/sharesOwnedFollowingTransaction")),
         })
 
-    return {"issuer": issuer, "owners": owners, "transactions": txs}
+    return {"issuer": issuer, "owners": owners, "transactions": txs, "planned": planned}
+
+
+# ── Insider roles ─────────────────────────────────────────────────────────────
+
+def classify_role(owners: list[dict]) -> tuple[str, str]:
+    """
+    Highest-signal role among a filing's reporting owners, as (key, label).
+    The CEO and CFO sit closest to the numbers, so their trades weigh most.
+    """
+    best_key, best_label = "OTHER", "Insider"
+    rank = {"CEO": 5, "CFO": 4, "OFFICER": 3, "DIRECTOR": 2, "TEN_PCT": 1, "OTHER": 0}
+    for o in owners:
+        title = (o.get("title") or "").upper()
+        if o.get("is_officer") and ("CHIEF EXECUTIVE" in title or "CEO" in title.split()
+                                    or "PRESIDENT AND CEO" in title):
+            key, label = "CEO", o.get("title") or "CEO"
+        elif o.get("is_officer") and ("CHIEF FINANCIAL" in title or "CFO" in title.split()):
+            key, label = "CFO", o.get("title") or "CFO"
+        elif o.get("is_officer"):
+            key, label = "OFFICER", o.get("title") or "Officer"
+        elif o.get("is_director"):
+            key, label = "DIRECTOR", "Director"
+        elif o.get("is_ten_pct"):
+            key, label = "TEN_PCT", "10% owner"
+        else:
+            key, label = "OTHER", "Insider"
+        if rank[key] > rank[best_key]:
+            best_key, best_label = key, label
+    return best_key, best_label
 
 
 # ── Security-title filter ─────────────────────────────────────────────────────
@@ -252,7 +287,7 @@ def summarize_form4s(parsed_filings: list[dict], since: str) -> dict:
         officer = any(o["is_officer"] for o in f["owners"])
         director = any(o["is_director"] for o in f["owners"])
         ten_pct = any(o["is_ten_pct"] for o in f["owners"])
-        title = next((o["title"] for o in f["owners"] if o["title"]), "")
+        role_key, role_label = classify_role(f["owners"])
         for tx in f["transactions"]:
             if tx["date"] and tx["date"] <= since:
                 continue
@@ -260,9 +295,15 @@ def summarize_form4s(parsed_filings: list[dict], since: str) -> dict:
                 key = tx.get("security") or "(untitled)"
                 skipped_securities[key] = skipped_securities.get(key, 0) + 1
                 continue
+            stake_after = tx.get("shares_after") or 0.0
             row = {
                 "insider":     "; ".join(owner_names),
-                "role":        title or ("Director" if director else "Officer" if officer else "10% owner" if ten_pct else "Insider"),
+                "role":        role_label,
+                "role_key":    role_key,
+                "planned":     bool(tx.get("planned")),
+                "shares_after": stake_after,
+                "stake_change_pct": (round(tx["shares"] / (stake_after - tx["shares"]) * 100.0, 1)
+                                     if stake_after > tx["shares"] > 0 else None),
                 "is_officer":  officer,
                 "is_director": director,
                 "date":        tx["date"] or f["filing_date"],
@@ -285,6 +326,36 @@ def summarize_form4s(parsed_filings: list[dict], since: str) -> dict:
     buy_value  = round(sum(b["value_usd"] for b in buys), 2)
     sell_value = round(sum(s["value_usd"] for s in sells), 2)
 
+    # Rule 10b5-1 sales were scheduled in advance; only discretionary sales say
+    # anything about how insiders see the business today (spec section 3).
+    planned_sells       = [x for x in sells if x.get("planned")]
+    discretionary_sells = [x for x in sells if not x.get("planned")]
+    planned_sell_value       = round(sum(x["value_usd"] for x in planned_sells), 2)
+    discretionary_sell_value = round(sum(x["value_usd"] for x in discretionary_sells), 2)
+
+    # Cluster buying: independent insiders buying within a short window.
+    cluster_buying, cluster_window_buyers = False, []
+    if len(sig_buys) >= 2:
+        dated = sorted((b for b in sig_buys if b.get("date")), key=lambda b: b["date"])
+        for i, anchor in enumerate(dated):
+            try:
+                a0 = date.fromisoformat(anchor["date"])
+            except ValueError:
+                continue
+            window = {anchor["insider"]}
+            for other in dated[i + 1:]:
+                try:
+                    if (date.fromisoformat(other["date"]) - a0).days <= INSIDER_CLUSTER_WINDOW_DAYS:
+                        window.add(other["insider"])
+                except ValueError:
+                    continue
+            if len(window) > len(cluster_window_buyers):
+                cluster_window_buyers = sorted(window)
+        cluster_buying = len(cluster_window_buyers) >= 2
+
+    best_stake = max((b.get("stake_change_pct") or 0.0) for b in sig_buys) if sig_buys else 0.0
+    roles = {b.get("role_key", "OTHER") for b in sig_buys}
+
     if not buys and not sells:
         stance = "NO_ACTIVITY"
     elif buy_value > sell_value:
@@ -295,8 +366,16 @@ def summarize_form4s(parsed_filings: list[dict], since: str) -> dict:
         stance = "BALANCED"
 
     return {
-        "net_stance":          stance,
-        "skipped_securities":  dict(sorted(skipped_securities.items())),
+        "net_stance":              stance,
+        "skipped_securities":      dict(sorted(skipped_securities.items())),
+        "planned_sell_value_usd":       planned_sell_value,
+        "discretionary_sell_value_usd": discretionary_sell_value,
+        "planned_sell_count":           len(planned_sells),
+        "cluster_buying":               cluster_buying,
+        "cluster_buyers":               cluster_window_buyers,
+        "buyer_roles":                  sorted(roles),
+        "top_role":                     max(roles, key=lambda r: INSIDER_ROLE_POINTS.get(r, 0.0)) if roles else None,
+        "max_stake_change_pct":         best_stake,
         "buy_count":            len(buys),
         "significant_buy_count": len(sig_buys),
         "distinct_buyers":      sorted({b["insider"] for b in sig_buys}),
@@ -314,35 +393,51 @@ def insider_score(summary: dict) -> tuple[float, list[str]]:
     """
     Pure, deterministic 0-100 transform of the Form 4 summary.
 
-      55 pts  net open-market buy value  (linear to INSIDER_VALUE_FULL_USD)
-      30 pts  distinct insiders buying   (linear to INSIDER_CLUSTER_FULL_COUNT)
-      15 pts  officer/director involvement (any = full)
-      net sellers: capped at 30 then −10 (buying is contradicted by larger sales)
-    No Form 4 data at all -> 0 with an explicit "no insider buying" reason.
+      40 pts  open-market buy value      (linear to INSIDER_VALUE_FULL_USD)
+      25 pts  distinct insiders buying   (linear to INSIDER_CLUSTER_FULL_COUNT,
+                                          full credit needs cluster buying)
+      25 pts  seniority of the buyers    (CEO/CFO > other officers > directors)
+      10 pts  size of the buy against the buyer's own existing stake
+      −25 pts discretionary net selling  (Rule 10b5-1 sales are NOT counted:
+                                          they were scheduled months earlier)
     """
     reasons: list[str] = []
     if not summary or (summary.get("buy_count", 0) == 0 and summary.get("sell_count", 0) == 0):
         return 0.0, ["No Form 4 open-market insider transactions since quarter-end"]
 
-    net = summary.get("net_value_usd", 0.0)
-    buy_val = summary.get("buy_value_usd", 0.0)
-    n_buyers = len(summary.get("distinct_buyers", []))
-    exec_involved = bool(summary.get("officer_or_director_buyers"))
+    buy_val   = summary.get("buy_value_usd", 0.0) or 0.0
+    n_buyers  = len(summary.get("distinct_buyers", []))
+    top_role  = summary.get("top_role")
+    cluster   = bool(summary.get("cluster_buying"))
+    stake_pct = summary.get("max_stake_change_pct", 0.0) or 0.0
 
-    value_pts = 55.0 * min(1.0, max(0.0, buy_val) / INSIDER_VALUE_FULL_USD)
-    cluster_pts = 30.0 * min(1.0, n_buyers / INSIDER_CLUSTER_FULL_COUNT)
-    exec_pts = 15.0 if exec_involved else 0.0
-    score = value_pts + cluster_pts + exec_pts
+    value_pts = 40.0 * min(1.0, max(0.0, buy_val) / INSIDER_VALUE_FULL_USD)
+    cluster_pts = 25.0 * min(1.0, n_buyers / INSIDER_CLUSTER_FULL_COUNT)
+    if n_buyers >= 2 and not cluster:
+        cluster_pts *= 0.7          # spread over months, not a coordinated cluster
+    role_pts  = INSIDER_ROLE_POINTS.get(top_role or "OTHER", 0.0) if buy_val > 0 else 0.0
+    stake_pts = 10.0 * min(1.0, stake_pct / INSIDER_STAKE_FULL_PCT)
+    score = value_pts + cluster_pts + role_pts + stake_pts
 
-    if net < 0:
-        # Net selling contradicts the 13F buy signal: cap the credit hard.
-        score = min(score, 30.0) - 10.0
-        reasons.append(f"Insiders were net sellers (${abs(net):,.0f} net sold) since quarter-end")
+    discretionary = summary.get("discretionary_sell_value_usd", summary.get("sell_value_usd", 0.0)) or 0.0
+    planned       = summary.get("planned_sell_value_usd", 0.0) or 0.0
+    if discretionary > buy_val:
+        excess = discretionary - buy_val
+        penalty = INSIDER_DISCRETIONARY_SELL_PENALTY * min(1.0, excess / INSIDER_VALUE_FULL_USD)
+        score -= penalty
+        reasons.append(f"Discretionary insider selling of ${discretionary:,.0f} outweighs purchases")
+
     if buy_val > 0:
         reasons.append(f"${buy_val:,.0f} of open-market insider purchases since quarter-end")
     if n_buyers:
-        reasons.append(f"{n_buyers} distinct insider{'s' if n_buyers != 1 else ''} bought"
-                       + (" (officer/director involved)" if exec_involved else ""))
+        role_txt = {"CEO": "including the CEO", "CFO": "including the CFO",
+                    "OFFICER": "including an officer", "DIRECTOR": "by directors"}.get(top_role, "")
+        reasons.append(f"{n_buyers} distinct insider{'s' if n_buyers != 1 else ''} bought {role_txt}".strip()
+                       + (" in a coordinated cluster" if cluster else ""))
+    if stake_pct >= 10:
+        reasons.append(f"Largest buy lifted that insider's own stake by {stake_pct:.0f}%")
+    if planned > 0:
+        reasons.append(f"${planned:,.0f} of sales ran under Rule 10b5-1 plans and are not scored as a signal")
     if buy_val == 0 and summary.get("sell_count", 0) > 0:
         reasons.append("Only insider sales on record since quarter-end (no purchases)")
 
@@ -358,9 +453,10 @@ def fetch_insider_activity(ticker: str, since: str, until: str | None = None) ->
     """
     until = until or date.today().isoformat()
     safe_t = re.sub(r"[^A-Z0-9]", "_", ticker.upper())
-    # v2: issuer verification + common-stock-only filter. The v1 snapshots hold
-    # other issuers' transactions, so they must not be reused.
-    cache_path = INSIDER_CACHE_DIR / f"{safe_t}_{since}_{until}_v2.json"
+    # v3: adds 10b5-1 planned-sale detection, insider roles and stake changes.
+    # v2 added issuer verification + the common-stock filter; v1 snapshots hold
+    # other issuers' transactions outright. Older snapshots are never reused.
+    cache_path = INSIDER_CACHE_DIR / f"{safe_t}_{since}_{until}_v3.json"
     if cache_path.exists():
         cached = json.load(open(cache_path))
         # Always re-derive the score from the cached raw summary so a change to

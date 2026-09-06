@@ -313,9 +313,25 @@ INSIDER_MAX_FORM4_PER_TICKER = 40     # newest Form 4s inspected per ticker
 INSIDER_MIN_PURCHASE_USD     = 25_000 # ignore token-sized buys
 INSIDER_CACHE_DIR            = BASE_DIR / "data" / "insider_cache"
 INSIDER_CACHE_DIR.mkdir(parents=True, exist_ok=True)
-# Sub-score anchors (0-100): value of open-market buys and number of insiders
-INSIDER_VALUE_FULL_USD       = 2_000_000   # ≥ $2M net buying = full value credit
+# Sub-score anchors. The insider score is the sum of four capped components
+# (value 40 + cluster 25 + role 25 + stake 10), minus a penalty that counts only
+# DISCRETIONARY selling - a Rule 10b5-1 sale was scheduled months in advance and
+# says nothing about today's conviction (SEC Form 4 flag <aff10b5One>).
+INSIDER_VALUE_FULL_USD       = 2_000_000   # ≥ $2M of buying = full value credit
 INSIDER_CLUSTER_FULL_COUNT   = 3           # ≥ 3 distinct insiders buying = full cluster credit
+INSIDER_CLUSTER_WINDOW_DAYS  = 30          # buys this close together count as cluster buying
+INSIDER_STAKE_FULL_PCT       = 25.0        # a buy lifting an insider's own stake by ≥25% = full credit
+# Role weighting: the people closest to the numbers carry the most signal.
+INSIDER_ROLE_POINTS = {"CEO": 25.0, "CFO": 25.0, "OFFICER": 18.0, "DIRECTOR": 12.0, "TEN_PCT": 6.0, "OTHER": 6.0}
+INSIDER_DISCRETIONARY_SELL_PENALTY = 25.0  # max points removed for genuine discretionary selling
+
+# ── Confluence: 13F accumulation confirmed by insider buying ─────────────────
+# A weighted sum treats "great 13F, no insider" the same as "mediocre 13F, great
+# insider". The bonus is an explicit interaction term for the setup the engine
+# is actually looking for, and is capped so it can never dominate the ranking.
+CONFLUENCE_MAX_BONUS      = 10.0
+CONFLUENCE_MIN_13F_SCORE  = 55.0   # the 13F side must be strong on its own
+CONFLUENCE_MIN_INSIDER    = 40.0   # and the insider side must be a real confirmation
 
 # ── Claude API: cost-aware model routing & cascading ─────────────────────────
 # Every LLM task is routed to the cheapest tier that historically passes

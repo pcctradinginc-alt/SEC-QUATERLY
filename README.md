@@ -49,9 +49,17 @@ peers happened to be scored. Weights sum to 100 (`config.SIGNAL_WEIGHTS`):
 | Manager quality | 15 | dynamic 0–1 quality of the buyers (concentration + turnover, blended with a prior) |
 | Multi-quarter accumulation | 10 | consecutive build quarters (current + history), silent-build bonus |
 | Smart-money consensus | 15 | number of independent buyers, scaled by their average quality |
-| Insider buying (Form 4) | 15 | open-market purchases since the 13F quarter-end: value, distinct insiders, officer/director involvement; net sellers capped |
+| Insider buying (Form 4) | 15 | open-market purchases since the 13F quarter-end: value (40), distinct buyers and cluster buying (25), seniority of the buyers (25), size against the buyer's own stake (10); only *discretionary* selling subtracts |
 | Filing freshness | 10 | `exp(-k · turnover · filing delay)` and the age of the filing |
 | Institutional crowding | 5 | inverse of the crowding proxy (hedge-fund-hotel list + oversized cluster) |
+
+**Confluence bonus (max +10).** A weighted sum rates "excellent 13F, no insider"
+the same as "average 13F, excellent insider". The engine is looking for the two
+firing *together*, so the 13F side and the insider side are scored separately
+first (`score_13f`, `insider_score`) and a capped bonus is added when both clear
+their thresholds, scaled by whichever side is weaker. Every stock also carries a
+deterministic `signal_class`, the strongest being
+`EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION`.
 
 A capped **price-action penalty** (max −15) is subtracted for names that already
 ran ≥15 % / ≥25 % since the quarter-end. Ties break on insider score, then
@@ -84,7 +92,18 @@ table:
 
 * code **P** + acquired → open-market purchase
 * code **S** + disposed → open-market sale
-* grants, exercises, gifts and derivative rows are ignored
+* grants, exercises, gifts, tax withholding and derivative rows are ignored
+
+Sales are split by intent. A Rule 10b5-1 sale was scheduled months in advance
+under a pre-arranged plan and says nothing about how an insider sees the
+business today, so only **discretionary** selling subtracts from the score; the
+planned portion is reported but not penalised (SEC Form 4 flag `<aff10b5One>`).
+On the September 2026 run this moved Carvana from rank 8 to rank 3: \$25.4M of
+its \$27.6M in sales were pre-arranged, leaving \$2.2M discretionary.
+
+Buyers are weighted by seniority (CEO/CFO > other officers > directors > 10 %
+owners), independent buyers inside a 30-day window count as **cluster buying**,
+and a purchase is measured against the buyer's own existing stake.
 
 Two filters keep the numbers about the right company and the right security:
 
