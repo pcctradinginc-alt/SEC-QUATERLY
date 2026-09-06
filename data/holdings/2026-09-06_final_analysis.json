@@ -1,0 +1,4158 @@
+{
+  "date": "2026-09-06",
+  "quarter_label": "Q2 2026 filings",
+  "stocks_scored": 675,
+  "top10": [
+    {
+      "alpha_score_legacy": 44.5,
+      "confluence_bonus": 8.1,
+      "contributions": {
+        "accumulation": 7.5,
+        "activity": 15.0,
+        "consensus": 12.3,
+        "conviction": 15.0,
+        "crowding": 4.2,
+        "freshness": 9.34,
+        "insider": 11.52,
+        "manager_quality": 11.16
+      },
+      "crowding_label": "LOW",
+      "factors": {
+        "accumulation": 75.0,
+        "activity": 100.0,
+        "consensus": 82.0,
+        "conviction": 100.0,
+        "crowding": 84.0,
+        "freshness": 93.4,
+        "insider": 76.8,
+        "manager_quality": 74.4
+      },
+      "filer_count": 8,
+      "filers": [
+        {
+          "alpha_score": 23.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "AQR Capital (Asness)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.939,
+          "manager_quality_score": 0.438,
+          "port_weight_pct": 0.614,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 4.39
+        },
+        {
+          "alpha_score": 27.5,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Atreides Management",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.694,
+          "port_weight_pct": 0.774,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.08
+        },
+        {
+          "alpha_score": 28.6,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Coatue (Laffont)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.722,
+          "port_weight_pct": 3.47,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 8.64
+        },
+        {
+          "alpha_score": 39.9,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "NVIDIA Corp",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.7,
+          "port_weight_pct": 47.272,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 11.36
+        },
+        {
+          "alpha_score": 22.6,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Renaissance Technologies (Quant)",
+          "filing_date": "2026-08-13",
+          "filing_date_actual": "2026-08-13",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.35,
+          "port_weight_pct": 1.793,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 15.46
+        },
+        {
+          "alpha_score": 44.5,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "SoftBank Group Corp",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.663,
+          "port_weight_pct": 66.806,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 281.88
+        },
+        {
+          "alpha_score": 31.3,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "SurgoCap Partners",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.814,
+          "port_weight_pct": 8.343,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.0
+        },
+        {
+          "alpha_score": 28.2,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Tiger Global (Coleman)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.96,
+          "manager_quality_score": 0.737,
+          "port_weight_pct": 2.476,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 2.22
+        }
+      ],
+      "flags": [
+        "CLUSTER",
+        "HIGH_CONVICTION",
+        "NEW_POSITION",
+        "OUTSIZED_VS_MANAGER_TYPICAL",
+        "SIZE_EXCEPTIONAL",
+        "SIZE_INTERESTING",
+        "SIZE_STRONG",
+        "SIZE_VERY_STRONG",
+        "SIZE_WEAK",
+        "TOP10_ENTRY",
+        "TOP3_POSITION"
+      ],
+      "grade": "VERY_STRONG",
+      "insider": {
+        "cik": "0000050863",
+        "error": null,
+        "foreign_issuer_skipped": {},
+        "form4_count": 3,
+        "reasons": [
+          "$9,999,985 of open-market insider purchases since quarter-end",
+          "1 distinct insider bought including the CEO"
+        ],
+        "score": 76.8,
+        "since": "2026-06-30",
+        "summary": {
+          "buy_count": 1,
+          "buy_value_usd": 9999985.0,
+          "buyer_roles": [
+            "CEO"
+          ],
+          "buys": [
+            {
+              "accession": "0000050863-26-000177",
+              "date": "2026-08-11",
+              "filing_date": "2026-08-14",
+              "insider": "TAN LIP BU",
+              "is_director": true,
+              "is_officer": true,
+              "planned": false,
+              "price": 95.0,
+              "role": "CEO",
+              "role_key": "CEO",
+              "security": "Common Stock",
+              "shares": 105263.0,
+              "shares_after": 1314669.0,
+              "stake_change_pct": 8.7,
+              "value_usd": 9999985.0
+            }
+          ],
+          "cluster_buyers": [],
+          "cluster_buying": false,
+          "discretionary_sell_value_usd": 0,
+          "distinct_buyers": [
+            "TAN LIP BU"
+          ],
+          "max_stake_change_pct": 8.7,
+          "net_stance": "NET_BUYING",
+          "net_value_usd": 9999985.0,
+          "officer_or_director_buyers": [
+            "TAN LIP BU"
+          ],
+          "planned_sell_count": 0,
+          "planned_sell_value_usd": 0,
+          "sell_count": 0,
+          "sell_value_usd": 0,
+          "sells": [],
+          "significant_buy_count": 1,
+          "skipped_securities": {},
+          "top_role": "CEO"
+        },
+        "ticker": "INTC",
+        "until": "2026-09-06"
+      },
+      "insider_score": 76.8,
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 2,
+        "build_score": 3.18,
+        "flags": [],
+        "silent_build": false,
+        "total_quarters": 2,
+        "weight_slope": 5.364
+      },
+      "name": "INTEL CORP",
+      "option_eligible": true,
+      "overall_rank": 1,
+      "post_filing_perf": {
+        "current_price": 95.8,
+        "days_since_filing": 68,
+        "filing_close": 139.63,
+        "pct_change": -31.4
+      },
+      "price_penalty": 0.0,
+      "rank": 1,
+      "reasons": {
+        "accumulation": [
+          "Built over 3 consecutive quarters"
+        ],
+        "activity": [
+          "SoftBank Group Corp opened a NEW position at 66.8% of its book",
+          "8 tracked managers bought this quarter"
+        ],
+        "consensus": [
+          "8 independent buyers incl. AQR Capital (Asness), Atreides Management, Coatue (Laffont) \u2026"
+        ],
+        "conviction": [
+          "Largest buyer weight: 66.8% of SoftBank Group Corp's portfolio (rank TOP3)",
+          "Position is \u22655\u00d7 the manager's own median position size"
+        ],
+        "crowding": [
+          "Crowding LOW \u2013 room for further institutional sponsorship"
+        ],
+        "freshness": [
+          "Filing is 23 days old; low-turnover buyers keep it informative"
+        ],
+        "insider": [
+          "$9,999,985 of open-market insider purchases since quarter-end",
+          "1 distinct insider bought including the CEO"
+        ],
+        "manager_quality": [
+          "Highest-quality buyer: SurgoCap Partners (quality 0.81)",
+          "Average buyer quality 0.64 across 8 managers"
+        ]
+      },
+      "score_13f": 87.6,
+      "signal_class": "ACCUMULATION_WITH_INSIDER_CONFIRMATION",
+      "signal_label": "Accumulation + insider confirmation",
+      "signal_score": 94.1,
+      "ticker": "INTC",
+      "why": {
+        "bullets": [
+          "SoftBank Group Corp opened a NEW position at 66.8% of its book",
+          "Largest buyer weight: 66.8% of SoftBank Group Corp's portfolio (rank TOP3)",
+          "8 independent buyers incl. AQR Capital (Asness), Atreides Management, Coatue (Laffont) \u2026",
+          "$9,999,985 of open-market insider purchases since quarter-end",
+          "Institutional accumulation and insider buying confirm each other (13F 88, insider 77) \u2192 +8 confluence"
+        ],
+        "summary": "INTC ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $9,999,985 of insider open-market buying since quarter-end.",
+        "top_drivers": [
+          {
+            "factor": "activity",
+            "label": "NEW / ADD activity",
+            "points": 15.0
+          },
+          {
+            "factor": "conviction",
+            "label": "Portfolio conviction",
+            "points": 15.0
+          },
+          {
+            "factor": "consensus",
+            "label": "Smart-money consensus",
+            "points": 12.3
+          }
+        ]
+      },
+      "commentary": {
+        "ticker": "INTC",
+        "why_strongest": "Eight independent new buyers including SoftBank at 66.8% of its book and NVIDIA at 47.3%, both extreme concentration signals. Accumulation and freshness scores are near-max, and insider buying reinforces the institutional build.",
+        "insider_read": "Net buying of $9,999,985 in a single trade by one officer/director confirms the institutional accumulation.",
+        "risks": [
+          "Stock is down 31% since quarter-end, so buyers are underwater so far",
+          "Single large insider trade may reflect one-off compensation-linked activity, not broad conviction"
+        ],
+        "option_note": "The Jan 2027 110-strike call offers a liquid, moderate-delta way to express the multi-buyer accumulation thesis.",
+        "verdict": "UNUSUALLY_STRONG"
+      },
+      "option": {
+        "ticker": "INTC",
+        "current_price": 95.8,
+        "change_pct": 4.51,
+        "expiries_checked": [
+          "2026-12-18",
+          "2027-01-15",
+          "2027-02-19"
+        ],
+        "iv_metrics": {
+          "iv_rank": 36.1,
+          "hv_30d_pct": 47.4,
+          "iv_hv_ratio": 1.37,
+          "verdict": "CHEAP \u2013 premium low vs. realised vol"
+        },
+        "status": "OK",
+        "contract": {
+          "symbol": "INTC270115C00110000",
+          "strike": 110.0,
+          "expiration": "2027-01-15",
+          "dte": 131,
+          "bid": 10.35,
+          "ask": 10.75,
+          "mid": 10.55,
+          "spread_pct": 3.8,
+          "volume": 2382,
+          "open_interest": 26879,
+          "delta": 0.456,
+          "implied_volatility": 0.656,
+          "moneyness_pct": 14.8,
+          "max_risk_per_contract": 1055.0,
+          "breakeven": 120.55,
+          "selection_cost": 0.0931
+        },
+        "eligible_count": 23,
+        "candidates_checked": 150,
+        "rejections": {
+          "delta": 114,
+          "iv": 62,
+          "open_interest": 26,
+          "spread": 20,
+          "volume": 58
+        },
+        "runner_up": [
+          {
+            "symbol": "INTC270115C00115000",
+            "delta": 0.414,
+            "selection_cost": 0.1889
+          },
+          {
+            "symbol": "INTC270115C00105000",
+            "delta": 0.501,
+            "selection_cost": 0.1965
+          },
+          {
+            "symbol": "INTC270219C00115000",
+            "delta": 0.447,
+            "selection_cost": 0.2179
+          }
+        ],
+        "filters": {
+          "expiry_days": "90\u2013180 days to expiration",
+          "delta": "0.30\u20130.70 call delta (target 0.45)",
+          "spread": "bid-ask spread \u2264 8% of mid",
+          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+          "open_interest": "open interest \u2265 500",
+          "iv": "implied volatility \u2264 70%"
+        },
+        "rule_rationale": "Delta 0.46 sits closest to the 0.45 target, strike 14.8% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 3.8% with volume 2,382 and open interest 26,879 keeps entry and exit liquid."
+      }
+    },
+    {
+      "alpha_score_legacy": 43.6,
+      "confluence_bonus": 7.8,
+      "contributions": {
+        "accumulation": 1.5,
+        "activity": 15.0,
+        "consensus": 12.87,
+        "conviction": 15.0,
+        "crowding": 5.0,
+        "freshness": 9.42,
+        "insider": 10.96,
+        "manager_quality": 13.62
+      },
+      "crowding_label": "LOW",
+      "factors": {
+        "accumulation": 15.0,
+        "activity": 100.0,
+        "consensus": 85.8,
+        "conviction": 100.0,
+        "crowding": 100.0,
+        "freshness": 94.2,
+        "insider": 73.1,
+        "manager_quality": 90.8
+      },
+      "filer_count": 4,
+      "filers": [
+        {
+          "alpha_score": 43.6,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Baupost Group (Klarman)",
+          "filing_date": "2026-08-13",
+          "filing_date_actual": "2026-08-13",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.976,
+          "port_weight_pct": 9.105,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 3.02
+        },
+        {
+          "alpha_score": 40.2,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Brave Warrior Advisors (Ainslie)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.765,
+          "port_weight_pct": 8.234,
+          "position_tier": "TOP5",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 203.31
+        },
+        {
+          "alpha_score": 37.1,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Harris Associates (Oakmark)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.662,
+          "port_weight_pct": 2.525,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 26.3
+        },
+        {
+          "alpha_score": 39.7,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Sound Shore Management",
+          "filing_date": "2026-08-12",
+          "filing_date_actual": "2026-08-12",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.825,
+          "port_weight_pct": 2.899,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.13
+        }
+      ],
+      "flags": [
+        "CLUSTER",
+        "EARLY_SMART_MONEY_ACCUMULATION",
+        "HIGH_CONVICTION",
+        "NEW_POSITION",
+        "OUTSIZED_VS_MANAGER_TYPICAL",
+        "SIZE_INTERESTING",
+        "SIZE_VERY_STRONG",
+        "TOP10_ENTRY",
+        "TOP3_POSITION",
+        "TOP5_POSITION"
+      ],
+      "grade": "VERY_STRONG",
+      "insider": {
+        "cik": "0001156039",
+        "error": null,
+        "foreign_issuer_skipped": {},
+        "form4_count": 4,
+        "reasons": [
+          "$1,368,280 of open-market insider purchases since quarter-end",
+          "2 distinct insiders bought including the CEO in a coordinated cluster",
+          "Largest buy lifted that insider's own stake by 10%"
+        ],
+        "score": 73.1,
+        "since": "2026-06-30",
+        "summary": {
+          "buy_count": 3,
+          "buy_value_usd": 1368280.05,
+          "buyer_roles": [
+            "CEO",
+            "DIRECTOR"
+          ],
+          "buys": [
+            {
+              "accession": "0001192045-26-000004",
+              "date": "2026-07-17",
+              "filing_date": "2026-07-17",
+              "insider": "PERU RAMIRO G",
+              "is_director": true,
+              "is_officer": false,
+              "planned": false,
+              "price": 366.05,
+              "role": "Director",
+              "role_key": "DIRECTOR",
+              "security": "Common Stock",
+              "shares": 1000.0,
+              "shares_after": 10908.0,
+              "stake_change_pct": 10.1,
+              "value_usd": 366050.0
+            },
+            {
+              "accession": "0001287920-26-000006",
+              "date": "2026-07-17",
+              "filing_date": "2026-07-17",
+              "insider": "BOUDREAUX GAIL",
+              "is_director": true,
+              "is_officer": true,
+              "planned": false,
+              "price": 366.41,
+              "role": "President and CEO",
+              "role_key": "CEO",
+              "security": "Common Stock",
+              "shares": 680.0,
+              "shares_after": 169931.0,
+              "stake_change_pct": 0.4,
+              "value_usd": 249158.8
+            },
+            {
+              "accession": "0001287920-26-000006",
+              "date": "2026-07-17",
+              "filing_date": "2026-07-17",
+              "insider": "BOUDREAUX GAIL",
+              "is_director": true,
+              "is_officer": true,
+              "planned": false,
+              "price": 368.25,
+              "role": "President and CEO",
+              "role_key": "CEO",
+              "security": "Common Stock",
+              "shares": 2045.0,
+              "shares_after": 171976.0,
+              "stake_change_pct": 1.2,
+              "value_usd": 753071.25
+            }
+          ],
+          "cluster_buyers": [
+            "BOUDREAUX GAIL",
+            "PERU RAMIRO G"
+          ],
+          "cluster_buying": true,
+          "discretionary_sell_value_usd": 0,
+          "distinct_buyers": [
+            "BOUDREAUX GAIL",
+            "PERU RAMIRO G"
+          ],
+          "max_stake_change_pct": 10.1,
+          "net_stance": "NET_BUYING",
+          "net_value_usd": 1368280.05,
+          "officer_or_director_buyers": [
+            "BOUDREAUX GAIL",
+            "PERU RAMIRO G"
+          ],
+          "planned_sell_count": 0,
+          "planned_sell_value_usd": 0,
+          "sell_count": 0,
+          "sell_value_usd": 0,
+          "sells": [],
+          "significant_buy_count": 3,
+          "skipped_securities": {},
+          "top_role": "CEO"
+        },
+        "ticker": "ELV",
+        "until": "2026-09-06"
+      },
+      "insider_score": 73.1,
+      "mq_signal": {},
+      "name": "ELEVANCE HEALTH INC FORMERLY",
+      "option_eligible": true,
+      "overall_rank": 2,
+      "post_filing_perf": {
+        "current_price": 407.5,
+        "days_since_filing": 68,
+        "filing_close": 386.73,
+        "pct_change": 5.4
+      },
+      "price_penalty": 0.0,
+      "rank": 2,
+      "reasons": {
+        "accumulation": [
+          "First quarter of buying \u2013 no multi-quarter build yet"
+        ],
+        "activity": [
+          "Baupost Group (Klarman) opened a NEW position at 9.1% of its book",
+          "4 tracked managers bought this quarter"
+        ],
+        "consensus": [
+          "4 independent buyers: Baupost Group (Klarman), Brave Warrior Advisors (Ainslie), Harris Associates (Oakmark), Sound Shore Management"
+        ],
+        "conviction": [
+          "Largest buyer weight: 9.1% of Baupost Group (Klarman)'s portfolio (rank TOP3)",
+          "Position is \u22655\u00d7 the manager's own median position size"
+        ],
+        "crowding": [
+          "Crowding LOW \u2013 room for further institutional sponsorship"
+        ],
+        "freshness": [
+          "Filing is 23 days old; low-turnover buyers keep it informative"
+        ],
+        "insider": [
+          "$1,368,280 of open-market insider purchases since quarter-end",
+          "2 distinct insiders bought including the CEO in a coordinated cluster",
+          "Largest buy lifted that insider's own stake by 10%"
+        ],
+        "manager_quality": [
+          "Highest-quality buyer: Baupost Group (Klarman) (quality 0.98)",
+          "Average buyer quality 0.81 across 4 managers"
+        ]
+      },
+      "score_13f": 85.2,
+      "signal_class": "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION",
+      "signal_label": "Early smart money + insider confirmation",
+      "signal_score": 91.2,
+      "ticker": "ELV",
+      "why": {
+        "bullets": [
+          "Baupost Group (Klarman) opened a NEW position at 9.1% of its book",
+          "Largest buyer weight: 9.1% of Baupost Group (Klarman)'s portfolio (rank TOP3)",
+          "Highest-quality buyer: Baupost Group (Klarman) (quality 0.98)",
+          "$1,368,280 of open-market insider purchases since quarter-end",
+          "Institutional accumulation and insider buying confirm each other (13F 85, insider 73) \u2192 +8 confluence"
+        ],
+        "summary": "ELV ranks on new / add activity, portfolio conviction and manager quality, confirmed by $1,368,280 of insider open-market buying since quarter-end.",
+        "top_drivers": [
+          {
+            "factor": "activity",
+            "label": "NEW / ADD activity",
+            "points": 15.0
+          },
+          {
+            "factor": "conviction",
+            "label": "Portfolio conviction",
+            "points": 15.0
+          },
+          {
+            "factor": "manager_quality",
+            "label": "Manager quality",
+            "points": 13.62
+          }
+        ]
+      },
+      "commentary": {
+        "ticker": "ELV",
+        "why_strongest": "Baupost (quality 0.98) opened a new position at 9.1% of its book, joined by three other quality managers, with top-tier manager_quality and crowding scores. Insider buying of $1,368,280 across three trades adds confirmation.",
+        "insider_read": "Net buying of $1,368,280 in 3 trades by 2 insiders, including an officer/director, aligns with the institutional build.",
+        "risks": [
+          "Accumulation score is low at 15.0, suggesting this may be an initial rather than sustained build",
+          "No suitable option was found for expressing this signal"
+        ],
+        "option_note": "No suitable call option was found; rejections spanned delta, open interest, spread, and volume filters.",
+        "verdict": "UNUSUALLY_STRONG"
+      },
+      "option": {
+        "ticker": "ELV",
+        "current_price": 407.5,
+        "change_pct": -1.76,
+        "expiries_checked": [
+          "2026-12-18",
+          "2027-01-15"
+        ],
+        "iv_metrics": {
+          "iv_rank": 30.1,
+          "hv_30d_pct": 22.7,
+          "iv_hv_ratio": 1.43,
+          "verdict": "CHEAP \u2013 premium low vs. realised vol"
+        },
+        "status": "NO_SUITABLE_OPTION_FOUND",
+        "contract": null,
+        "eligible_count": 0,
+        "candidates_checked": 117,
+        "rejections": {
+          "delta": 100,
+          "open_interest": 115,
+          "spread": 66,
+          "volume": 117
+        },
+        "filters": {
+          "expiry_days": "90\u2013180 days to expiration",
+          "delta": "0.30\u20130.70 call delta (target 0.45)",
+          "spread": "bid-ask spread \u2264 8% of mid",
+          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+          "open_interest": "open interest \u2265 500",
+          "iv": "implied volatility \u2264 70%"
+        }
+      }
+    },
+    {
+      "alpha_score_legacy": 50.0,
+      "confluence_bonus": 5.7,
+      "contributions": {
+        "accumulation": 7.5,
+        "activity": 15.0,
+        "consensus": 12.3,
+        "conviction": 15.0,
+        "crowding": 5.0,
+        "freshness": 8.88,
+        "insider": 7.29,
+        "manager_quality": 12.24
+      },
+      "crowding_label": "LOW",
+      "factors": {
+        "accumulation": 75.0,
+        "activity": 100.0,
+        "consensus": 82.0,
+        "conviction": 100.0,
+        "crowding": 100.0,
+        "freshness": 88.8,
+        "insider": 48.6,
+        "manager_quality": 81.6
+      },
+      "filer_count": 6,
+      "filers": [
+        {
+          "alpha_score": 31.2,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "D1 Capital (Sundheim)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.639,
+          "manager_quality_score": 0.446,
+          "port_weight_pct": 0.715,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.25
+        },
+        {
+          "alpha_score": 39.8,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Lone Pine Capital (Mandel)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.716,
+          "port_weight_pct": 4.233,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.32
+        },
+        {
+          "alpha_score": 50.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "RV Capital (Zeller)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.934,
+          "port_weight_pct": 30.312,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 9.4
+        },
+        {
+          "alpha_score": 33.4,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Renaissance Technologies (Quant)",
+          "filing_date": "2026-08-13",
+          "filing_date_actual": "2026-08-13",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.35,
+          "port_weight_pct": 0.591,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 5.09
+        },
+        {
+          "alpha_score": 37.6,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Viking Global (Halvorsen)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.893,
+          "manager_quality_score": 0.676,
+          "port_weight_pct": 2.312,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 3.22
+        },
+        {
+          "alpha_score": 39.3,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Whale Rock Capital Management",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.714,
+          "port_weight_pct": 2.255,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.0
+        }
+      ],
+      "flags": [
+        "CLUSTER",
+        "EARLY_SMART_MONEY_ACCUMULATION",
+        "HIGH_CONVICTION",
+        "NEW_POSITION",
+        "OUTSIZED_VS_MANAGER_TYPICAL",
+        "SIZE_EXCEPTIONAL",
+        "SIZE_INTERESTING",
+        "SIZE_STRONG",
+        "SIZE_WEAK",
+        "TOP10_ENTRY",
+        "TOP3_POSITION"
+      ],
+      "grade": "VERY_STRONG",
+      "insider": {
+        "cik": "0001690820",
+        "error": null,
+        "foreign_issuer_skipped": {},
+        "form4_count": 27,
+        "reasons": [
+          "Discretionary insider selling of $2,227,500 outweighs purchases",
+          "$1,544,981 of open-market insider purchases since quarter-end",
+          "1 distinct insider bought by directors",
+          "Largest buy lifted that insider's own stake by 15%",
+          "$25,372,460 of sales ran under Rule 10b5-1 plans and are not scored as a signal"
+        ],
+        "score": 48.6,
+        "since": "2026-06-30",
+        "summary": {
+          "buy_count": 2,
+          "buy_value_usd": 1544981.37,
+          "buyer_roles": [
+            "DIRECTOR"
+          ],
+          "buys": [
+            {
+              "accession": "0001088011-26-000006",
+              "date": "2026-07-31",
+              "filing_date": "2026-08-04",
+              "insider": "MAROONE MICHAEL E",
+              "is_director": true,
+              "is_officer": false,
+              "planned": false,
+              "price": 61.69,
+              "role": "Director",
+              "role_key": "DIRECTOR",
+              "security": "Class A Common Stock",
+              "shares": 21153.0,
+              "shares_after": 164726.0,
+              "stake_change_pct": 14.7,
+              "value_usd": 1304928.57
+            },
+            {
+              "accession": "0001088011-26-000006",
+              "date": "2026-07-31",
+              "filing_date": "2026-08-04",
+              "insider": "MAROONE MICHAEL E",
+              "is_director": true,
+              "is_officer": false,
+              "planned": false,
+              "price": 62.4,
+              "role": "Director",
+              "role_key": "DIRECTOR",
+              "security": "Class A Common Stock",
+              "shares": 3847.0,
+              "shares_after": 168573.0,
+              "stake_change_pct": 2.3,
+              "value_usd": 240052.8
+            }
+          ],
+          "cluster_buyers": [
+            "MAROONE MICHAEL E"
+          ],
+          "cluster_buying": false,
+          "discretionary_sell_value_usd": 2227500.0,
+          "distinct_buyers": [
+            "MAROONE MICHAEL E"
+          ],
+          "max_stake_change_pct": 14.7,
+          "net_stance": "NET_SELLING",
+          "net_value_usd": -26054978.94,
+          "officer_or_director_buyers": [
+            "MAROONE MICHAEL E"
+          ],
+          "planned_sell_count": 37,
+          "planned_sell_value_usd": 25372460.31,
+          "sell_count": 39,
+          "sell_value_usd": 27599960.31,
+          "sells": [
+            {
+              "accession": "0001783558-26-000018",
+              "date": "2026-08-03",
+              "filing_date": "2026-08-04",
+              "insider": "Palmer Stephen R",
+              "is_director": false,
+              "is_officer": true,
+              "planned": true,
+              "price": 65.82,
+              "role": "Vice President of Accounting",
+              "role_key": "OFFICER",
+              "security": "Class A Common Stock",
+              "shares": 520.0,
+              "shares_after": 136909.0,
+              "stake_change_pct": 0.4,
+              "value_usd": 34226.4
+            },
+            {
+              "accession": "0001702455-26-000010",
+              "date": "2026-08-13",
+              "filing_date": "2026-08-17",
+              "insider": "PLATT IRA J.",
+              "is_director": true,
+              "is_officer": false,
+              "planned": false,
+              "price": 73.0,
+              "role": "Director",
+              "role_key": "DIRECTOR",
+              "security": "Class A Common Stock",
+              "shares": 15000.0,
+              "shares_after": 186470.0,
+              "stake_change_pct": 8.7,
+              "value_usd": 1095000.0
+            },
+            {
+              "accession": "0001210412-26-000008",
+              "date": "2026-08-14",
+              "filing_date": "2026-08-17",
+              "insider": "QUAYLE J DANFORTH",
+              "is_director": true,
+              "is_officer": false,
+              "planned": true,
+              "price": 75.0,
+              "role": "Director",
+              "role_key": "DIRECTOR",
+              "security": "Class A Common Stock",
+              "shares": 14525.0,
+              "shares_after": 214960.0,
+              "stake_change_pct": 7.2,
+              "value_usd": 1089375.0
+            },
+            {
+              "accession": "0001702455-26-000010",
+              "date": "2026-08-14",
+              "filing_date": "2026-08-17",
+              "insider": "PLATT IRA J.",
+              "is_director": true,
+              "is_officer": false,
+              "planned": false,
+              "price": 75.5,
+              "role": "Director",
+              "role_key": "DIRECTOR",
+              "security": "Class A Common Stock",
+              "shares": 15000.0,
+              "shares_after": 186470.0,
+              "stake_change_pct": 8.7,
+              "value_usd": 1132500.0
+            },
+            {
+              "accession": "0001700537-26-000020",
+              "date": "2026-09-01",
+              "filing_date": "2026-09-03",
+              "insider": "HUSTON BENJAMIN E.",
+              "is_director": false,
+              "is_officer": true,
+              "planned": true,
+              "price": 71.36,
+              "role": "Chief Operating Officer",
+              "role_key": "OFFICER",
+              "security": "Class A Common Stock",
+              "shares": 29474.0,
+              "shares_after": 499219.0,
+              "stake_change_pct": 6.3,
+              "value_usd": 2103264.64
+            },
+            {
+              "accession": "0001700537-26-000020",
+              "date": "2026-09-01",
+              "filing_date": "2026-09-03",
+              "insider": "HUSTON BENJAMIN E.",
+              "is_director": false,
+              "is_officer": true,
+              "planned": true,
+              "price": 71.83,
+              "role": "Chief Operating Officer",
+              "role_key": "OFFICER",
+              "security": "Class A Common Stock",
+              "shares": 20526.0,
+              "shares_after": 478693.0,
+              "stake_change_pct": 4.5,
+              "value_usd": 1474382.58
+            },
+            {
+              "accession": "0001700540-26-000020",
+              "date": "2026-09-01",
+              "filing_date": "2026-09-03",
+              "insider": "JENKINS MARK W.",
+              "is_director": false,
+              "is_officer": true,
+              "planned": true,
+              "price": 71.36,
+              "role": "Chief Financial Officer",
+              "role_key": "CFO",
+              "security": "Class A Common Stock",
+              "shares": 37406.0,
+              "shares_after": 1175862.0,
+              "stake_change_pct": 3.3,
+              "value_usd": 2669292.16
+            },
+            {
+              "accession": "0001700540-26-000020",
+              "date": "2026-09-01",
+              "filing_date": "2026-09-03",
+              "insider": "JENKINS MARK W.",
+              "is_director": false,
+              "is_officer": true,
+              "planned": true,
+              "price": 71.83,
+              "role": "Chief Financial Officer",
+              "role_key": "CFO",
+              "security": "Class A Common Stock",
+              "shares": 26344.0,
+              "shares_after": 1149518.0,
+              "stake_change_pct": 2.3,
+              "value_usd": 1892289.52
+            },
+            {
+              "accession": "0001783558-26-000020",
+              "date": "2026-09-01",
+              "filing_date": "2026-09-03",
+              "insider": "Palmer Stephen R",
+              "is_director": false,
+              "is_officer": true,
+              "planned": true,
+              "price": 71.4,
+              "role": "Vice President of Accounting",
+              "role_key": "OFFICER",
+              "security": "Class A Common Stock",
+              "shares": 3400.0,
+              "shares_after": 130486.0,
+              "stake_change_pct": 2.7,
+              "value_usd": 242760.0
+            },
+            {
+              "accession": "0001783558-26-000020",
+              "date": "2026-09-01",
+              "filing_date": "2026-09-03",
+              "insider": "Palmer Stephen R",
+              "is_director": false,
+              "is_officer": true,
+              "planned": true,
+              "price": 71.88,
+              "role": "Vice President of Accounting",
+              "role_key": "OFFICER",
+              "security": "Class A Common Stock",
+              "shares": 1600.0,
+              "shares_after": 128886.0,
+              "stake_change_pct": 1.3,
+              "value_usd": 115008.0
+            }
+          ],
+          "significant_buy_count": 2,
+          "skipped_securities": {},
+          "top_role": "DIRECTOR"
+        },
+        "ticker": "CVNA",
+        "until": "2026-09-06"
+      },
+      "insider_score": 48.6,
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 2,
+        "build_score": 1.24,
+        "flags": [],
+        "silent_build": false,
+        "total_quarters": 2,
+        "weight_slope": 1.487
+      },
+      "name": "CARVANA CO",
+      "option_eligible": true,
+      "overall_rank": 3,
+      "post_filing_perf": {
+        "current_price": 74.59,
+        "days_since_filing": 68,
+        "filing_close": 65.82,
+        "pct_change": 13.3
+      },
+      "price_penalty": 0.0,
+      "rank": 3,
+      "reasons": {
+        "accumulation": [
+          "Built over 3 consecutive quarters"
+        ],
+        "activity": [
+          "RV Capital (Zeller) opened a NEW position at 30.3% of its book",
+          "6 tracked managers bought this quarter"
+        ],
+        "consensus": [
+          "6 independent buyers incl. D1 Capital (Sundheim), Lone Pine Capital (Mandel), RV Capital (Zeller) \u2026"
+        ],
+        "conviction": [
+          "Largest buyer weight: 30.3% of RV Capital (Zeller)'s portfolio (rank TOP3)",
+          "Position is \u22655\u00d7 the manager's own median position size"
+        ],
+        "crowding": [
+          "Crowding LOW \u2013 room for further institutional sponsorship"
+        ],
+        "freshness": [
+          "Filing is 23 days old; low-turnover buyers keep it informative"
+        ],
+        "insider": [
+          "Discretionary insider selling of $2,227,500 outweighs purchases",
+          "$1,544,981 of open-market insider purchases since quarter-end",
+          "1 distinct insider bought by directors",
+          "Largest buy lifted that insider's own stake by 15%",
+          "$25,372,460 of sales ran under Rule 10b5-1 plans and are not scored as a signal"
+        ],
+        "manager_quality": [
+          "Highest-quality buyer: RV Capital (Zeller) (quality 0.93)",
+          "Average buyer quality 0.64 across 6 managers"
+        ]
+      },
+      "score_13f": 89.3,
+      "signal_class": "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION",
+      "signal_label": "Early smart money + insider confirmation",
+      "signal_score": 88.9,
+      "ticker": "CVNA",
+      "why": {
+        "bullets": [
+          "RV Capital (Zeller) opened a NEW position at 30.3% of its book",
+          "Largest buyer weight: 30.3% of RV Capital (Zeller)'s portfolio (rank TOP3)",
+          "6 independent buyers incl. D1 Capital (Sundheim), Lone Pine Capital (Mandel), RV Capital (Zeller) \u2026",
+          "Discretionary insider selling of $2,227,500 outweighs purchases",
+          "Institutional accumulation and insider buying confirm each other (13F 89, insider 49) \u2192 +6 confluence"
+        ],
+        "summary": "CVNA ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $1,544,981 of insider open-market buying since quarter-end.",
+        "top_drivers": [
+          {
+            "factor": "activity",
+            "label": "NEW / ADD activity",
+            "points": 15.0
+          },
+          {
+            "factor": "conviction",
+            "label": "Portfolio conviction",
+            "points": 15.0
+          },
+          {
+            "factor": "consensus",
+            "label": "Smart-money consensus",
+            "points": 12.3
+          }
+        ]
+      },
+      "commentary": {
+        "ticker": "CVNA",
+        "why_strongest": "RV Capital opened a new position at 30.3% of its book, one of six independent new buyers, with perfect activity and conviction scores. Multi-quarter building over 2 prior quarters adds context to the fresh 13F entries.",
+        "insider_read": "Net stance is NET_SELLING: $27,599,960 in sales across 39 trades outweighs $1,544,981 in purchases, a clear divergence from the institutional buying.",
+        "risks": [
+          "Heavy insider selling directly contradicts the 13F accumulation signal",
+          "Insider score of 48.6 is well below the other top-3 names"
+        ],
+        "option_note": "The Jan 2027 82-strike call has zero recent volume, limiting near-term liquidity despite meaningful open interest.",
+        "verdict": "STRONG"
+      },
+      "option": {
+        "ticker": "CVNA",
+        "current_price": 74.59,
+        "change_pct": 1.58,
+        "expiries_checked": [
+          "2026-12-18",
+          "2027-01-15",
+          "2027-02-19"
+        ],
+        "iv_metrics": {
+          "iv_rank": 52.2,
+          "hv_30d_pct": 60.3,
+          "iv_hv_ratio": 1.03,
+          "verdict": "MODERATE"
+        },
+        "status": "OK",
+        "contract": {
+          "symbol": "CVNA270115C00082000",
+          "strike": 82.0,
+          "expiration": "2027-01-15",
+          "dte": 131,
+          "bid": 8.15,
+          "ask": 8.65,
+          "mid": 8.4,
+          "spread_pct": 6.0,
+          "volume": 0,
+          "open_interest": 2817,
+          "delta": 0.484,
+          "implied_volatility": 0.602,
+          "moneyness_pct": 9.9,
+          "max_risk_per_contract": 840.0,
+          "breakeven": 90.4,
+          "selection_cost": 0.3967
+        },
+        "eligible_count": 6,
+        "candidates_checked": 185,
+        "rejections": {
+          "delta": 144,
+          "iv": 59,
+          "open_interest": 113,
+          "spread": 91,
+          "volume": 165
+        },
+        "runner_up": [
+          {
+            "symbol": "CVNA270115C00080000",
+            "delta": 0.511,
+            "selection_cost": 0.4757
+          },
+          {
+            "symbol": "CVNA261218C00080000",
+            "delta": 0.495,
+            "selection_cost": 0.6295
+          },
+          {
+            "symbol": "CVNA270115C00074000",
+            "delta": 0.597,
+            "selection_cost": 0.8981
+          }
+        ],
+        "filters": {
+          "expiry_days": "90\u2013180 days to expiration",
+          "delta": "0.30\u20130.70 call delta (target 0.45)",
+          "spread": "bid-ask spread \u2264 8% of mid",
+          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+          "open_interest": "open interest \u2265 500",
+          "iv": "implied volatility \u2264 70%"
+        },
+        "rule_rationale": "Delta 0.48 sits closest to the 0.45 target, strike 9.9% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 6.0% with volume 0 and open interest 2,817 keeps entry and exit liquid."
+      }
+    },
+    {
+      "alpha_score_legacy": 0.0,
+      "confluence_bonus": 5.1,
+      "contributions": {
+        "accumulation": 7.5,
+        "activity": 15.0,
+        "consensus": 13.41,
+        "conviction": 15.0,
+        "crowding": 2.15,
+        "freshness": 9.51,
+        "insider": 6.2,
+        "manager_quality": 13.72
+      },
+      "crowding_label": "HIGH",
+      "factors": {
+        "accumulation": 75.0,
+        "activity": 100.0,
+        "consensus": 89.4,
+        "conviction": 100.0,
+        "crowding": 43.0,
+        "freshness": 95.1,
+        "insider": 41.3,
+        "manager_quality": 91.5
+      },
+      "filer_count": 10,
+      "filers": [
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Chou Associates Management",
+          "filing_date": "2026-08-12",
+          "filing_date_actual": "2026-08-12",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.841,
+          "port_weight_pct": 0.716,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 0.65
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Gates Foundation Trust",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.98,
+          "manager_quality_score": 0.957,
+          "port_weight_pct": 21.353,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 35.15
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "H&H International Investment (Li Lu)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.985,
+          "port_weight_pct": 24.18,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 25.89
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Himalaya Capital Management (Li Lu)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 1.0,
+          "port_weight_pct": 14.977,
+          "position_tier": "TOP5",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.21
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Lountzis Asset Management",
+          "filing_date": "2026-07-31",
+          "filing_date_actual": "2026-07-31",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.797,
+          "port_weight_pct": 20.991,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 94.13
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Muhlenkamp & Co",
+          "filing_date": "2026-08-18",
+          "filing_date_actual": "2026-08-18",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.847,
+          "port_weight_pct": 5.579,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.41
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Semper Augustus Investments Group",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.866,
+          "port_weight_pct": 15.451,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 41.2
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Soros Fund Management (Soros)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.41,
+          "port_weight_pct": 0.862,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 5.58
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Sound Shore Management",
+          "filing_date": "2026-08-12",
+          "filing_date_actual": "2026-08-12",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.825,
+          "port_weight_pct": 3.142,
+          "position_tier": "TOP5",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.23
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Two Sigma Investments (Quant)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.35,
+          "port_weight_pct": 1.105,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 9.06
+        }
+      ],
+      "flags": [
+        "CLUSTER",
+        "HIGH_CONVICTION",
+        "NEW_POSITION",
+        "OUTSIZED_VS_MANAGER_TYPICAL",
+        "SIZE_EXCEPTIONAL",
+        "SIZE_INTERESTING",
+        "SIZE_STRONG",
+        "SIZE_VERY_STRONG",
+        "SIZE_WEAK",
+        "TOP10_ENTRY",
+        "TOP3_POSITION",
+        "TOP5_POSITION"
+      ],
+      "grade": "VERY_STRONG",
+      "insider": {
+        "cik": "0001067983",
+        "error": null,
+        "foreign_issuer_skipped": {
+          "DVA": 1
+        },
+        "form4_count": 5,
+        "reasons": [
+          "$250,072 of open-market insider purchases since quarter-end",
+          "1 distinct insider bought including an officer",
+          "Largest buy lifted that insider's own stake by 56%"
+        ],
+        "score": 41.3,
+        "since": "2026-06-30",
+        "summary": {
+          "buy_count": 3,
+          "buy_value_usd": 250072.03,
+          "buyer_roles": [
+            "OFFICER"
+          ],
+          "buys": [
+            {
+              "accession": "0001193125-26-349574",
+              "date": "2026-08-12",
+              "filing_date": "2026-08-13",
+              "insider": "O'Sullivan Michael J.",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 510.64,
+              "role": "See Remarks",
+              "role_key": "OFFICER",
+              "security": "Class B Common Stock",
+              "shares": 45.0,
+              "shares_after": 708.0,
+              "stake_change_pct": 6.8,
+              "value_usd": 22978.8
+            },
+            {
+              "accession": "0001193125-26-349574",
+              "date": "2026-08-12",
+              "filing_date": "2026-08-13",
+              "insider": "O'Sullivan Michael J.",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 512.52,
+              "role": "See Remarks",
+              "role_key": "OFFICER",
+              "security": "Class B Common Stock",
+              "shares": 400.0,
+              "shares_after": 1108.0,
+              "stake_change_pct": 56.5,
+              "value_usd": 205008.0
+            },
+            {
+              "accession": "0001193125-26-349574",
+              "date": "2026-08-12",
+              "filing_date": "2026-08-13",
+              "insider": "O'Sullivan Michael J.",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 513.61,
+              "role": "See Remarks",
+              "role_key": "OFFICER",
+              "security": "Class B Common Stock",
+              "shares": 43.0,
+              "shares_after": 1151.0,
+              "stake_change_pct": 3.9,
+              "value_usd": 22085.23
+            }
+          ],
+          "cluster_buyers": [],
+          "cluster_buying": false,
+          "discretionary_sell_value_usd": 0,
+          "distinct_buyers": [
+            "O'Sullivan Michael J."
+          ],
+          "max_stake_change_pct": 56.5,
+          "net_stance": "NET_BUYING",
+          "net_value_usd": 250072.03,
+          "officer_or_director_buyers": [
+            "O'Sullivan Michael J."
+          ],
+          "planned_sell_count": 0,
+          "planned_sell_value_usd": 0,
+          "sell_count": 0,
+          "sell_value_usd": 0,
+          "sells": [],
+          "significant_buy_count": 1,
+          "skipped_securities": {},
+          "top_role": "OFFICER"
+        },
+        "ticker": "BRK/B",
+        "until": "2026-09-06"
+      },
+      "insider_score": 41.3,
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 2,
+        "build_score": 0.5,
+        "flags": [],
+        "silent_build": false,
+        "total_quarters": 2,
+        "weight_slope": -2.367
+      },
+      "name": "BERKSHIRE HATHAWAY INC DEL",
+      "option_eligible": true,
+      "overall_rank": 4,
+      "post_filing_perf": {
+        "current_price": 506.03,
+        "days_since_filing": 68,
+        "filing_close": 500.39,
+        "pct_change": 1.1
+      },
+      "price_penalty": 0.0,
+      "rank": 4,
+      "reasons": {
+        "accumulation": [
+          "Built over 3 consecutive quarters"
+        ],
+        "activity": [
+          "H&H International Investment (Li Lu) opened a NEW position at 24.2% of its book",
+          "10 tracked managers bought this quarter"
+        ],
+        "consensus": [
+          "10 independent buyers incl. Chou Associates Management, Gates Foundation Trust, H&H International Investment (Li Lu) \u2026"
+        ],
+        "conviction": [
+          "Largest buyer weight: 24.2% of H&H International Investment (Li Lu)'s portfolio (rank TOP3)",
+          "Position is \u22655\u00d7 the manager's own median position size"
+        ],
+        "crowding": [
+          "Crowding HIGH \u2013 trade is already popular"
+        ],
+        "freshness": [
+          "Filing is 19 days old; low-turnover buyers keep it informative"
+        ],
+        "insider": [
+          "$250,072 of open-market insider purchases since quarter-end",
+          "1 distinct insider bought including an officer",
+          "Largest buy lifted that insider's own stake by 56%"
+        ],
+        "manager_quality": [
+          "Highest-quality buyer: Himalaya Capital Management (Li Lu) (quality 1.00)",
+          "Average buyer quality 0.79 across 10 managers"
+        ]
+      },
+      "same_issuer_alternates": [
+        {
+          "signal_score": 69.8,
+          "ticker": "BRK/A"
+        }
+      ],
+      "score_13f": 89.8,
+      "signal_class": "ACCUMULATION_WITH_INSIDER_CONFIRMATION",
+      "signal_label": "Accumulation + insider confirmation",
+      "signal_score": 87.6,
+      "ticker": "BRK/B",
+      "why": {
+        "bullets": [
+          "H&H International Investment (Li Lu) opened a NEW position at 24.2% of its book",
+          "Largest buyer weight: 24.2% of H&H International Investment (Li Lu)'s portfolio (rank TOP3)",
+          "Highest-quality buyer: Himalaya Capital Management (Li Lu) (quality 1.00)",
+          "$250,072 of open-market insider purchases since quarter-end",
+          "Institutional accumulation and insider buying confirm each other (13F 90, insider 41) \u2192 +5 confluence"
+        ],
+        "summary": "BRK/B ranks on new / add activity, portfolio conviction and manager quality, confirmed by $250,072 of insider open-market buying since quarter-end.",
+        "top_drivers": [
+          {
+            "factor": "activity",
+            "label": "NEW / ADD activity",
+            "points": 15.0
+          },
+          {
+            "factor": "conviction",
+            "label": "Portfolio conviction",
+            "points": 15.0
+          },
+          {
+            "factor": "manager_quality",
+            "label": "Manager quality",
+            "points": 13.72
+          }
+        ]
+      },
+      "commentary": {
+        "ticker": "BRK/B",
+        "why_strongest": "Ten new institutional buyers include several perfect-quality value managers (Li Lu at 1.00, 0.98), with H&H International at 24.2% of its book. High manager_quality and consensus scores support the read, though crowding is labeled HIGH.",
+        "insider_read": "Net buying of $250,072 across 3 trades by one insider offers modest but positive confirmation.",
+        "risks": [
+          "Crowding label is HIGH, unlike most other top-10 names",
+          "Insider purchase size is small relative to the scale of institutional buying"
+        ],
+        "option_note": "The Jan 2027 520-strike call provides a moderate-delta, reasonably liquid way to track the broad value-manager accumulation.",
+        "verdict": "STRONG"
+      },
+      "option": {
+        "ticker": "BRK/B",
+        "current_price": 506.03,
+        "change_pct": -0.42,
+        "expiries_checked": [
+          "2026-12-18",
+          "2027-01-15"
+        ],
+        "iv_metrics": {
+          "iv_rank": 40.2,
+          "hv_30d_pct": 14.7,
+          "iv_hv_ratio": 1.06,
+          "verdict": "MODERATE"
+        },
+        "status": "OK",
+        "contract": {
+          "symbol": "BRKB270115C00520000",
+          "strike": 520.0,
+          "expiration": "2027-01-15",
+          "dte": 131,
+          "bid": 15.35,
+          "ask": 16.25,
+          "mid": 15.8,
+          "spread_pct": 5.7,
+          "volume": 13,
+          "open_interest": 7580,
+          "delta": 0.461,
+          "implied_volatility": 0.151,
+          "moneyness_pct": 2.8,
+          "max_risk_per_contract": 1580.0,
+          "breakeven": 535.8,
+          "selection_cost": 0.2422
+        },
+        "eligible_count": 4,
+        "candidates_checked": 128,
+        "rejections": {
+          "delta": 115,
+          "open_interest": 78,
+          "spread": 48,
+          "volume": 116
+        },
+        "runner_up": [
+          {
+            "symbol": "BRKB270115C00530000",
+            "delta": 0.374,
+            "selection_cost": 0.5519
+          },
+          {
+            "symbol": "BRKB270115C00510000",
+            "delta": 0.552,
+            "selection_cost": 0.6646
+          },
+          {
+            "symbol": "BRKB270115C00500000",
+            "delta": 0.639,
+            "selection_cost": 1.0755
+          }
+        ],
+        "filters": {
+          "expiry_days": "90\u2013180 days to expiration",
+          "delta": "0.30\u20130.70 call delta (target 0.45)",
+          "spread": "bid-ask spread \u2264 8% of mid",
+          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+          "open_interest": "open interest \u2265 500",
+          "iv": "implied volatility \u2264 70%"
+        },
+        "rule_rationale": "Delta 0.46 sits closest to the 0.45 target, strike 2.8% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 5.7% with volume 13 and open interest 7,580 keeps entry and exit liquid."
+      }
+    },
+    {
+      "alpha_score_legacy": 0.0,
+      "confluence_bonus": 5.5,
+      "contributions": {
+        "accumulation": 7.5,
+        "activity": 15.0,
+        "consensus": 12.63,
+        "conviction": 15.0,
+        "crowding": 1.4,
+        "freshness": 9.09,
+        "insider": 6.93,
+        "manager_quality": 12.2
+      },
+      "crowding_label": "HIGH",
+      "factors": {
+        "accumulation": 75.0,
+        "activity": 100.0,
+        "consensus": 84.2,
+        "conviction": 100.0,
+        "crowding": 28.0,
+        "freshness": 90.9,
+        "insider": 46.2,
+        "manager_quality": 81.3
+      },
+      "filer_count": 15,
+      "filers": [
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "7G Capital Management",
+          "filing_date": "2026-08-13",
+          "filing_date_actual": "2026-08-13",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.82,
+          "port_weight_pct": 15.839,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.76
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Appaloosa (Tepper)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.732,
+          "port_weight_pct": 10.547,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 4.76
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Coatue (Laffont)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.722,
+          "port_weight_pct": 8.755,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 21.81
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Duquesne Family Office (Druckenmiller)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.673,
+          "port_weight_pct": 5.404,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 12.69
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Fairfax Financial Holdings (Watsa)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.899,
+          "port_weight_pct": 1.694,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 2.19
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Harvard Management Co",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.757,
+          "manager_quality_score": 0.795,
+          "port_weight_pct": 8.2,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 2.89
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Renaissance Technologies (Quant)",
+          "filing_date": "2026-08-13",
+          "filing_date_actual": "2026-08-13",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.35,
+          "port_weight_pct": 0.711,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 6.13
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Situational Awareness LP",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.672,
+          "manager_quality_score": 0.508,
+          "port_weight_pct": 6.369,
+          "position_tier": "TOP5",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 2.97
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "SoftBank Group Corp",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.663,
+          "port_weight_pct": 1.485,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 6.27
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Soros Fund Management (Soros)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.41,
+          "port_weight_pct": 3.224,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 20.87
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "SurgoCap Partners",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.814,
+          "port_weight_pct": 14.019,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.68
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Third Point (Loeb)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.761,
+          "port_weight_pct": 4.724,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 2.59
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Tiger Global (Coleman)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.96,
+          "manager_quality_score": 0.737,
+          "port_weight_pct": 9.72,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 8.73
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Viking Global (Halvorsen)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.893,
+          "manager_quality_score": 0.676,
+          "port_weight_pct": 4.313,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 6.01
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Whale Rock Capital Management",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.714,
+          "port_weight_pct": 2.262,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.0
+        }
+      ],
+      "flags": [
+        "CLUSTER",
+        "HIGH_CONVICTION",
+        "NEW_POSITION",
+        "OUTSIZED_VS_MANAGER_TYPICAL",
+        "SIZE_EXCEPTIONAL",
+        "SIZE_INTERESTING",
+        "SIZE_STRONG",
+        "SIZE_VERY_STRONG",
+        "SIZE_WEAK",
+        "TOP10_ENTRY",
+        "TOP3_POSITION",
+        "TOP5_POSITION"
+      ],
+      "grade": "VERY_STRONG",
+      "insider": {
+        "cik": "0001046179",
+        "error": null,
+        "foreign_issuer_skipped": {},
+        "form4_count": 40,
+        "reasons": [
+          "$400,340 of open-market insider purchases since quarter-end",
+          "2 distinct insiders bought including an officer",
+          "Largest buy lifted that insider's own stake by 21%"
+        ],
+        "score": 46.2,
+        "since": "2026-06-30",
+        "summary": {
+          "buy_count": 23,
+          "buy_value_usd": 400340.04,
+          "buyer_roles": [
+            "OFFICER"
+          ],
+          "buys": [
+            {
+              "accession": "0001046179-26-000513",
+              "date": "2026-08-07",
+              "filing_date": "2026-08-10",
+              "insider": "Lin Chris Horng-Dar",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.31,
+              "role": "VP and CIO",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 49.0,
+              "shares_after": 5931.0,
+              "stake_change_pct": 0.8,
+              "value_usd": 3592.19
+            },
+            {
+              "accession": "0001046179-26-000519",
+              "date": "2026-08-07",
+              "filing_date": "2026-08-10",
+              "insider": "Tien Bor-Zen",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.31,
+              "role": "VP",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 42.0,
+              "shares_after": 270.0,
+              "stake_change_pct": 18.4,
+              "value_usd": 3079.02
+            },
+            {
+              "accession": "0001046179-26-000519",
+              "date": "2026-08-07",
+              "filing_date": "2026-08-10",
+              "insider": "Tien Bor-Zen",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.31,
+              "role": "VP",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 7.0,
+              "shares_after": 80.0,
+              "stake_change_pct": 9.6,
+              "value_usd": 513.17
+            },
+            {
+              "accession": "0001046179-26-000520",
+              "date": "2026-08-07",
+              "filing_date": "2026-08-10",
+              "insider": "Wu Shien-Yang",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.31,
+              "role": "SVP",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 57.0,
+              "shares_after": 6805.0,
+              "stake_change_pct": 0.8,
+              "value_usd": 4178.67
+            },
+            {
+              "accession": "0001046179-26-000521",
+              "date": "2026-08-07",
+              "filing_date": "2026-08-10",
+              "insider": "Wei Che-Chia",
+              "is_director": true,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.31,
+              "role": "Chairman and CEO",
+              "role_key": "CEO",
+              "security": "Common Shares (2330.TW)",
+              "shares": 152.0,
+              "shares_after": 17987.0,
+              "stake_change_pct": 0.9,
+              "value_usd": 11143.12
+            },
+            {
+              "accession": "0001046179-26-000522",
+              "date": "2026-08-07",
+              "filing_date": "2026-08-10",
+              "insider": "Wang Ying-Lang",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.31,
+              "role": "SVP",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 55.0,
+              "shares_after": 6445.0,
+              "stake_change_pct": 0.9,
+              "value_usd": 4032.05
+            },
+            {
+              "accession": "0001046179-26-000523",
+              "date": "2026-08-07",
+              "filing_date": "2026-08-10",
+              "insider": "Mii Yuh-Jier",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.31,
+              "role": "EVP and Co-COO",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 72.0,
+              "shares_after": 8099.0,
+              "stake_change_pct": 0.9,
+              "value_usd": 5278.32
+            },
+            {
+              "accession": "0001046179-26-000529",
+              "date": "2026-08-07",
+              "filing_date": "2026-08-10",
+              "insider": "Yoo Chue-San",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.31,
+              "role": "VP",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 51.0,
+              "shares_after": 6641.0,
+              "stake_change_pct": 0.8,
+              "value_usd": 3738.81
+            },
+            {
+              "accession": "0001046179-26-000530",
+              "date": "2026-08-07",
+              "filing_date": "2026-08-10",
+              "insider": "Wu Yi-Huang",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.31,
+              "role": "VP",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 41.0,
+              "shares_after": 120.0,
+              "stake_change_pct": 51.9,
+              "value_usd": 3005.71
+            },
+            {
+              "accession": "0001046179-26-000531",
+              "date": "2026-08-07",
+              "filing_date": "2026-08-10",
+              "insider": "Yuan Lipen",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.31,
+              "role": "VP",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 42.0,
+              "shares_after": 1260.0,
+              "stake_change_pct": 3.4,
+              "value_usd": 3079.02
+            },
+            {
+              "accession": "0001046179-26-000532",
+              "date": "2026-08-07",
+              "filing_date": "2026-08-10",
+              "insider": "Zhang Kevin Xiaoqiang",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.31,
+              "role": "SVP and Deputy Co-COO",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 63.0,
+              "shares_after": 7286.0,
+              "stake_change_pct": 0.9,
+              "value_usd": 4618.53
+            },
+            {
+              "accession": "0001046179-26-000533",
+              "date": "2026-08-07",
+              "filing_date": "2026-08-10",
+              "insider": "Yeap Choh Fei",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.31,
+              "role": "SVP",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 57.0,
+              "shares_after": 6493.0,
+              "stake_change_pct": 0.9,
+              "value_usd": 4178.67
+            },
+            {
+              "accession": "0001046179-26-000543",
+              "date": "2026-08-18",
+              "filing_date": "2026-08-20",
+              "insider": "Yuan Lipen",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 74.5,
+              "role": "VP",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 1000.0,
+              "shares_after": 6000.0,
+              "stake_change_pct": 20.0,
+              "value_usd": 74500.0
+            },
+            {
+              "accession": "0001046179-26-000543",
+              "date": "2026-08-18",
+              "filing_date": "2026-08-20",
+              "insider": "Yuan Lipen",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.58,
+              "role": "VP",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 350.0,
+              "shares_after": 2000.0,
+              "stake_change_pct": 21.2,
+              "value_usd": 25753.0
+            },
+            {
+              "accession": "0001046179-26-000543",
+              "date": "2026-08-19",
+              "filing_date": "2026-08-20",
+              "insider": "Yuan Lipen",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 73.77,
+              "role": "VP",
+              "role_key": "OFFICER",
+              "security": "Common Shares (2330.TW)",
+              "shares": 1000.0,
+              "shares_after": 7000.0,
+              "stake_change_pct": 16.7,
+              "value_usd": 73770.0
+            }
+          ],
+          "cluster_buyers": [
+            "Fang Shu-Hua"
+          ],
+          "cluster_buying": false,
+          "discretionary_sell_value_usd": 0,
+          "distinct_buyers": [
+            "Fang Shu-Hua",
+            "Yuan Lipen"
+          ],
+          "max_stake_change_pct": 21.2,
+          "net_stance": "NET_BUYING",
+          "net_value_usd": 400340.04,
+          "officer_or_director_buyers": [
+            "Fang Shu-Hua",
+            "Yuan Lipen"
+          ],
+          "planned_sell_count": 0,
+          "planned_sell_value_usd": 0,
+          "sell_count": 0,
+          "sell_value_usd": 0,
+          "sells": [],
+          "significant_buy_count": 5,
+          "skipped_securities": {},
+          "top_role": "OFFICER"
+        },
+        "ticker": "TSM",
+        "until": "2026-09-06"
+      },
+      "insider_score": 46.2,
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 2,
+        "build_score": 0.5,
+        "flags": [],
+        "silent_build": false,
+        "total_quarters": 2,
+        "weight_slope": -0.556
+      },
+      "name": "TAIWAN SEMICONDUCTOR MANUFAC",
+      "option_eligible": true,
+      "overall_rank": 5,
+      "post_filing_perf": {
+        "current_price": 428.91,
+        "days_since_filing": 68,
+        "filing_close": 477.57,
+        "pct_change": -10.2
+      },
+      "price_penalty": 0.0,
+      "rank": 5,
+      "reasons": {
+        "accumulation": [
+          "Built over 3 consecutive quarters"
+        ],
+        "activity": [
+          "7G Capital Management opened a NEW position at 15.8% of its book",
+          "15 tracked managers bought this quarter"
+        ],
+        "consensus": [
+          "15 independent buyers incl. 7G Capital Management, Appaloosa (Tepper), Coatue (Laffont) \u2026"
+        ],
+        "conviction": [
+          "Largest buyer weight: 15.8% of 7G Capital Management's portfolio (rank TOP3)",
+          "Position is \u22655\u00d7 the manager's own median position size"
+        ],
+        "crowding": [
+          "Crowding HIGH \u2013 trade is already popular"
+        ],
+        "freshness": [
+          "Filing is 23 days old; low-turnover buyers keep it informative"
+        ],
+        "insider": [
+          "$400,340 of open-market insider purchases since quarter-end",
+          "2 distinct insiders bought including an officer",
+          "Largest buy lifted that insider's own stake by 21%"
+        ],
+        "manager_quality": [
+          "Highest-quality buyer: Fairfax Financial Holdings (Watsa) (quality 0.90)",
+          "Average buyer quality 0.68 across 15 managers"
+        ]
+      },
+      "score_13f": 85.7,
+      "signal_class": "ACCUMULATION_WITH_INSIDER_CONFIRMATION",
+      "signal_label": "Accumulation + insider confirmation",
+      "signal_score": 85.3,
+      "ticker": "TSM",
+      "why": {
+        "bullets": [
+          "7G Capital Management opened a NEW position at 15.8% of its book",
+          "Largest buyer weight: 15.8% of 7G Capital Management's portfolio (rank TOP3)",
+          "15 independent buyers incl. 7G Capital Management, Appaloosa (Tepper), Coatue (Laffont) \u2026",
+          "$400,340 of open-market insider purchases since quarter-end",
+          "Institutional accumulation and insider buying confirm each other (13F 86, insider 46) \u2192 +6 confluence"
+        ],
+        "summary": "TSM ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $400,340 of insider open-market buying since quarter-end.",
+        "top_drivers": [
+          {
+            "factor": "activity",
+            "label": "NEW / ADD activity",
+            "points": 15.0
+          },
+          {
+            "factor": "conviction",
+            "label": "Portfolio conviction",
+            "points": 15.0
+          },
+          {
+            "factor": "consensus",
+            "label": "Smart-money consensus",
+            "points": 12.63
+          }
+        ]
+      },
+      "commentary": {
+        "ticker": "TSM",
+        "why_strongest": "Fifteen independent new buyers, the most of any top-10 name, including Appaloosa, Coatue, and Duquesne, with strong consensus and manager_quality scores. Insider buying across 23 trades by two insiders adds confirmation despite HIGH crowding.",
+        "insider_read": "Net buying of $400,340 across 23 trades by 2 insiders, including an officer/director, supports the institutional accumulation.",
+        "risks": [
+          "Crowding label is HIGH and price is down 10% since quarter-end",
+          "Insider purchase total is modest relative to the scale of 13F buying"
+        ],
+        "option_note": "The Jan 2027 460-strike call offers tight spread and reasonable open interest to express the broad-based buyer signal.",
+        "verdict": "STRONG"
+      },
+      "option": {
+        "ticker": "TSM",
+        "current_price": 428.91,
+        "change_pct": 2.86,
+        "expiries_checked": [
+          "2026-12-18",
+          "2027-01-15",
+          "2027-02-19"
+        ],
+        "iv_metrics": {
+          "iv_rank": 27.6,
+          "hv_30d_pct": 25.4,
+          "iv_hv_ratio": 1.4,
+          "verdict": "CHEAP \u2013 premium low vs. realised vol"
+        },
+        "status": "OK",
+        "contract": {
+          "symbol": "TSM270115C00460000",
+          "strike": 460.0,
+          "expiration": "2027-01-15",
+          "dte": 131,
+          "bid": 27.1,
+          "ask": 28.0,
+          "mid": 27.55,
+          "spread_pct": 3.3,
+          "volume": 24,
+          "open_interest": 3756,
+          "delta": 0.435,
+          "implied_volatility": 0.369,
+          "moneyness_pct": 7.2,
+          "max_risk_per_contract": 2755.0,
+          "breakeven": 487.55,
+          "selection_cost": 0.129
+        },
+        "eligible_count": 9,
+        "candidates_checked": 201,
+        "rejections": {
+          "delta": 170,
+          "open_interest": 104,
+          "spread": 55,
+          "volume": 170
+        },
+        "runner_up": [
+          {
+            "symbol": "TSM270115C00450000",
+            "delta": 0.474,
+            "selection_cost": 0.2895
+          },
+          {
+            "symbol": "TSM261218C00450000",
+            "delta": 0.454,
+            "selection_cost": 0.3859
+          },
+          {
+            "symbol": "TSM270115C00480000",
+            "delta": 0.362,
+            "selection_cost": 0.5621
+          }
+        ],
+        "filters": {
+          "expiry_days": "90\u2013180 days to expiration",
+          "delta": "0.30\u20130.70 call delta (target 0.45)",
+          "spread": "bid-ask spread \u2264 8% of mid",
+          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+          "open_interest": "open interest \u2265 500",
+          "iv": "implied volatility \u2264 70%"
+        },
+        "rule_rationale": "Delta 0.43 sits closest to the 0.45 target, strike 7.2% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 3.3% with volume 24 and open interest 3,756 keeps entry and exit liquid."
+      }
+    },
+    {
+      "alpha_score_legacy": 43.0,
+      "confluence_bonus": 0.0,
+      "contributions": {
+        "accumulation": 7.5,
+        "activity": 15.0,
+        "consensus": 12.99,
+        "conviction": 15.0,
+        "crowding": 5.0,
+        "freshness": 9.42,
+        "insider": 0.0,
+        "manager_quality": 13.62
+      },
+      "crowding_label": "LOW",
+      "factors": {
+        "accumulation": 75.0,
+        "activity": 100.0,
+        "consensus": 86.6,
+        "conviction": 100.0,
+        "crowding": 100.0,
+        "freshness": 94.2,
+        "insider": 0.0,
+        "manager_quality": 90.8
+      },
+      "filer_count": 4,
+      "filers": [
+        {
+          "alpha_score": 43.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Berkshire Hathaway (Buffett)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.965,
+          "port_weight_pct": 9.204,
+          "position_tier": "TOP5",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 12.17
+        },
+        {
+          "alpha_score": 39.1,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Chou Associates Management",
+          "filing_date": "2026-08-12",
+          "filing_date_actual": "2026-08-12",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.841,
+          "port_weight_pct": 1.315,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.19
+        },
+        {
+          "alpha_score": 36.5,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Harris Associates (Oakmark)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.662,
+          "port_weight_pct": 1.744,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 18.17
+        },
+        {
+          "alpha_score": 39.4,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Sound Shore Management",
+          "filing_date": "2026-08-12",
+          "filing_date_actual": "2026-08-12",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.825,
+          "port_weight_pct": 3.576,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.4
+        }
+      ],
+      "flags": [
+        "CLUSTER",
+        "EARLY_SMART_MONEY_ACCUMULATION",
+        "HIGH_CONVICTION",
+        "NEW_POSITION",
+        "OUTSIZED_VS_MANAGER_TYPICAL",
+        "SIZE_INTERESTING",
+        "SIZE_STRONG",
+        "SIZE_VERY_STRONG",
+        "TOP3_POSITION",
+        "TOP5_POSITION"
+      ],
+      "grade": "VERY_STRONG",
+      "insider": {
+        "cik": "0000070858",
+        "error": null,
+        "foreign_issuer_skipped": {
+          "BJDX": 2,
+          "MUNEX": 1,
+          "NHS": 1,
+          "NMZ": 3,
+          "PML": 2,
+          "PMM": 1,
+          "PNI": 1
+        },
+        "form4_count": 3,
+        "reasons": [
+          "No Form 4 open-market insider transactions since quarter-end"
+        ],
+        "score": 0.0,
+        "since": "2026-06-30",
+        "summary": {
+          "buy_count": 0,
+          "buy_value_usd": 0,
+          "buyer_roles": [],
+          "buys": [],
+          "cluster_buyers": [],
+          "cluster_buying": false,
+          "discretionary_sell_value_usd": 0,
+          "distinct_buyers": [],
+          "max_stake_change_pct": 0.0,
+          "net_stance": "NO_ACTIVITY",
+          "net_value_usd": 0,
+          "officer_or_director_buyers": [],
+          "planned_sell_count": 0,
+          "planned_sell_value_usd": 0,
+          "sell_count": 0,
+          "sell_value_usd": 0,
+          "sells": [],
+          "significant_buy_count": 0,
+          "skipped_securities": {},
+          "top_role": null
+        },
+        "ticker": "BAC",
+        "until": "2026-09-06"
+      },
+      "insider_score": 0.0,
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 2,
+        "build_score": 0.95,
+        "flags": [],
+        "silent_build": false,
+        "total_quarters": 2,
+        "weight_slope": 0.892
+      },
+      "name": "BANK OF AMER CORP",
+      "option_eligible": true,
+      "overall_rank": 6,
+      "post_filing_perf": {
+        "current_price": 62.68,
+        "days_since_filing": 68,
+        "filing_close": 56.69,
+        "pct_change": 10.6
+      },
+      "price_penalty": 0.0,
+      "rank": 6,
+      "reasons": {
+        "accumulation": [
+          "Built over 3 consecutive quarters"
+        ],
+        "activity": [
+          "Berkshire Hathaway (Buffett) opened a NEW position at 9.2% of its book",
+          "4 tracked managers bought this quarter"
+        ],
+        "consensus": [
+          "4 independent buyers: Berkshire Hathaway (Buffett), Chou Associates Management, Harris Associates (Oakmark), Sound Shore Management"
+        ],
+        "conviction": [
+          "Largest buyer weight: 9.2% of Berkshire Hathaway (Buffett)'s portfolio (rank TOP5)",
+          "Position is \u22655\u00d7 the manager's own median position size"
+        ],
+        "crowding": [
+          "Crowding LOW \u2013 room for further institutional sponsorship"
+        ],
+        "freshness": [
+          "Filing is 23 days old; low-turnover buyers keep it informative"
+        ],
+        "insider": [
+          "No Form 4 open-market insider transactions since quarter-end"
+        ],
+        "manager_quality": [
+          "Highest-quality buyer: Berkshire Hathaway (Buffett) (quality 0.96)",
+          "Average buyer quality 0.82 across 4 managers"
+        ]
+      },
+      "score_13f": 92.4,
+      "signal_class": "EARLY_SMART_MONEY_ACCUMULATION",
+      "signal_label": "Early smart money accumulation",
+      "signal_score": 78.5,
+      "ticker": "BAC",
+      "why": {
+        "bullets": [
+          "Berkshire Hathaway (Buffett) opened a NEW position at 9.2% of its book",
+          "Largest buyer weight: 9.2% of Berkshire Hathaway (Buffett)'s portfolio (rank TOP5)",
+          "Highest-quality buyer: Berkshire Hathaway (Buffett) (quality 0.96)"
+        ],
+        "summary": "BAC ranks on new / add activity, portfolio conviction and manager quality, without confirming insider purchases so far.",
+        "top_drivers": [
+          {
+            "factor": "activity",
+            "label": "NEW / ADD activity",
+            "points": 15.0
+          },
+          {
+            "factor": "conviction",
+            "label": "Portfolio conviction",
+            "points": 15.0
+          },
+          {
+            "factor": "manager_quality",
+            "label": "Manager quality",
+            "points": 13.62
+          }
+        ]
+      },
+      "commentary": {
+        "ticker": "BAC",
+        "why_strongest": "Berkshire Hathaway (Buffett, quality 0.96) opened a new 9.2%-of-book position, joined by three other quality managers, with top-tier manager_quality and consensus scores. Multi-quarter building over 2 prior quarters adds depth to the fresh entries.",
+        "insider_read": "No insider activity: zero purchases and zero sales, so there is no insider confirmation of the 13F signal yet.",
+        "risks": [
+          "Insider score is 0.0, leaving the signal reliant solely on institutional filings",
+          "Crowding label is HIGH"
+        ],
+        "option_note": "The Jan 2027 65-strike call has solid volume and open interest with a tight spread, suitable for tracking the Buffett-led accumulation.",
+        "verdict": "STRONG"
+      },
+      "option": {
+        "ticker": "BAC",
+        "current_price": 62.68,
+        "change_pct": -0.07,
+        "expiries_checked": [
+          "2026-12-18",
+          "2027-01-15",
+          "2027-02-19"
+        ],
+        "iv_metrics": {
+          "iv_rank": 55.8,
+          "hv_30d_pct": 16.8,
+          "iv_hv_ratio": 1.44,
+          "verdict": "MODERATE"
+        },
+        "status": "OK",
+        "contract": {
+          "symbol": "BAC270115C00065000",
+          "strike": 65.0,
+          "expiration": "2027-01-15",
+          "dte": 131,
+          "bid": 2.91,
+          "ask": 3.0,
+          "mid": 2.96,
+          "spread_pct": 3.0,
+          "volume": 518,
+          "open_interest": 21316,
+          "delta": 0.459,
+          "implied_volatility": 0.244,
+          "moneyness_pct": 3.7,
+          "max_risk_per_contract": 296.0,
+          "breakeven": 67.96,
+          "selection_cost": 0.0635
+        },
+        "eligible_count": 7,
+        "candidates_checked": 84,
+        "rejections": {
+          "delta": 72,
+          "open_interest": 40,
+          "spread": 50,
+          "volume": 53
+        },
+        "runner_up": [
+          {
+            "symbol": "BAC261218C00065000",
+            "delta": 0.439,
+            "selection_cost": 0.36
+          },
+          {
+            "symbol": "BAC270219C00065000",
+            "delta": 0.475,
+            "selection_cost": 0.5139
+          },
+          {
+            "symbol": "BAC270115C00067500",
+            "delta": 0.356,
+            "selection_cost": 0.6078
+          }
+        ],
+        "filters": {
+          "expiry_days": "90\u2013180 days to expiration",
+          "delta": "0.30\u20130.70 call delta (target 0.45)",
+          "spread": "bid-ask spread \u2264 8% of mid",
+          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+          "open_interest": "open interest \u2265 500",
+          "iv": "implied volatility \u2264 70%"
+        },
+        "rule_rationale": "Delta 0.46 sits closest to the 0.45 target, strike 3.7% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 3.0% with volume 518 and open interest 21,316 keeps entry and exit liquid."
+      }
+    },
+    {
+      "alpha_score_legacy": 32.8,
+      "confluence_bonus": 0.0,
+      "contributions": {
+        "accumulation": 7.5,
+        "activity": 15.0,
+        "consensus": 13.62,
+        "conviction": 15.0,
+        "crowding": 4.2,
+        "freshness": 9.3,
+        "insider": 0.0,
+        "manager_quality": 13.76
+      },
+      "crowding_label": "LOW",
+      "factors": {
+        "accumulation": 75.0,
+        "activity": 100.0,
+        "consensus": 90.8,
+        "conviction": 100.0,
+        "crowding": 84.0,
+        "freshness": 93.0,
+        "insider": 0.0,
+        "manager_quality": 91.7
+      },
+      "filer_count": 8,
+      "filers": [
+        {
+          "alpha_score": 29.3,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Baupost Group (Klarman)",
+          "filing_date": "2026-08-13",
+          "filing_date_actual": "2026-08-13",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.976,
+          "port_weight_pct": 4.443,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.47
+        },
+        {
+          "alpha_score": 22.6,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Dodge & Cox",
+          "filing_date": "2026-08-13",
+          "filing_date_actual": "2026-08-13",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.59,
+          "port_weight_pct": 0.973,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 27.41
+        },
+        {
+          "alpha_score": 27.2,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Pershing Square Inc",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.813,
+          "port_weight_pct": 5.764,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 0.77
+        },
+        {
+          "alpha_score": 27.3,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "SurgoCap Partners",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.814,
+          "port_weight_pct": 6.257,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 0.75
+        },
+        {
+          "alpha_score": 32.8,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "TCI Fund Management (Hohn)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.938,
+          "port_weight_pct": 19.826,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 2.98
+        },
+        {
+          "alpha_score": 24.4,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Tiger Global (Coleman)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.96,
+          "manager_quality_score": 0.737,
+          "port_weight_pct": 1.143,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.03
+        },
+        {
+          "alpha_score": 32.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "ValueAct Holdings",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.985,
+          "port_weight_pct": 14.103,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 3.37
+        },
+        {
+          "alpha_score": 24.2,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Viking Global (Halvorsen)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.893,
+          "manager_quality_score": 0.676,
+          "port_weight_pct": 6.253,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 8.71
+        }
+      ],
+      "flags": [
+        "CLUSTER",
+        "HIGH_CONVICTION",
+        "NEW_POSITION",
+        "OUTSIZED_VS_MANAGER_TYPICAL",
+        "SIZE_EXCEPTIONAL",
+        "SIZE_INTERESTING",
+        "SIZE_STRONG",
+        "SIZE_VERY_STRONG",
+        "SIZE_WEAK",
+        "TOP10_ENTRY",
+        "TOP3_POSITION"
+      ],
+      "grade": "VERY_STRONG",
+      "insider": {
+        "cik": "0001403161",
+        "error": null,
+        "foreign_issuer_skipped": {},
+        "form4_count": 9,
+        "reasons": [
+          "Discretionary insider selling of $27,553,200 outweighs purchases",
+          "$9,503,212 of sales ran under Rule 10b5-1 plans and are not scored as a signal",
+          "Only insider sales on record since quarter-end (no purchases)"
+        ],
+        "score": 0.0,
+        "since": "2026-06-30",
+        "summary": {
+          "buy_count": 0,
+          "buy_value_usd": 0,
+          "buyer_roles": [],
+          "buys": [],
+          "cluster_buyers": [],
+          "cluster_buying": false,
+          "discretionary_sell_value_usd": 27553199.56,
+          "distinct_buyers": [],
+          "max_stake_change_pct": 0.0,
+          "net_stance": "NET_SELLING",
+          "net_value_usd": -37056411.36,
+          "officer_or_director_buyers": [],
+          "planned_sell_count": 6,
+          "planned_sell_value_usd": 9503211.8,
+          "sell_count": 9,
+          "sell_value_usd": 37056411.36,
+          "sells": [
+            {
+              "accession": "0001403161-26-000089",
+              "date": "2026-07-01",
+              "filing_date": "2026-07-02",
+              "insider": "MCINERNEY RYAN",
+              "is_director": true,
+              "is_officer": true,
+              "planned": true,
+              "price": 343.8849,
+              "role": "Chief Executive Officer",
+              "role_key": "CEO",
+              "security": "Class A Common Stock",
+              "shares": 8852.0,
+              "shares_after": 16812.0,
+              "stake_change_pct": 111.2,
+              "value_usd": 3044069.13
+            },
+            {
+              "accession": "0001403161-26-000089",
+              "date": "2026-07-01",
+              "filing_date": "2026-07-02",
+              "insider": "MCINERNEY RYAN",
+              "is_director": true,
+              "is_officer": true,
+              "planned": true,
+              "price": 344.5451,
+              "role": "Chief Executive Officer",
+              "role_key": "CEO",
+              "security": "Class A Common Stock",
+              "shares": 1638.0,
+              "shares_after": 15174.0,
+              "stake_change_pct": 12.1,
+              "value_usd": 564364.87
+            },
+            {
+              "accession": "0001403161-26-000090",
+              "date": "2026-07-02",
+              "filing_date": "2026-07-06",
+              "insider": "ROTTENBERG JULIE B",
+              "is_director": false,
+              "is_officer": true,
+              "planned": true,
+              "price": 360.0,
+              "role": "GENERAL COUNSEL",
+              "role_key": "OFFICER",
+              "security": "Class A Common Stock",
+              "shares": 2027.0,
+              "shares_after": 18404.0,
+              "stake_change_pct": 12.4,
+              "value_usd": 729720.0
+            },
+            {
+              "accession": "0001403161-26-000107",
+              "date": "2026-07-30",
+              "filing_date": "2026-07-31",
+              "insider": "MAHON TULLIER KELLY",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 365.0492,
+              "role": "VICE CHAIR, CHF PPL & CORP AFF",
+              "role_key": "OFFICER",
+              "security": "Class A Common Stock",
+              "shares": 37281.0,
+              "shares_after": 69653.0,
+              "stake_change_pct": 115.2,
+              "value_usd": 13609399.23
+            },
+            {
+              "accession": "0001403161-26-000107",
+              "date": "2026-07-30",
+              "filing_date": "2026-07-31",
+              "insider": "MAHON TULLIER KELLY",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 364.8112,
+              "role": "VICE CHAIR, CHF PPL & CORP AFF",
+              "role_key": "OFFICER",
+              "security": "Class A Common Stock",
+              "shares": 19991.0,
+              "shares_after": 49662.0,
+              "stake_change_pct": 67.4,
+              "value_usd": 7292940.7
+            },
+            {
+              "accession": "0001403161-26-000112",
+              "date": "2026-08-21",
+              "filing_date": "2026-08-24",
+              "insider": "MCINERNEY RYAN",
+              "is_director": true,
+              "is_officer": true,
+              "planned": true,
+              "price": 367.87,
+              "role": "Chief Executive Officer",
+              "role_key": "CEO",
+              "security": "Class A Common Stock",
+              "shares": 5875.0,
+              "shares_after": 15174.0,
+              "stake_change_pct": 63.2,
+              "value_usd": 2161236.25
+            },
+            {
+              "accession": "0001403161-26-000113",
+              "date": "2026-08-21",
+              "filing_date": "2026-08-24",
+              "insider": "Taneja Rajat",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 370.9968,
+              "role": "PRESIDENT, TECHNOLOGY",
+              "role_key": "OFFICER",
+              "security": "Class A Common Stock",
+              "shares": 17927.0,
+              "shares_after": 232112.0,
+              "stake_change_pct": 8.4,
+              "value_usd": 6650859.63
+            },
+            {
+              "accession": "0001403161-26-000115",
+              "date": "2026-08-31",
+              "filing_date": "2026-09-01",
+              "insider": "ROTTENBERG JULIE B",
+              "is_director": false,
+              "is_officer": true,
+              "planned": true,
+              "price": 381.35,
+              "role": "GENERAL COUNSEL",
+              "role_key": "OFFICER",
+              "security": "Class A Common Stock",
+              "shares": 2028.0,
+              "shares_after": 18404.0,
+              "stake_change_pct": 12.4,
+              "value_usd": 773377.8
+            },
+            {
+              "accession": "0001403161-26-000117",
+              "date": "2026-09-01",
+              "filing_date": "2026-09-02",
+              "insider": "MCINERNEY RYAN",
+              "is_director": true,
+              "is_officer": true,
+              "planned": true,
+              "price": 379.65,
+              "role": "Chief Executive Officer",
+              "role_key": "CEO",
+              "security": "Class A Common Stock",
+              "shares": 5875.0,
+              "shares_after": 15174.0,
+              "stake_change_pct": 63.2,
+              "value_usd": 2230443.75
+            }
+          ],
+          "significant_buy_count": 0,
+          "skipped_securities": {},
+          "top_role": null
+        },
+        "ticker": "V",
+        "until": "2026-09-06"
+      },
+      "insider_score": 0.0,
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 2,
+        "build_score": 0.8,
+        "flags": [],
+        "silent_build": false,
+        "total_quarters": 2,
+        "weight_slope": 0.608
+      },
+      "name": "VISA INC",
+      "option_eligible": true,
+      "overall_rank": 7,
+      "post_filing_perf": {
+        "current_price": 375.07,
+        "days_since_filing": 68,
+        "filing_close": 342.45,
+        "pct_change": 9.5
+      },
+      "price_penalty": 0.0,
+      "rank": 7,
+      "reasons": {
+        "accumulation": [
+          "Built over 3 consecutive quarters"
+        ],
+        "activity": [
+          "TCI Fund Management (Hohn) opened a NEW position at 19.8% of its book",
+          "8 tracked managers bought this quarter"
+        ],
+        "consensus": [
+          "8 independent buyers incl. Baupost Group (Klarman), Dodge & Cox, Pershing Square Inc \u2026"
+        ],
+        "conviction": [
+          "Largest buyer weight: 19.8% of TCI Fund Management (Hohn)'s portfolio (rank TOP3)",
+          "Position is \u22655\u00d7 the manager's own median position size"
+        ],
+        "crowding": [
+          "Crowding LOW \u2013 room for further institutional sponsorship"
+        ],
+        "freshness": [
+          "Filing is 23 days old; low-turnover buyers keep it informative"
+        ],
+        "insider": [
+          "Discretionary insider selling of $27,553,200 outweighs purchases",
+          "$9,503,212 of sales ran under Rule 10b5-1 plans and are not scored as a signal",
+          "Only insider sales on record since quarter-end (no purchases)"
+        ],
+        "manager_quality": [
+          "Highest-quality buyer: ValueAct Holdings (quality 0.98)",
+          "Average buyer quality 0.82 across 8 managers"
+        ]
+      },
+      "score_13f": 92.2,
+      "signal_class": "MULTI_QUARTER_ACCUMULATION",
+      "signal_label": "Multi-quarter accumulation",
+      "signal_score": 78.4,
+      "ticker": "V",
+      "why": {
+        "bullets": [
+          "TCI Fund Management (Hohn) opened a NEW position at 19.8% of its book",
+          "Largest buyer weight: 19.8% of TCI Fund Management (Hohn)'s portfolio (rank TOP3)",
+          "Highest-quality buyer: ValueAct Holdings (quality 0.98)"
+        ],
+        "summary": "V ranks on new / add activity, portfolio conviction and manager quality, without confirming insider purchases so far.",
+        "top_drivers": [
+          {
+            "factor": "activity",
+            "label": "NEW / ADD activity",
+            "points": 15.0
+          },
+          {
+            "factor": "conviction",
+            "label": "Portfolio conviction",
+            "points": 15.0
+          },
+          {
+            "factor": "manager_quality",
+            "label": "Manager quality",
+            "points": 13.76
+          }
+        ]
+      },
+      "commentary": {
+        "ticker": "V",
+        "why_strongest": "Eight new buyers including TCI Fund Management at 19.8% of its book and ValueAct at 0.98 quality, with the highest manager_quality and consensus scores in the top 10. However, insider activity runs counter to the institutional read.",
+        "insider_read": "Net stance is NET_SELLING: $37,056,411 in sales across 9 trades with zero purchases, directly contradicting the 13F buying.",
+        "risks": [
+          "Insider score is 0.0 and sales are substantial, a clear divergence from institutional accumulation",
+          "No purchases at all to offset the sales"
+        ],
+        "option_note": "The Jan 2027 390-strike call carries a wider 6.9% spread and thin volume, a secondary consideration given the insider divergence.",
+        "verdict": "STRONG"
+      },
+      "option": {
+        "ticker": "V",
+        "current_price": 375.07,
+        "change_pct": -0.98,
+        "expiries_checked": [
+          "2026-12-18",
+          "2027-01-15"
+        ],
+        "iv_metrics": {
+          "iv_rank": 46.6,
+          "hv_30d_pct": 20.4,
+          "iv_hv_ratio": 1.1,
+          "verdict": "MODERATE"
+        },
+        "status": "OK",
+        "contract": {
+          "symbol": "V270115C00390000",
+          "strike": 390.0,
+          "expiration": "2027-01-15",
+          "dte": 131,
+          "bid": 14.75,
+          "ask": 15.8,
+          "mid": 15.28,
+          "spread_pct": 6.9,
+          "volume": 6,
+          "open_interest": 2749,
+          "delta": 0.446,
+          "implied_volatility": 0.218,
+          "moneyness_pct": 4.0,
+          "max_risk_per_contract": 1528.0,
+          "breakeven": 405.28,
+          "selection_cost": 0.3048
+        },
+        "eligible_count": 3,
+        "candidates_checked": 156,
+        "rejections": {
+          "delta": 137,
+          "open_interest": 125,
+          "spread": 64,
+          "volume": 150
+        },
+        "runner_up": [
+          {
+            "symbol": "V270115C00375000",
+            "delta": 0.566,
+            "selection_cost": 0.7355
+          },
+          {
+            "symbol": "V270115C00360000",
+            "delta": 0.676,
+            "selection_cost": 1.3541
+          }
+        ],
+        "filters": {
+          "expiry_days": "90\u2013180 days to expiration",
+          "delta": "0.30\u20130.70 call delta (target 0.45)",
+          "spread": "bid-ask spread \u2264 8% of mid",
+          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+          "open_interest": "open interest \u2265 500",
+          "iv": "implied volatility \u2264 70%"
+        },
+        "rule_rationale": "Delta 0.45 sits closest to the 0.45 target, strike 4.0% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 6.9% with volume 6 and open interest 2,749 keeps entry and exit liquid."
+      }
+    },
+    {
+      "alpha_score_legacy": 43.7,
+      "confluence_bonus": 0.0,
+      "contributions": {
+        "accumulation": 7.5,
+        "activity": 15.0,
+        "consensus": 12.84,
+        "conviction": 15.0,
+        "crowding": 5.0,
+        "freshness": 9.42,
+        "insider": 0.0,
+        "manager_quality": 13.17
+      },
+      "crowding_label": "LOW",
+      "factors": {
+        "accumulation": 75.0,
+        "activity": 100.0,
+        "consensus": 85.6,
+        "conviction": 100.0,
+        "crowding": 100.0,
+        "freshness": 94.2,
+        "insider": 0.0,
+        "manager_quality": 87.8
+      },
+      "filer_count": 4,
+      "filers": [
+        {
+          "alpha_score": 43.7,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Ancient Art (Pabrai)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.929,
+          "port_weight_pct": 12.285,
+          "position_tier": "TOP5",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 3.16
+        },
+        {
+          "alpha_score": 40.4,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Chou Associates Management",
+          "filing_date": "2026-08-12",
+          "filing_date_actual": "2026-08-12",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.841,
+          "port_weight_pct": 4.785,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 4.35
+        },
+        {
+          "alpha_score": 39.0,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Donald Smith & Co",
+          "filing_date": "2026-08-11",
+          "filing_date_actual": "2026-08-11",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.777,
+          "port_weight_pct": 3.054,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 3.51
+        },
+        {
+          "alpha_score": 36.9,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Harris Associates (Oakmark)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.662,
+          "port_weight_pct": 1.59,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 16.56
+        }
+      ],
+      "flags": [
+        "CLUSTER",
+        "EARLY_SMART_MONEY_ACCUMULATION",
+        "HIGH_CONVICTION",
+        "NEW_POSITION",
+        "OUTSIZED_VS_MANAGER_TYPICAL",
+        "SIZE_EXCEPTIONAL",
+        "SIZE_INTERESTING",
+        "SIZE_STRONG",
+        "TOP10_ENTRY",
+        "TOP5_POSITION"
+      ],
+      "grade": "VERY_STRONG",
+      "insider": {
+        "cik": "0000040729",
+        "error": null,
+        "foreign_issuer_skipped": {},
+        "form4_count": 5,
+        "reasons": [
+          "$221,168 of sales ran under Rule 10b5-1 plans and are not scored as a signal",
+          "Only insider sales on record since quarter-end (no purchases)"
+        ],
+        "score": 0.0,
+        "since": "2026-06-30",
+        "summary": {
+          "buy_count": 0,
+          "buy_value_usd": 0,
+          "buyer_roles": [],
+          "buys": [],
+          "cluster_buyers": [],
+          "cluster_buying": false,
+          "discretionary_sell_value_usd": 0,
+          "distinct_buyers": [],
+          "max_stake_change_pct": 0.0,
+          "net_stance": "NET_SELLING",
+          "net_value_usd": -221168.0,
+          "officer_or_director_buyers": [],
+          "planned_sell_count": 1,
+          "planned_sell_value_usd": 221168.0,
+          "sell_count": 1,
+          "sell_value_usd": 221168.0,
+          "sells": [
+            {
+              "accession": "0002045848-26-000007",
+              "date": "2026-08-04",
+              "filing_date": "2026-08-05",
+              "insider": "Richard Stephanie N",
+              "is_director": false,
+              "is_officer": true,
+              "planned": true,
+              "price": 44.2336,
+              "role": "Chief Risk Officer",
+              "role_key": "OFFICER",
+              "security": "Common Stock",
+              "shares": 5000.0,
+              "shares_after": 88927.0,
+              "stake_change_pct": 6.0,
+              "value_usd": 221168.0
+            }
+          ],
+          "significant_buy_count": 0,
+          "skipped_securities": {},
+          "top_role": null
+        },
+        "ticker": "ALLY",
+        "until": "2026-09-06"
+      },
+      "insider_score": 0.0,
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 2,
+        "build_score": 1.28,
+        "flags": [],
+        "silent_build": false,
+        "total_quarters": 2,
+        "weight_slope": 1.565
+      },
+      "name": "ALLY FINANCIAL INC",
+      "option_eligible": true,
+      "overall_rank": 8,
+      "post_filing_perf": {
+        "current_price": 43.73,
+        "days_since_filing": 68,
+        "filing_close": 45.63,
+        "pct_change": -4.2
+      },
+      "price_penalty": 0.0,
+      "rank": 8,
+      "reasons": {
+        "accumulation": [
+          "Built over 3 consecutive quarters"
+        ],
+        "activity": [
+          "Ancient Art (Pabrai) opened a NEW position at 12.3% of its book",
+          "4 tracked managers bought this quarter"
+        ],
+        "consensus": [
+          "4 independent buyers: Ancient Art (Pabrai), Chou Associates Management, Donald Smith & Co, Harris Associates (Oakmark)"
+        ],
+        "conviction": [
+          "Largest buyer weight: 12.3% of Ancient Art (Pabrai)'s portfolio (rank TOP5)",
+          "Position is \u22655\u00d7 the manager's own median position size"
+        ],
+        "crowding": [
+          "Crowding LOW \u2013 room for further institutional sponsorship"
+        ],
+        "freshness": [
+          "Filing is 23 days old; low-turnover buyers keep it informative"
+        ],
+        "insider": [
+          "$221,168 of sales ran under Rule 10b5-1 plans and are not scored as a signal",
+          "Only insider sales on record since quarter-end (no purchases)"
+        ],
+        "manager_quality": [
+          "Highest-quality buyer: Ancient Art (Pabrai) (quality 0.93)",
+          "Average buyer quality 0.80 across 4 managers"
+        ]
+      },
+      "score_13f": 91.7,
+      "signal_class": "EARLY_SMART_MONEY_ACCUMULATION",
+      "signal_label": "Early smart money accumulation",
+      "signal_score": 77.9,
+      "ticker": "ALLY",
+      "why": {
+        "bullets": [
+          "Ancient Art (Pabrai) opened a NEW position at 12.3% of its book",
+          "Largest buyer weight: 12.3% of Ancient Art (Pabrai)'s portfolio (rank TOP5)",
+          "Highest-quality buyer: Ancient Art (Pabrai) (quality 0.93)"
+        ],
+        "summary": "ALLY ranks on new / add activity, portfolio conviction and manager quality, without confirming insider purchases so far.",
+        "top_drivers": [
+          {
+            "factor": "activity",
+            "label": "NEW / ADD activity",
+            "points": 15.0
+          },
+          {
+            "factor": "conviction",
+            "label": "Portfolio conviction",
+            "points": 15.0
+          },
+          {
+            "factor": "manager_quality",
+            "label": "Manager quality",
+            "points": 13.17
+          }
+        ]
+      },
+      "commentary": {
+        "ticker": "ALLY",
+        "why_strongest": "Four new buyers including Pabrai's Ancient Art at 12.3% of its book, with strong manager_quality and consensus scores and 2 prior build quarters. Institutional accumulation is broad but lacks insider corroboration.",
+        "insider_read": "Net stance is NET_SELLING: $221,168 in sales in 1 trade, with zero purchases, so no insider confirmation exists.",
+        "risks": [
+          "Insider score is 0.0 and the only insider activity was a sale",
+          "Price down 4% since quarter-end"
+        ],
+        "option_note": "No suitable call option was found; rejections spanned delta, open interest, spread, and volume filters.",
+        "verdict": "ROUTINE"
+      },
+      "option": {
+        "ticker": "ALLY",
+        "current_price": 43.73,
+        "change_pct": 0.33,
+        "expiries_checked": [
+          "2026-12-18",
+          "2027-01-15"
+        ],
+        "iv_metrics": {
+          "iv_rank": 45.3,
+          "hv_30d_pct": 19.7,
+          "iv_hv_ratio": 1.44,
+          "verdict": "MODERATE"
+        },
+        "status": "NO_SUITABLE_OPTION_FOUND",
+        "contract": null,
+        "eligible_count": 0,
+        "candidates_checked": 48,
+        "rejections": {
+          "delta": 33,
+          "open_interest": 42,
+          "spread": 46,
+          "volume": 48
+        },
+        "filters": {
+          "expiry_days": "90\u2013180 days to expiration",
+          "delta": "0.30\u20130.70 call delta (target 0.45)",
+          "spread": "bid-ask spread \u2264 8% of mid",
+          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+          "open_interest": "open interest \u2265 500",
+          "iv": "implied volatility \u2264 70%"
+        }
+      }
+    },
+    {
+      "alpha_score_legacy": 43.8,
+      "confluence_bonus": 0.0,
+      "contributions": {
+        "accumulation": 7.5,
+        "activity": 15.0,
+        "consensus": 13.04,
+        "conviction": 15.0,
+        "crowding": 5.0,
+        "freshness": 9.02,
+        "insider": 0.0,
+        "manager_quality": 13.29
+      },
+      "crowding_label": "LOW",
+      "factors": {
+        "accumulation": 75.0,
+        "activity": 100.0,
+        "consensus": 86.9,
+        "conviction": 100.0,
+        "crowding": 100.0,
+        "freshness": 90.2,
+        "insider": 0.0,
+        "manager_quality": 88.6
+      },
+      "filer_count": 4,
+      "filers": [
+        {
+          "alpha_score": 43.8,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Brown University",
+          "filing_date": "2026-08-05",
+          "filing_date_actual": "2026-08-05",
+          "freshness_score": 0.957,
+          "manager_quality_score": 0.924,
+          "port_weight_pct": 15.269,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 2.58
+        },
+        {
+          "alpha_score": 37.8,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "DME Capital Management",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.754,
+          "port_weight_pct": 0.786,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 0.51
+        },
+        {
+          "alpha_score": 35.9,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Harvard Management Co",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.757,
+          "manager_quality_score": 0.795,
+          "port_weight_pct": 0.509,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 0.18
+        },
+        {
+          "alpha_score": 39.6,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Muhlenkamp & Co",
+          "filing_date": "2026-08-18",
+          "filing_date_actual": "2026-08-18",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.847,
+          "port_weight_pct": 2.355,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 0.6
+        }
+      ],
+      "flags": [
+        "CLUSTER",
+        "EARLY_SMART_MONEY_ACCUMULATION",
+        "HIGH_CONVICTION",
+        "NEW_POSITION",
+        "SIZE_EXCEPTIONAL",
+        "SIZE_INTERESTING",
+        "SIZE_WEAK",
+        "TOP3_POSITION"
+      ],
+      "grade": "VERY_STRONG",
+      "insider": {
+        "cik": "0001222333",
+        "error": null,
+        "foreign_issuer_skipped": {},
+        "form4_count": 0,
+        "reasons": [
+          "No Form 4 open-market insider transactions since quarter-end"
+        ],
+        "score": 0.0,
+        "since": "2026-06-30",
+        "summary": {
+          "buy_count": 0,
+          "buy_value_usd": 0,
+          "buyer_roles": [],
+          "buys": [],
+          "cluster_buyers": [],
+          "cluster_buying": false,
+          "discretionary_sell_value_usd": 0,
+          "distinct_buyers": [],
+          "max_stake_change_pct": 0.0,
+          "net_stance": "NO_ACTIVITY",
+          "net_value_usd": 0,
+          "officer_or_director_buyers": [],
+          "planned_sell_count": 0,
+          "planned_sell_value_usd": 0,
+          "sell_count": 0,
+          "sell_value_usd": 0,
+          "sells": [],
+          "significant_buy_count": 0,
+          "skipped_securities": {},
+          "top_role": null
+        },
+        "ticker": "GLD",
+        "until": "2026-09-06"
+      },
+      "insider_score": 0.0,
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 2,
+        "build_score": 0.5,
+        "flags": [],
+        "silent_build": false,
+        "total_quarters": 2,
+        "weight_slope": -5.025
+      },
+      "name": "SPDR GOLD TR",
+      "option_eligible": true,
+      "overall_rank": 9,
+      "post_filing_perf": {
+        "current_price": 406.77,
+        "days_since_filing": 68,
+        "filing_close": 368.38,
+        "pct_change": 10.4
+      },
+      "price_penalty": 0.0,
+      "rank": 9,
+      "reasons": {
+        "accumulation": [
+          "Built over 3 consecutive quarters"
+        ],
+        "activity": [
+          "Brown University opened a NEW position at 15.3% of its book",
+          "4 tracked managers bought this quarter"
+        ],
+        "consensus": [
+          "4 independent buyers: Brown University, DME Capital Management, Harvard Management Co, Muhlenkamp & Co"
+        ],
+        "conviction": [
+          "Largest buyer weight: 15.3% of Brown University's portfolio (rank TOP3)"
+        ],
+        "crowding": [
+          "Crowding LOW \u2013 room for further institutional sponsorship"
+        ],
+        "freshness": [
+          "Filing is 19 days old; low-turnover buyers keep it informative"
+        ],
+        "insider": [
+          "No Form 4 open-market insider transactions since quarter-end"
+        ],
+        "manager_quality": [
+          "Highest-quality buyer: Brown University (quality 0.92)",
+          "Average buyer quality 0.83 across 4 managers"
+        ]
+      },
+      "score_13f": 91.6,
+      "signal_class": "EARLY_SMART_MONEY_ACCUMULATION",
+      "signal_label": "Early smart money accumulation",
+      "signal_score": 77.8,
+      "ticker": "GLD",
+      "why": {
+        "bullets": [
+          "Brown University opened a NEW position at 15.3% of its book",
+          "Largest buyer weight: 15.3% of Brown University's portfolio (rank TOP3)",
+          "Highest-quality buyer: Brown University (quality 0.92)"
+        ],
+        "summary": "GLD ranks on new / add activity, portfolio conviction and manager quality, without confirming insider purchases so far.",
+        "top_drivers": [
+          {
+            "factor": "activity",
+            "label": "NEW / ADD activity",
+            "points": 15.0
+          },
+          {
+            "factor": "conviction",
+            "label": "Portfolio conviction",
+            "points": 15.0
+          },
+          {
+            "factor": "manager_quality",
+            "label": "Manager quality",
+            "points": 13.29
+          }
+        ]
+      },
+      "commentary": {
+        "ticker": "GLD",
+        "why_strongest": "Four new institutional buyers including Brown University at 15.3% of its book, with high manager_quality and consensus scores and 2 prior build quarters of accumulation. This is a passive commodity vehicle, so insider dynamics do not apply the same way as operating companies.",
+        "insider_read": "No insider activity: zero purchases and zero sales, consistent with GLD having no traditional insider base.",
+        "risks": [
+          "Insider score of 0.0 is structural for a commodity trust, not a red flag but also not a confirming signal",
+          "Gold accumulation may reflect macro hedging rather than a distinct fundamental view"
+        ],
+        "option_note": "The Jan 2027 425-strike call has a tight 1.3% spread and strong open interest, making it a liquid way to express the accumulation.",
+        "verdict": "ROUTINE"
+      },
+      "option": {
+        "ticker": "GLD",
+        "current_price": 406.77,
+        "change_pct": -0.85,
+        "expiries_checked": [
+          "2026-12-18",
+          "2026-12-31",
+          "2027-01-15",
+          "2027-02-19"
+        ],
+        "iv_metrics": {
+          "iv_rank": 30.6,
+          "hv_30d_pct": 27.5,
+          "iv_hv_ratio": 0.87,
+          "verdict": "CHEAP \u2013 premium low vs. realised vol"
+        },
+        "status": "OK",
+        "contract": {
+          "symbol": "GLD270115C00425000",
+          "strike": 425.0,
+          "expiration": "2027-01-15",
+          "dte": 131,
+          "bid": 18.55,
+          "ask": 18.8,
+          "mid": 18.68,
+          "spread_pct": 1.3,
+          "volume": 59,
+          "open_interest": 13385,
+          "delta": 0.453,
+          "implied_volatility": 0.244,
+          "moneyness_pct": 4.5,
+          "max_risk_per_contract": 1868.0,
+          "breakeven": 443.68,
+          "selection_cost": -0.0757
+        },
+        "eligible_count": 20,
+        "candidates_checked": 595,
+        "rejections": {
+          "delta": 503,
+          "open_interest": 385,
+          "spread": 161,
+          "volume": 511
+        },
+        "runner_up": [
+          {
+            "symbol": "GLD270115C00420000",
+            "delta": 0.484,
+            "selection_cost": 0.0904
+          },
+          {
+            "symbol": "GLD270115C00430000",
+            "delta": 0.422,
+            "selection_cost": 0.1072
+          },
+          {
+            "symbol": "GLD261218C00420000",
+            "delta": 0.46,
+            "selection_cost": 0.1974
+          }
+        ],
+        "filters": {
+          "expiry_days": "90\u2013180 days to expiration",
+          "delta": "0.30\u20130.70 call delta (target 0.45)",
+          "spread": "bid-ask spread \u2264 8% of mid",
+          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+          "open_interest": "open interest \u2265 500",
+          "iv": "implied volatility \u2264 70%"
+        },
+        "rule_rationale": "Delta 0.45 sits closest to the 0.45 target, strike 4.5% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 1.3% with volume 59 and open interest 13,385 keeps entry and exit liquid."
+      }
+    },
+    {
+      "alpha_score_legacy": 47.9,
+      "confluence_bonus": 0.0,
+      "contributions": {
+        "accumulation": 7.5,
+        "activity": 15.0,
+        "consensus": 12.27,
+        "conviction": 15.0,
+        "crowding": 5.0,
+        "freshness": 9.24,
+        "insider": 0.92,
+        "manager_quality": 12.73
+      },
+      "crowding_label": "LOW",
+      "factors": {
+        "accumulation": 75.0,
+        "activity": 100.0,
+        "consensus": 81.8,
+        "conviction": 100.0,
+        "crowding": 100.0,
+        "freshness": 92.4,
+        "insider": 6.1,
+        "manager_quality": 84.9
+      },
+      "filer_count": 4,
+      "filers": [
+        {
+          "alpha_score": 47.9,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Ancient Art (Pabrai)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.929,
+          "port_weight_pct": 22.858,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 5.87
+        },
+        {
+          "alpha_score": 45.3,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "RV Capital (Zeller)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.934,
+          "port_weight_pct": 12.755,
+          "position_tier": "TOP5",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 3.96
+        },
+        {
+          "alpha_score": 33.3,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Two Sigma Investments (Quant)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.35,
+          "port_weight_pct": 0.705,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 5.78
+        },
+        {
+          "alpha_score": 37.3,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Viking Global (Halvorsen)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.893,
+          "manager_quality_score": 0.676,
+          "port_weight_pct": 1.199,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.67
+        }
+      ],
+      "flags": [
+        "CLUSTER",
+        "EARLY_SMART_MONEY_ACCUMULATION",
+        "HIGH_CONVICTION",
+        "NEW_POSITION",
+        "OUTSIZED_VS_MANAGER_TYPICAL",
+        "SIZE_EXCEPTIONAL",
+        "SIZE_INTERESTING",
+        "SIZE_WEAK",
+        "TOP3_POSITION",
+        "TOP5_POSITION"
+      ],
+      "grade": "VERY_STRONG",
+      "insider": {
+        "cik": "0001381197",
+        "error": null,
+        "foreign_issuer_skipped": {},
+        "form4_count": 4,
+        "reasons": [
+          "$6,740 of open-market insider purchases since quarter-end"
+        ],
+        "score": 6.1,
+        "since": "2026-06-30",
+        "summary": {
+          "buy_count": 3,
+          "buy_value_usd": 6739.75,
+          "buyer_roles": [],
+          "buys": [
+            {
+              "accession": "0001381197-26-000113",
+              "date": "2026-07-01",
+              "filing_date": "2026-07-01",
+              "insider": "Conkling Lori A",
+              "is_director": true,
+              "is_officer": false,
+              "planned": true,
+              "price": 88.03,
+              "role": "Director",
+              "role_key": "DIRECTOR",
+              "security": "Class A common stock",
+              "shares": 25.0,
+              "shares_after": 2509.0,
+              "stake_change_pct": 1.0,
+              "value_usd": 2200.75
+            },
+            {
+              "accession": "0001381197-26-000140",
+              "date": "2026-08-03",
+              "filing_date": "2026-08-04",
+              "insider": "Conkling Lori A",
+              "is_director": true,
+              "is_officer": false,
+              "planned": true,
+              "price": 87.03,
+              "role": "Director",
+              "role_key": "DIRECTOR",
+              "security": "Class A common stock",
+              "shares": 25.0,
+              "shares_after": 2534.0,
+              "stake_change_pct": 1.0,
+              "value_usd": 2175.75
+            },
+            {
+              "accession": "0001381197-26-000149",
+              "date": "2026-09-01",
+              "filing_date": "2026-09-02",
+              "insider": "Conkling Lori A",
+              "is_director": true,
+              "is_officer": false,
+              "planned": true,
+              "price": 94.53,
+              "role": "Director",
+              "role_key": "DIRECTOR",
+              "security": "Class A common stock",
+              "shares": 25.0,
+              "shares_after": 2559.0,
+              "stake_change_pct": 1.0,
+              "value_usd": 2363.25
+            }
+          ],
+          "cluster_buyers": [],
+          "cluster_buying": false,
+          "discretionary_sell_value_usd": 0,
+          "distinct_buyers": [],
+          "max_stake_change_pct": 0.0,
+          "net_stance": "NET_BUYING",
+          "net_value_usd": 6739.75,
+          "officer_or_director_buyers": [],
+          "planned_sell_count": 0,
+          "planned_sell_value_usd": 0,
+          "sell_count": 0,
+          "sell_value_usd": 0,
+          "sells": [],
+          "significant_buy_count": 0,
+          "skipped_securities": {},
+          "top_role": null
+        },
+        "ticker": "IBKR",
+        "until": "2026-09-06"
+      },
+      "insider_score": 6.1,
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 2,
+        "build_score": 2.02,
+        "flags": [],
+        "silent_build": false,
+        "total_quarters": 2,
+        "weight_slope": 3.035
+      },
+      "name": "INTERACTIVE BROKERS GROUP IN",
+      "option_eligible": true,
+      "overall_rank": 10,
+      "post_filing_perf": {
+        "current_price": 92.62,
+        "days_since_filing": 68,
+        "filing_close": 86.96,
+        "pct_change": 6.5
+      },
+      "price_penalty": 0.0,
+      "rank": 10,
+      "reasons": {
+        "accumulation": [
+          "Built over 3 consecutive quarters"
+        ],
+        "activity": [
+          "Ancient Art (Pabrai) opened a NEW position at 22.9% of its book",
+          "4 tracked managers bought this quarter"
+        ],
+        "consensus": [
+          "4 independent buyers: Ancient Art (Pabrai), RV Capital (Zeller), Two Sigma Investments (Quant), Viking Global (Halvorsen)"
+        ],
+        "conviction": [
+          "Largest buyer weight: 22.9% of Ancient Art (Pabrai)'s portfolio (rank TOP3)",
+          "Position is \u22655\u00d7 the manager's own median position size"
+        ],
+        "crowding": [
+          "Crowding LOW \u2013 room for further institutional sponsorship"
+        ],
+        "freshness": [
+          "Filing is 23 days old; low-turnover buyers keep it informative"
+        ],
+        "insider": [
+          "$6,740 of open-market insider purchases since quarter-end"
+        ],
+        "manager_quality": [
+          "Highest-quality buyer: RV Capital (Zeller) (quality 0.93)",
+          "Average buyer quality 0.72 across 4 managers"
+        ]
+      },
+      "score_13f": 90.3,
+      "signal_class": "EARLY_SMART_MONEY_ACCUMULATION",
+      "signal_label": "Early smart money accumulation",
+      "signal_score": 77.7,
+      "ticker": "IBKR",
+      "why": {
+        "bullets": [
+          "Ancient Art (Pabrai) opened a NEW position at 22.9% of its book",
+          "Largest buyer weight: 22.9% of Ancient Art (Pabrai)'s portfolio (rank TOP3)",
+          "Highest-quality buyer: RV Capital (Zeller) (quality 0.93)",
+          "$6,740 of open-market insider purchases since quarter-end"
+        ],
+        "summary": "IBKR ranks on new / add activity, portfolio conviction and manager quality, confirmed by $6,740 of insider open-market buying since quarter-end.",
+        "top_drivers": [
+          {
+            "factor": "activity",
+            "label": "NEW / ADD activity",
+            "points": 15.0
+          },
+          {
+            "factor": "conviction",
+            "label": "Portfolio conviction",
+            "points": 15.0
+          },
+          {
+            "factor": "manager_quality",
+            "label": "Manager quality",
+            "points": 12.73
+          }
+        ]
+      },
+      "commentary": {
+        "ticker": "IBKR",
+        "why_strongest": "Four new buyers including Pabrai's Ancient Art at 22.9% of its book and RV Capital at 12.8%, with strong manager_quality and 2 prior build quarters. Insider activity is present but very small in scale.",
+        "insider_read": "Net buying of only $6,740 across 3 trades by zero identified officers/directors is a minimal, low-confidence confirmation.",
+        "risks": [
+          "Insider purchase size is negligible relative to the institutional buying",
+          "No officer/director involvement in the insider trades"
+        ],
+        "option_note": "No suitable call option was found; rejections spanned delta, open interest, spread, and volume filters.",
+        "verdict": "ROUTINE"
+      },
+      "option": {
+        "ticker": "IBKR",
+        "current_price": 92.62,
+        "change_pct": -0.36,
+        "expiries_checked": [
+          "2026-12-18",
+          "2027-01-15"
+        ],
+        "iv_metrics": {
+          "iv_rank": 51.6,
+          "hv_30d_pct": 45.8,
+          "iv_hv_ratio": 0.82,
+          "verdict": "MODERATE"
+        },
+        "status": "NO_SUITABLE_OPTION_FOUND",
+        "contract": null,
+        "eligible_count": 0,
+        "candidates_checked": 81,
+        "rejections": {
+          "delta": 72,
+          "open_interest": 53,
+          "spread": 46,
+          "volume": 78
+        },
+        "filters": {
+          "expiry_days": "90\u2013180 days to expiration",
+          "delta": "0.30\u20130.70 call delta (target 0.45)",
+          "spread": "bid-ask spread \u2264 8% of mid",
+          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+          "open_interest": "open interest \u2265 500",
+          "iv": "implied volatility \u2264 70%"
+        }
+      }
+    }
+  ],
+  "market_context": "This quarter's top signals are dominated by fresh, high-conviction new positions across mega-cap tech, financials, and healthcare, with several names (INTC, TSM, BRK/B) attracting a dozen-plus independent buyers simultaneously. Insider confirmation is mixed: some setups show genuine open-market buying while others (BAC, V, ALLY, GLD, IBKR) show weak or negative insider signals despite strong institutional accumulation.",
+  "commentary_source": "claude-sonnet-5",
+  "llm": {
+    "spent_usd": 0.0641,
+    "budget_usd": 1.5,
+    "api_calls": 2,
+    "cache_hits": 0,
+    "escalations": 1,
+    "route": [
+      {
+        "tier": "haiku",
+        "ok": false,
+        "why": "CVNA: why_strongest dollar figure $2,230,000 matches no Form 4 total",
+        "cost_usd": 0.0223,
+        "input_tokens": 6362,
+        "output_tokens": 3188,
+        "cache_read": 0,
+        "cache_write": 0
+      },
+      {
+        "tier": "sonnet",
+        "ok": true,
+        "why": "ok",
+        "cost_usd": 0.04175,
+        "input_tokens": 6785,
+        "output_tokens": 2818,
+        "cache_read": 0,
+        "cache_write": 1327
+      }
+    ]
+  },
+  "weights": {
+    "activity": 15,
+    "conviction": 15,
+    "manager_quality": 15,
+    "accumulation": 10,
+    "consensus": 15,
+    "insider": 15,
+    "freshness": 10,
+    "crowding": 5
+  },
+  "filters": {
+    "expiry_days": "90\u2013180 days to expiration",
+    "delta": "0.30\u20130.70 call delta (target 0.45)",
+    "spread": "bid-ask spread \u2264 8% of mid",
+    "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+    "open_interest": "open interest \u2265 500",
+    "iv": "implied volatility \u2264 70%"
+  },
+  "input_fingerprint": "dc574786aaa7e02550120a1ccba4fbe75d97222d4480652099bc6f9c35ec79ca",
+  "ranking_fingerprint": "b3a9bd138c33686ec1722f0e8823140289479a79f3da086ca3dd3c1c09550494",
+  "sell_signals": [],
+  "filer_count": 52,
+  "no_option_label": "NO_SUITABLE_OPTION_FOUND",
+  "disclaimer": "Automated research summary built from public SEC 13F and Form 4 filings and delayed option quotes. Not investment advice. Options can expire worthless."
+}
