@@ -126,11 +126,17 @@ def compute_manager_quality(history: list[dict]) -> dict[str, dict]:
         prior = _static_prior(filer_name)
         quarters_used = len(quarters_with_data)
 
+        # Turnover compares which names entered and left the book. For a book
+        # stored capped at its top 500 positions, a name sliding from rank 490
+        # to 510 disappears without being sold - the same reason EXIT detection
+        # is disabled there. Measuring turnover on that subset invents churn.
         turnovers = []
         for i in range(len(quarters_with_data) - 1):
-            curr = quarters_with_data[i]["filers"][filer_name]["positions"]
-            prev = quarters_with_data[i + 1]["filers"][filer_name]["positions"]
-            t = _quarter_turnover_pct(prev, curr)
+            curr_filer = quarters_with_data[i]["filers"][filer_name]
+            prev_filer = quarters_with_data[i + 1]["filers"][filer_name]
+            if curr_filer.get("is_capped") or prev_filer.get("is_capped"):
+                continue
+            t = _quarter_turnover_pct(prev_filer["positions"], curr_filer["positions"])
             if t is not None:
                 turnovers.append(t)
 

@@ -35,7 +35,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # Tests gate the analysis: a red suite must never be able to compute signals,
+  # render a report and mail it out in parallel.
   analyze:
+    needs: tests
     runs-on: ubuntu-latest
     timeout-minutes: 45
     # Every step must agree on "today": each script keys its data files on the

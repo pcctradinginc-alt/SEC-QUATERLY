@@ -98,7 +98,10 @@ def build_multi_quarter_signals(today_str: str) -> dict[str, dict]:
     ticker_quarters: dict[str, list[dict]] = {}
 
     for quarter_data in history:
-        quarter_str = quarter_data.get("date", "")
+        # The reporting quarter, not the run date: a Q2-2026 build must not be
+        # labelled "2026-09-06" internally.
+        from parse_13f import infer_report_date
+        quarter_str = infer_report_date(quarter_data) or quarter_data.get("date", "")
         for filer_name, filer_data in quarter_data.get("filers", {}).items():
             for pos in filer_data.get("positions", []):
                 ticker = pos.get("ticker") or pos.get("cusip", "")

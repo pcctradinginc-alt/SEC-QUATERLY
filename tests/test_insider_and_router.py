@@ -143,12 +143,17 @@ def test_planned_10b5_1_sales_do_not_count_against_the_signal():
 
 def test_cluster_buying_and_stake_change():
     tight = {"filing_date": "2026-08-10", "accession": "a", **ia.parse_form4(FORM4)}
-    second = ia.parse_form4(FORM4.replace("DOE JANE", "ROE RICHARD"))
+    second = ia.parse_form4(FORM4.replace("DOE JANE", "ROE RICHARD")
+                            .replace("<rptOwnerCik>0000000002</rptOwnerCik>",
+                                     "<rptOwnerCik>0000000003</rptOwnerCik>"))
     s = ia.summarize_form4s([tight, {"filing_date": "2026-08-12", "accession": "b", **second}], "2026-06-30")
     assert s["cluster_buying"] is True
     assert len(s["cluster_buyers"]) == 2
 
-    far = ia.parse_form4(FORM4.replace("DOE JANE", "ROE RICHARD").replace("2026-08-20", "2026-08-01"))
+    far = ia.parse_form4(FORM4.replace("DOE JANE", "ROE RICHARD")
+                         .replace("<rptOwnerCik>0000000002</rptOwnerCik>",
+                                  "<rptOwnerCik>0000000003</rptOwnerCik>")
+                         .replace("2026-08-20", "2026-08-01"))
     s2 = ia.summarize_form4s([tight, {"filing_date": "2026-08-01", "accession": "b", **far}], "2026-06-30")
     assert s2["cluster_buying"] is True   # 19 days apart is still a cluster
 
@@ -208,3 +213,40 @@ def test_router_respects_budget(monkeypatch, tmp_path):
     out, meta = llm_router.route("explain_signals", "sys", "user", {"name": "t", "input_schema": {}}, None)
     assert out is None
     assert meta["attempts"][0]["skipped"] == "budget"
+
+
+FORM4_AMENDED = FORM4.replace("<documentType>4</documentType>", "<documentType>4/A</documentType>") \
+    if "<documentType>4</documentType>" in FORM4 else FORM4
+
+
+def test_amendment_does_not_double_count_a_transaction():
+    """A Form 4/A restates the original and repeats its transactions. Summing
+    both would turn one purchase into two - worth up to 25 score points."""
+    original = {"filing_date": "2026-08-22", "accession": "acc-1", "form": "4",
+                **ia.parse_form4(FORM4)}
+    amendment = {"filing_date": "2026-08-25", "accession": "acc-2", "form": "4/A",
+                 **ia.parse_form4(FORM4_AMENDED)}
+
+    alone = ia.summarize_form4s([original], "2026-06-30")
+    both = ia.summarize_form4s([original, amendment], "2026-06-30")
+
+    assert both["buy_count"] == alone["buy_count"] == 1
+    assert both["gross_buy_value_usd"] == alone["gross_buy_value_usd"] == 502500.0
+    # every in-window row of the amendment is recognised as a repeat, not just the buy
+    assert both["superseded_transactions"] == 2
+    assert ia.insider_score(both)[0] == ia.insider_score(alone)[0]
+
+
+def test_only_significant_buys_drive_the_value_score():
+    """A hundred token-sized trades must not score like one conviction buy."""
+    tiny = []
+    for i in range(20):
+        p = ia.parse_form4(FORM4.replace("<value>10000</value>", "<value>100</value>")
+                           .replace(f"<rptOwnerCik>0000000002</rptOwnerCik>",
+                                    f"<rptOwnerCik>00000000{i:02d}</rptOwnerCik>")
+                           .replace("2026-08-20", f"2026-08-{i % 28 + 1:02d}"))
+        tiny.append({"filing_date": "2026-08-22", "accession": f"a{i}", "form": "4", **p})
+    s = ia.summarize_form4s(tiny, "2026-06-30")
+    assert s["gross_buy_value_usd"] > 0                    # reported
+    assert s["significant_buy_value_usd"] == 0.0           # but not scored
+    assert ia.insider_score(s)[0] < 30.0

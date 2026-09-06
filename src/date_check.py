@@ -16,16 +16,20 @@ import holidays
 TARGET_MONTHS = {2, 5, 8, 11}
 TARGET_DAY = 16
 
-# German public holidays (federal-level) as fallback
-# SEC is a US system – EDGAR is open every day – so we only skip
-# weekends. German holidays are NOT a reason to skip, but the
-# cron only fires 14-20th of target months so this is future-proof.
-DE_HOLIDAYS = holidays.Germany(years=range(2024, 2035))
+# The filing deadline this pipeline follows is a US one, so the calendar has to
+# be US federal holidays - not German ones. A run landing on Independence Day or
+# Thanksgiving would otherwise fire on a day EDGAR support and the markets are
+# shut, and the option quotes would be a stale snapshot.
+US_HOLIDAYS = holidays.UnitedStates(years=range(2024, 2036))
+
+
+def is_business_day(d: date) -> bool:
+    return d.weekday() < 5 and d not in US_HOLIDAYS
 
 
 def next_business_day(d: date) -> date:
-    """Advance d until it falls on Mon-Fri (weekends only, not holidays)."""
-    while d.weekday() >= 5:  # 5=Sat, 6=Sun
+    """Advance d until it is a US business day (weekends and federal holidays)."""
+    while not is_business_day(d):
         d += timedelta(days=1)
     return d
 

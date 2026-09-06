@@ -25,7 +25,7 @@ class DataQualityFailure(RuntimeError):
 
 def delta_summary(parsed: dict) -> dict:
     """Counts every delta category plus the matching statistics behind them."""
-    counts = {k: 0 for k in ("NEW", "ADDED", "REDUCED", "UNCHANGED", "SOLD")}
+    counts = {k: 0 for k in ("NEW", "ADDED", "REDUCED", "UNCHANGED", "SOLD", "NO_BASELINE")}
     exits = matched = total = 0
     filers_with_prior = filers_without_prior = capped_without_exits = 0
 
@@ -33,7 +33,7 @@ def delta_summary(parsed: dict) -> dict:
         positions = filer.get("positions", [])
         if not positions and filer.get("error"):
             continue
-        has_prior = any(p["delta"]["type"] != "NEW" for p in positions) or \
+        has_prior = any(p["delta"]["type"] not in ("NEW", "NO_BASELINE") for p in positions) or \
             bool(filer.get("exited_positions"))
         if filer.get("exit_detection_available") is False and filer.get("is_capped"):
             capped_without_exits += 1
@@ -46,7 +46,7 @@ def delta_summary(parsed: dict) -> dict:
             t = p["delta"]["type"]
             counts[t] = counts.get(t, 0) + 1
             total += 1
-            if t != "NEW":
+            if t not in ("NEW", "NO_BASELINE"):
                 matched += 1
         exits += len(filer.get("exited_positions", []))
 
@@ -56,6 +56,7 @@ def delta_summary(parsed: dict) -> dict:
         "total_positions":      total,
         "matched_positions":    matched,
         "new_ratio":            (counts["NEW"] / total) if total else 0.0,
+        "no_baseline_positions": counts["NO_BASELINE"],
         "filers_with_prior":    filers_with_prior,
         "filers_without_prior": filers_without_prior,
         "capped_without_exits": capped_without_exits,
@@ -136,6 +137,7 @@ def render(result: dict) -> str:
         f"  ADDED:      {c.get('ADDED', 0):>7,}",
         f"  REDUCED:    {c.get('REDUCED', 0):>7,}",
         f"  UNCHANGED:  {c.get('UNCHANGED', 0):>7,}",
+        f"  NO_BASELINE:{c.get('NO_BASELINE', 0):>7,}  (filer without a prior quarter - not scored)",
         f"  EXIT:       {s['exits']:>7,}",
         "",
         f"  Matched current/prior positions: {s['matched_positions']:,} of {s['total_positions']:,}",

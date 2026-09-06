@@ -239,7 +239,8 @@ def adjust_shares_for_splits(shares: int, ticker: str, splits: dict) -> int:
     return shares
 
 
-def compute_delta(current_shares: int, prior_shares: int | None, ticker: str) -> dict:
+def compute_delta(current_shares: int, prior_shares: int | None, ticker: str,
+                  has_baseline: bool = True) -> dict:
     """
     Returns delta info between current and prior quarter.
 
@@ -249,6 +250,17 @@ def compute_delta(current_shares: int, prior_shares: int | None, ticker: str) ->
       - Full exit     (current == 0, though EDGAR won't show these)
       - Change        (normal delta)
     """
+    if not has_baseline:
+        # No prior quarter exists for this filer, so nothing can be said about
+        # whether the position is new. "The manager opened a position" and "we
+        # have never seen this manager before" are different statements, and
+        # only the first is a buy signal.
+        return {
+            "type":         "NO_BASELINE",
+            "delta_shares": None,
+            "delta_pct":    None,
+        }
+
     if prior_shares is None:
         return {
             "type":         "NEW",
@@ -439,7 +451,8 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
             else:
                 prior_shares_adj = prior_shares_raw
 
-            delta = compute_delta(holding["shares"], prior_shares_adj, key)
+            delta = compute_delta(holding["shares"], prior_shares_adj, key,
+                                  has_baseline=prior_filer is not None)
 
             # Portfolio weight uses long-only AUM (corrected denominator above)
             port_weight_pct = (holding["value_usd_thousands"] / reported_aum) * 100.0

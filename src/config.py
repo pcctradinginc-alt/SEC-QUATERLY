@@ -107,6 +107,28 @@ FILERS = {
     "SurgoCap Partners":                    "0001960830",
 }
 
+# ── Economic decision-makers ──────────────────────────────────────────────────
+# Several entries file separately but answer to the same investment process.
+# Counting them as independent buyers manufactures consensus: PDD's "two
+# independent managers" were both Li Lu vehicles. Consensus counts distinct
+# groups; filers not listed here are their own group.
+FILER_ECONOMIC_GROUP = {
+    "Pershing Square (Ackman)":               "PERSHING_SQUARE",
+    "Pershing Square Inc":                    "PERSHING_SQUARE",
+    "H&H International Investment (Li Lu)":   "LI_LU",
+    "Himalaya Capital Management (Li Lu)":    "LI_LU",
+}
+
+# Corporate treasuries file 13F for strategic stakes, not a stock-picking
+# mandate. They stay in the data, but they cannot lend breadth to a consensus
+# or count towards a cluster.
+CORPORATE_STRATEGIC_FILERS = {"NVIDIA Corp", "Alphabet Inc", "SoftBank Group Corp"}
+
+
+def economic_group(filer_name: str) -> str:
+    return FILER_ECONOMIC_GROUP.get(filer_name, filer_name)
+
+
 # ── Filer quality tiers (static bootstrap prior) ─────────────────────────────
 # University endowments / concentrated value investors: long-horizon,
 # fundamental -> higher weight. Quant / diversified / non-traditional

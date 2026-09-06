@@ -149,10 +149,19 @@ def buyers_table(filers: list[dict]) -> str:
           <td class="r" style="padding:6px 0;font-size:12px;color:{INK}">{esc(f['filer'])}</td>
           <td class="r" style="padding:6px 6px;font-size:12px;color:{INK};text-align:right">{(f.get('port_weight_pct') or 0):.1f}%</td>
           <td class="r" style="padding:6px 6px;font-size:12px;color:{chg_color};text-align:right;font-weight:600">{esc(chg)}</td>
-          <td class="r" style="padding:6px 0 6px 6px;font-size:12px;color:{INK2};text-align:right">{(f.get('manager_quality_score') or 0):.2f}</td>
+          <td class="r" style="padding:6px 0 6px 6px;font-size:12px;color:{INK2};text-align:right">{(f.get('manager_quality_score') or 0):.2f}{'<span style="color:' + INK3 + '"> ~</span>' if f.get('manager_quality_source') == 'BOOTSTRAPPED' else ''}</td>
         </tr>"""
     return f"""
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse; margin-top:6px">
+      <tr class="k">
+        <td style="padding:0 0 4px">Manager</td><td style="padding:0 6px 4px;text-align:right">Weight</td>
+        <td style="padding:0 6px 4px;text-align:right">Change</td><td style="padding:0 0 4px 6px;text-align:right">Quality</td>
+      </tr>{rows}
+    </table>
+    <div style="font-size:11px;color:{INK3};margin-top:4px">
+      Quality marked ~ is still bootstrapped from a prior rather than measured over enough quarters.
+    </div>""" if any(f.get("manager_quality_source") == "BOOTSTRAPPED" for f in filers) else f"""
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="tb" style="border-collapse:collapse;margin-top:6px">
       <tr class="k">
         <td style="padding:0 0 4px">Manager</td><td style="padding:0 6px 4px;text-align:right">Weight</td>
         <td style="padding:0 6px 4px;text-align:right">Change</td><td style="padding:0 0 4px 6px;text-align:right">Quality</td>

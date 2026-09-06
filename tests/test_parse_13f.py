@@ -83,5 +83,26 @@ def test_delta_classification_end_to_end():
     import data_quality as dq
     out["prior_report_date"] = "2026-03-31"
     r = dq.evaluate(out)
-    assert r["summary"]["counts"] == {"NEW": 1, "ADDED": 1, "REDUCED": 1, "UNCHANGED": 1, "SOLD": 0}
+    assert r["summary"]["counts"] == {"NEW": 1, "ADDED": 1, "REDUCED": 1,
+                                     "UNCHANGED": 1, "SOLD": 0, "NO_BASELINE": 0}
     assert r["summary"]["exits"] == 1
+
+
+def test_a_filer_without_a_prior_quarter_is_not_a_buy_signal():
+    """"The manager opened a position" and "we have never seen this manager"
+    are different statements; only the first is accumulation."""
+    raw = {"date": "2026-09-06", "report_date": "2026-06-30", "recent_splits": {},
+           "filers": {"NEWCOMER": {
+               "cik": "0000000009",
+               "meta": {"filingDate": "2026-08-14", "reportDate": "2026-06-30", "isAmendment": False},
+               "holdings": [_holding("ZZZ", 500, 500)]}}}
+    prior = {"date": "2026-05-16", "period_of_report": "2026-03-31", "filers": {}}
+
+    out = p13.parse_and_enrich(raw, prior)
+    pos = out["filers"]["NEWCOMER"]["positions"][0]
+    assert pos["delta"]["type"] == "NO_BASELINE"
+    assert pos["port_weight_pct"] == 100.0          # still counts for weight and AUM
+
+    import scoring
+    universe = scoring.build_scored_universe(out, {}, {})
+    assert [e["ticker"] for e in universe] == []    # but never as a buy signal

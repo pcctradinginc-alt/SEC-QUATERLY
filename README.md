@@ -306,6 +306,14 @@ guard or a loud warning:
 | The information table is checked against the filing's own cover page when its filename suggests another period | SurgoCap ships a Q2-2026 filing whose table is named `Surgo_13F_09302025.xml`; the cover page confirms the real period, so the filename alone is never trusted |
 | Multi-quarter history is deduplicated by reporting quarter | Two pipeline runs for one quarter would otherwise count as two quarters of accumulation |
 | The latest filing for the quarter wins, amendments preferred on a tie | A 13F-HR/A restates the original |
+| `NO_BASELINE` is its own delta type | A filer with no prior quarter on file cannot have "opened" anything. Those positions count for AUM and weight but never as NEW/ADD activity, cluster, consensus or accumulation |
+| Form 4/A supersedes the filing it restates | An amendment repeats the original's transactions; summing both turned one insider purchase into two, worth up to 25 score points |
+| Only purchases above `INSIDER_MIN_PURCHASE_USD` drive the insider value score | A hundred token-sized trades would otherwise score like a single conviction buy; the gross figure is still reported |
+| A contract with unknown implied volatility is not eligible | Every filter must be satisfied, and an unknown IV cannot be asserted to be in range |
+| Turnover is not measured on capped books | A name sliding from rank 490 to 510 leaves the stored subset without being sold, inventing churn - the same reason EXITs are not derived there |
+| Consensus counts economic decision-makers, not filings | Two Li Lu vehicles are one decision; corporate treasuries lend no breadth at all |
+| `analyze` runs only after the test job is green, and the gate cannot be skipped with `--from` | A red suite must never be able to compute signals and mail them in parallel |
+| The Form 4 candidate pool is bounded by reachability, not a fixed number | A stock is fetched while its score plus the maximum insider gain still clears the tenth-best |
 | Zero EXITs or all-NEW across the universe raises a data-quality warning | The comparison being broken is far more likely than a quarter in which nobody sold anything |
 
 ---
