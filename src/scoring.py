@@ -714,9 +714,19 @@ def run():
     print(f"\n{'─'*60}")
     print(f"{'Rank':<5}{'Ticker':<8}{'Score':<8}{'Filers':<8}{'Crowd':<10}{'Flags'}")
     print(f"{'─'*60}")
-    for i, agg in enumerate(aggregated[:20], 1):
+    # Unresolved CUSIPs stay in the book for AUM and weights, but they are not
+    # tradable securities and must not be presented as ranked candidates.
+    def _tradable(t: str) -> bool:
+        return bool(t) and len(t) <= 6 and t[:1].isalpha()
+
+    shown = [a for a in aggregated if _tradable(a["ticker"])][:20]
+    hidden = sum(1 for a in aggregated if not _tradable(a["ticker"]))
+    for i, agg in enumerate(shown, 1):
         print(f"{i:<5}{agg['ticker']:<8}{agg['alpha_score']:<8.1f}"
               f"{agg['filer_count']:<8}{agg['crowding_label']:<10}{', '.join(agg['flags'])}")
+    if hidden:
+        print(f"\n  ({hidden} holdings without a resolved tradable ticker are excluded "
+              f"from the candidate ranking)")
 
     output = {
         "date":             today_str,

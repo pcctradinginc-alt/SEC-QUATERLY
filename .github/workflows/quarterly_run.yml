@@ -28,6 +28,12 @@ on:
         required: false
         default: 'false'
 
+# Runs write generated data back to the branch. Two of them in flight means one
+# loses its push, so they queue instead of racing.
+concurrency:
+  group: sec-13f-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   analyze:
     runs-on: ubuntu-latest
@@ -116,17 +122,29 @@ jobs:
           git config --local user.name "GitHub Action"
           # data/insider_cache/ is deliberately git-ignored: it is a raw EDGAR
           # cache, and a stale snapshot can silently carry wrong data forward.
-          git add data/holdings/ data/llm_cache/ reports/
-          git diff --staged --quiet || git commit -m "📊 Quarterly 13F signal run $(date +%Y-%m-%d)"
-          # Concurrent runs (e.g. two baseline rebuilds) push to the same branch.
-          # Without a rebase the loser's push is rejected and its work is thrown
-          # away even though every analysis step succeeded.
+          PATHS="data/holdings/ data/llm_cache/ reports/"
+          MSG="📊 Quarterly 13F signal run $(date +%Y-%m-%d)"
+
+          # These files are generated wholesale, so a three-way merge on them is
+          # meaningless: two runs for the same date rewrite the same JSON and a
+          # rebase stops on content conflicts. Instead, adopt whatever the branch
+          # now points at as the base and re-commit this run's output on top.
+          commit_output() {
+            git add $PATHS
+            git diff --staged --quiet && return 1
+            git commit -m "$MSG"
+          }
+
+          commit_output || { echo "nothing to commit"; exit 0; }
+
           for attempt in 1 2 3; do
             if git push; then
               exit 0
             fi
-            echo "push rejected (attempt $attempt) – rebasing onto the branch and retrying"
-            git pull --rebase origin "${GITHUB_REF_NAME}" || exit 1
+            echo "push rejected (attempt $attempt) – rebasing onto the branch tip"
+            git fetch origin "${GITHUB_REF_NAME}" || exit 1
+            git reset --mixed "origin/${GITHUB_REF_NAME}" || exit 1
+            commit_output || { echo "output already on the branch"; exit 0; }
           done
           echo "could not push after 3 attempts"; exit 1
 
