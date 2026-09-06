@@ -79,7 +79,7 @@
         "spread": "bid-ask spread \u2264 8% of mid",
         "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
         "open_interest": "open interest \u2265 500",
-        "iv": "implied volatility \u2264 70%"
+        "iv": "implied volatility known and \u2264 70%"
       },
       "rule_rationale": "Delta 0.46 sits closest to the 0.45 target, strike 14.8% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 3.8% with volume 2,382 and open interest 26,879 keeps entry and exit liquid."
     },
@@ -149,7 +149,7 @@
         "spread": "bid-ask spread \u2264 8% of mid",
         "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
         "open_interest": "open interest \u2265 500",
-        "iv": "implied volatility \u2264 70%"
+        "iv": "implied volatility known and \u2264 70%"
       },
       "rule_rationale": "Delta 0.48 sits closest to the 0.45 target, strike 9.9% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 6.0% with volume 0 and open interest 2,817 keeps entry and exit liquid."
     },
@@ -207,7 +207,7 @@
         "spread": "bid-ask spread \u2264 8% of mid",
         "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
         "open_interest": "open interest \u2265 500",
-        "iv": "implied volatility \u2264 70%"
+        "iv": "implied volatility known and \u2264 70%"
       },
       "rule_rationale": "Delta 0.56 sits closest to the 0.45 target, strike 0.5% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 3.4% with volume 137 and open interest 3,608 keeps entry and exit liquid."
     },
@@ -275,7 +275,7 @@
         "spread": "bid-ask spread \u2264 8% of mid",
         "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
         "open_interest": "open interest \u2265 500",
-        "iv": "implied volatility \u2264 70%"
+        "iv": "implied volatility known and \u2264 70%"
       },
       "rule_rationale": "Delta 0.46 sits closest to the 0.45 target, strike 2.8% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 5.7% with volume 13 and open interest 7,580 keeps entry and exit liquid."
     },
@@ -344,7 +344,7 @@
         "spread": "bid-ask spread \u2264 8% of mid",
         "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
         "open_interest": "open interest \u2265 500",
-        "iv": "implied volatility \u2264 70%"
+        "iv": "implied volatility known and \u2264 70%"
       },
       "rule_rationale": "Delta 0.43 sits closest to the 0.45 target, strike 7.2% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 3.3% with volume 24 and open interest 3,756 keeps entry and exit liquid."
     },
@@ -378,7 +378,7 @@
         "spread": "bid-ask spread \u2264 8% of mid",
         "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
         "open_interest": "open interest \u2265 500",
-        "iv": "implied volatility \u2264 70%"
+        "iv": "implied volatility known and \u2264 70%"
       }
     },
     "ALK": {
@@ -412,7 +412,7 @@
         "spread": "bid-ask spread \u2264 8% of mid",
         "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
         "open_interest": "open interest \u2265 500",
-        "iv": "implied volatility \u2264 70%"
+        "iv": "implied volatility known and \u2264 70%"
       }
     },
     "TTMI": {
@@ -446,7 +446,7 @@
         "spread": "bid-ask spread \u2264 8% of mid",
         "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
         "open_interest": "open interest \u2265 500",
-        "iv": "implied volatility \u2264 70%"
+        "iv": "implied volatility known and \u2264 70%"
       }
     },
     "UAA": {
@@ -479,7 +479,7 @@
         "spread": "bid-ask spread \u2264 8% of mid",
         "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
         "open_interest": "open interest \u2265 500",
-        "iv": "implied volatility \u2264 70%"
+        "iv": "implied volatility known and \u2264 70%"
       }
     },
     "V": {
@@ -541,14 +541,14 @@
         "spread": "bid-ask spread \u2264 8% of mid",
         "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
         "open_interest": "open interest \u2265 500",
-        "iv": "implied volatility \u2264 70%"
+        "iv": "implied volatility known and \u2264 70%"
       },
       "rule_rationale": "Delta 0.45 sits closest to the 0.45 target, strike 4.0% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 6.9% with volume 6 and open interest 2,749 keeps entry and exit liquid."
     }
   },
   "market": {
     "state": "closed",
-    "as_of": "2026-09-06T09:11:37+00:00",
+    "as_of": "2026-09-06T09:45:06+00:00",
     "description": "Market is closed",
     "trading_day": "2026-09-06"
   },
@@ -558,6 +558,6 @@
     "spread": "bid-ask spread \u2264 8% of mid",
     "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
     "open_interest": "open interest \u2265 500",
-    "iv": "implied volatility \u2264 70%"
+    "iv": "implied volatility known and \u2264 70%"
   }
 }

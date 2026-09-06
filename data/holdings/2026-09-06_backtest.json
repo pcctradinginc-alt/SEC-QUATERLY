@@ -498,9 +498,9 @@
       "excess_d180_pct": null,
       "ticker": "BRK/B",
       "company": "BERKSHIRE HATHAWAY INC DEL",
-      "signal_score": 78.7,
+      "signal_score": 78.6,
       "primary_flag": "VERY_STRONG",
-      "insider_score": 41.3,
+      "insider_score": 40.4,
       "status_d90": "pending",
       "status_d180": "pending"
     },
@@ -513,9 +513,9 @@
       "excess_d180_pct": null,
       "ticker": "TSM",
       "company": "TAIWAN SEMICONDUCTOR MANUFAC",
-      "signal_score": 77.8,
+      "signal_score": 77.4,
       "primary_flag": "VERY_STRONG",
-      "insider_score": 46.2,
+      "insider_score": 43.2,
       "status_d90": "pending",
       "status_d180": "pending"
     },
