@@ -4,82 +4,82 @@
   "stocks_scored": 361,
   "top10": [
     {
-      "alpha_score_legacy": 28.5,
-      "confluence_bonus": 7.3,
+      "alpha_score_legacy": 28.8,
+      "confluence_bonus": 8.1,
       "contributions": {
-        "accumulation": 1.5,
+        "accumulation": 10.0,
         "activity": 15.0,
-        "consensus": 11.22,
+        "consensus": 11.84,
         "conviction": 14.01,
         "crowding": 5.0,
-        "freshness": 7.75,
+        "freshness": 8.33,
         "insider": 11.52,
-        "manager_quality": 10.11
+        "manager_quality": 10.89
       },
       "crowding_label": "LOW",
       "factors": {
-        "accumulation": 15.0,
+        "accumulation": 100.0,
         "activity": 100.0,
-        "consensus": 74.8,
+        "consensus": 78.9,
         "conviction": 93.4,
         "crowding": 100.0,
-        "freshness": 77.5,
+        "freshness": 83.3,
         "insider": 76.8,
-        "manager_quality": 67.4
+        "manager_quality": 72.6
       },
       "filer_count": 4,
       "filers": [
         {
-          "alpha_score": 15.5,
+          "alpha_score": 20.4,
           "delta_pct": 1.53,
           "delta_type": "ADDED",
           "filer": "Atreides Management",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.383,
-          "manager_quality_score": 0.344,
+          "freshness_score": 0.653,
+          "manager_quality_score": 0.48,
           "port_weight_pct": 0.774,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
           "weight_vs_median": 1.08
         },
         {
-          "alpha_score": 24.2,
+          "alpha_score": 26.3,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "Coatue (Laffont)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.85,
-          "manager_quality_score": 0.562,
+          "freshness_score": 0.908,
+          "manager_quality_score": 0.658,
           "port_weight_pct": 3.47,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
           "weight_vs_median": 8.64
         },
         {
-          "alpha_score": 28.5,
+          "alpha_score": 28.8,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "SurgoCap Partners",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.882,
-          "manager_quality_score": 0.741,
+          "freshness_score": 0.856,
+          "manager_quality_score": 0.77,
           "port_weight_pct": 8.343,
           "position_tier": "TOP10",
           "report_date": "2026-06-30",
           "weight_vs_median": 1.0
         },
         {
-          "alpha_score": 26.1,
+          "alpha_score": 27.8,
           "delta_pct": 159.52,
           "delta_type": "ADDED",
           "filer": "Tiger Global (Coleman)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.929,
-          "manager_quality_score": 0.651,
+          "freshness_score": 0.959,
+          "manager_quality_score": 0.736,
           "port_weight_pct": 2.476,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
@@ -89,6 +89,7 @@
       "flags": [
         "AGGRESSIVE_ADD",
         "CLUSTER",
+        "EARLY_SMART_MONEY_ACCUMULATION",
         "HIGH_CONVICTION",
         "NEW_POSITION",
         "OUTSIZED_VS_MANAGER_TYPICAL",
@@ -158,7 +159,18 @@
         "until": "2026-09-06"
       },
       "insider_score": 76.8,
-      "mq_signal": {},
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 3,
+        "build_score": 2.4,
+        "flags": [
+          "MULTI_QUARTER_BUILD"
+        ],
+        "silent_build": false,
+        "total_quarters": 3,
+        "weight_slope": 2.206
+      },
       "name": "INTEL CORP",
       "option_eligible": true,
       "overall_rank": 1,
@@ -172,7 +184,7 @@
       "rank": 1,
       "reasons": {
         "accumulation": [
-          "First quarter of buying \u2013 no multi-quarter build yet"
+          "Built over 4 consecutive quarters"
         ],
         "activity": [
           "SurgoCap Partners opened a NEW position at 8.3% of its book",
@@ -197,24 +209,25 @@
           "1 distinct insider bought including the CEO"
         ],
         "manager_quality": [
-          "Highest-quality buyer: SurgoCap Partners (quality 0.74)",
-          "Average buyer quality 0.57 across 4 managers"
+          "Highest-quality buyer: SurgoCap Partners (quality 0.77)",
+          "Average buyer quality 0.66 across 4 managers"
         ]
       },
-      "score_13f": 76.0,
-      "signal_class": "ACCUMULATION_WITH_INSIDER_CONFIRMATION",
-      "signal_label": "Accumulation + insider confirmation",
-      "signal_score": 83.4,
+      "score_13f": 88.3,
+      "signal_class": "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION",
+      "signal_label": "Early smart money + insider confirmation",
+      "signal_score": 94.7,
       "ticker": "INTC",
       "tradable_ticker_validated": true,
       "why": {
         "bullets": [
           "SurgoCap Partners opened a NEW position at 8.3% of its book",
           "Largest buyer weight: 8.3% of SurgoCap Partners's portfolio (rank TOP10)",
+          "4 independent buyers: Atreides Management, Coatue (Laffont), SurgoCap Partners, Tiger Global (Coleman)",
           "$9,999,985 of open-market insider purchases since quarter-end",
-          "Institutional accumulation and insider buying confirm each other (13F 76, insider 77) \u2192 +7 confluence"
+          "Institutional accumulation and insider buying confirm each other (13F 88, insider 77) \u2192 +8 confluence"
         ],
-        "summary": "INTC ranks on new / add activity, portfolio conviction and insider buying (form 4), confirmed by $9,999,985 of insider open-market buying since quarter-end.",
+        "summary": "INTC ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $9,999,985 of insider open-market buying since quarter-end.",
         "top_drivers": [
           {
             "factor": "activity",
@@ -227,20 +240,20 @@
             "points": 14.01
           },
           {
-            "factor": "insider",
-            "label": "Insider buying (Form 4)",
-            "points": 11.52
+            "factor": "consensus",
+            "label": "Smart-money consensus",
+            "points": 11.84
           }
         ]
       },
       "commentary": {
         "ticker": "INTC",
-        "why_strongest": "Four filers increased their reported long positions, including two new entries, one of them at 8.3% of SurgoCap Partners's book, a top-decile weight. A single insider open-market purchase of $9,999,985 lines up with that institutional activity, and crowding among tracked filers is low. The 31% price decline since quarter-end means entry levels differ materially from filers' cost.",
-        "insider_read": "Yes: $9,999,985 of open-market purchases in 1 trade by 1 insider, with an officer or director involved, and no recorded sales.",
+        "why_strongest": "Four independent filers increased reported long positions, including a new SurgoCap holding at 8.3% of its book and a +160% add by Tiger Global, on top of three prior build quarters. The 31% price decline since quarter-end means these marks were struck well above current levels, and crowding is labelled low.",
+        "insider_read": "Yes: $9,999,985 of open-market purchases in one trade by one insider, with an officer or director involved, and no reported sales.",
         "risks": [
-          "Filings lag up to 45 days; the 31% drawdown since quarter-end may have changed manager views",
-          "No prior build quarters, so this is a single-quarter datapoint, not a sustained accumulation trend",
-          "One large insider purchase can reflect a scheduled or one-off allocation rather than a repeatable pattern"
+          "45-day 13F lag: positions may already have changed, and the 31% drawdown could reflect news the filings predate",
+          "A single large insider purchase is thin evidence and may be idiosyncratic",
+          "SurgoCap's 8.3% weight is on long-only reported AUM and overstates true exposure"
         ],
         "verdict": "UNUSUALLY_STRONG"
       },
@@ -316,96 +329,96 @@
       }
     },
     {
-      "alpha_score_legacy": 51.9,
+      "alpha_score_legacy": 51.7,
       "confluence_bonus": 5.7,
       "contributions": {
-        "accumulation": 1.5,
+        "accumulation": 10.0,
         "activity": 15.0,
-        "consensus": 11.97,
+        "consensus": 12.4,
         "conviction": 15.0,
         "crowding": 5.0,
-        "freshness": 7.63,
+        "freshness": 8.08,
         "insider": 7.29,
-        "manager_quality": 11.98
+        "manager_quality": 12.36
       },
       "crowding_label": "LOW",
       "factors": {
-        "accumulation": 15.0,
+        "accumulation": 100.0,
         "activity": 100.0,
-        "consensus": 79.8,
+        "consensus": 82.7,
         "conviction": 100.0,
         "crowding": 100.0,
-        "freshness": 76.3,
+        "freshness": 80.8,
         "insider": 48.6,
-        "manager_quality": 79.9
+        "manager_quality": 82.4
       },
       "filer_count": 5,
       "filers": [
         {
-          "alpha_score": 28.7,
+          "alpha_score": 32.3,
           "delta_pct": 465.43,
           "delta_type": "ADDED",
           "filer": "D1 Capital (Sundheim)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.368,
-          "manager_quality_score": 0.327,
+          "freshness_score": 0.605,
+          "manager_quality_score": 0.411,
           "port_weight_pct": 0.715,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
           "weight_vs_median": 1.25
         },
         {
-          "alpha_score": 34.8,
+          "alpha_score": 37.1,
           "delta_pct": 499.57,
           "delta_type": "ADDED",
           "filer": "Lone Pine Capital (Mandel)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.662,
-          "manager_quality_score": 0.476,
+          "freshness_score": 0.736,
+          "manager_quality_score": 0.585,
           "port_weight_pct": 4.233,
           "position_tier": "TOP10",
           "report_date": "2026-06-30",
           "weight_vs_median": 1.32
         },
         {
-          "alpha_score": 51.9,
+          "alpha_score": 51.7,
           "delta_pct": 367.35,
           "delta_type": "ADDED",
           "filer": "RV Capital (Zeller)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 1.0,
-          "manager_quality_score": 0.934,
+          "freshness_score": 0.975,
+          "manager_quality_score": 0.937,
           "port_weight_pct": 30.312,
           "position_tier": "TOP3",
           "report_date": "2026-06-30",
           "weight_vs_median": 9.4
         },
         {
-          "alpha_score": 38.0,
+          "alpha_score": 38.4,
           "delta_pct": 343.24,
           "delta_type": "ADDED",
           "filer": "Viking Global (Halvorsen)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.824,
-          "manager_quality_score": 0.62,
+          "freshness_score": 0.838,
+          "manager_quality_score": 0.634,
           "port_weight_pct": 2.312,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
           "weight_vs_median": 3.22
         },
         {
-          "alpha_score": 38.5,
+          "alpha_score": 39.9,
           "delta_pct": 386.25,
           "delta_type": "ADDED",
           "filer": "Whale Rock Capital Management",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.863,
-          "manager_quality_score": 0.628,
+          "freshness_score": 0.886,
+          "manager_quality_score": 0.706,
           "port_weight_pct": 2.255,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
@@ -415,6 +428,7 @@
       "flags": [
         "AGGRESSIVE_ADD",
         "CLUSTER",
+        "EARLY_SMART_MONEY_ACCUMULATION",
         "OUTSIZED_VS_MANAGER_TYPICAL",
         "TOP3_POSITION"
       ],
@@ -673,7 +687,18 @@
         "until": "2026-09-06"
       },
       "insider_score": 48.6,
-      "mq_signal": {},
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 3,
+        "build_score": 0.82,
+        "flags": [
+          "MULTI_QUARTER_BUILD"
+        ],
+        "silent_build": false,
+        "total_quarters": 3,
+        "weight_slope": 0.092
+      },
       "name": "CARVANA CO",
       "option_eligible": true,
       "overall_rank": 2,
@@ -687,7 +712,7 @@
       "rank": 2,
       "reasons": {
         "accumulation": [
-          "First quarter of buying \u2013 no multi-quarter build yet"
+          "Built over 4 consecutive quarters"
         ],
         "activity": [
           "Lone Pine Capital (Mandel) added +500% to an existing position",
@@ -714,25 +739,25 @@
           "$25,372,460 of sales ran under Rule 10b5-1 plans and are not scored as a signal"
         ],
         "manager_quality": [
-          "Highest-quality buyer: RV Capital (Zeller) (quality 0.93)",
-          "Average buyer quality 0.60 across 5 managers"
+          "Highest-quality buyer: RV Capital (Zeller) (quality 0.94)",
+          "Average buyer quality 0.65 across 5 managers"
         ]
       },
-      "score_13f": 80.1,
-      "signal_class": "ACCUMULATION_WITH_INSIDER_CONFIRMATION",
-      "signal_label": "Accumulation + insider confirmation",
-      "signal_score": 81.1,
+      "score_13f": 91.6,
+      "signal_class": "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION",
+      "signal_label": "Early smart money + insider confirmation",
+      "signal_score": 90.8,
       "ticker": "CVNA",
       "tradable_ticker_validated": true,
       "why": {
         "bullets": [
           "Lone Pine Capital (Mandel) added +500% to an existing position",
           "Largest buyer weight: 30.3% of RV Capital (Zeller)'s portfolio (rank TOP3)",
-          "Highest-quality buyer: RV Capital (Zeller) (quality 0.93)",
+          "5 independent buyers incl. D1 Capital (Sundheim), Lone Pine Capital (Mandel), RV Capital (Zeller) \u2026",
           "Discretionary insider selling of $2,227,500 outweighs purchases",
-          "Institutional accumulation and insider buying confirm each other (13F 80, insider 49) \u2192 +6 confluence"
+          "Institutional accumulation and insider buying confirm each other (13F 92, insider 49) \u2192 +6 confluence"
         ],
-        "summary": "CVNA ranks on new / add activity, portfolio conviction and manager quality, confirmed by $1,544,981 of insider open-market buying since quarter-end.",
+        "summary": "CVNA ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $1,544,981 of insider open-market buying since quarter-end.",
         "top_drivers": [
           {
             "factor": "activity",
@@ -745,20 +770,20 @@
             "points": 15.0
           },
           {
-            "factor": "manager_quality",
-            "label": "Manager quality",
-            "points": 11.98
+            "factor": "consensus",
+            "label": "Smart-money consensus",
+            "points": 12.4
           }
         ]
       },
       "commentary": {
         "ticker": "CVNA",
-        "why_strongest": "Five filers materially increased reported long positions, with percentage adds ranging up to +500%, and RV Capital holds it at 30.3% of its book, a top-three weight among tracked managers. The highest-quality buyer here scores 0.93. Conviction and activity factors are both maxed, though the insider factor is the weakest element of the setup.",
-        "insider_read": "Mixed and net selling: $1,544,981 of purchases in 2 trades by 1 insider against $27,599,960 of sales across 39 trades.",
+        "why_strongest": "Five independent managers added, with percentage increases from +343% to +500%, and RV Capital's reported weight at 30.3% of its book ranks in the engine's top three conviction weights. Three prior build quarters plus low crowding support the accumulation read.",
+        "insider_read": "Mixed and net selling: purchases of $1,544,981 in 2 trades by one insider against $27,599,960 of sales across 39 trades.",
         "risks": [
-          "Heavy insider selling outweighs the modest purchase activity",
-          "Concentration at a single manager (30.3%) makes the consensus read thinner than the buyer count suggests",
-          "Price is already up 13% since quarter-end"
+          "Heavy insider selling across 39 trades cuts against the institutional signal",
+          "Large percentage adds can start from very small bases and overstate conviction",
+          "Price is up 13% since quarter-end, so filers' cost basis is below current levels"
         ],
         "verdict": "STRONG"
       },
@@ -834,68 +859,68 @@
       }
     },
     {
-      "alpha_score_legacy": 26.3,
+      "alpha_score_legacy": 27.6,
       "confluence_bonus": 6.4,
       "contributions": {
-        "accumulation": 1.5,
+        "accumulation": 10.0,
         "activity": 15.0,
-        "consensus": 9.64,
+        "consensus": 10.02,
         "conviction": 15.0,
         "crowding": 5.0,
-        "freshness": 8.8,
+        "freshness": 8.0,
         "insider": 8.55,
-        "manager_quality": 10.11
+        "manager_quality": 10.88
       },
       "crowding_label": "LOW",
       "factors": {
-        "accumulation": 15.0,
+        "accumulation": 100.0,
         "activity": 100.0,
-        "consensus": 64.3,
+        "consensus": 66.8,
         "conviction": 100.0,
         "crowding": 100.0,
-        "freshness": 88.0,
+        "freshness": 80.0,
         "insider": 57.0,
-        "manager_quality": 67.4
+        "manager_quality": 72.5
       },
       "filer_count": 3,
       "filers": [
         {
-          "alpha_score": 26.1,
+          "alpha_score": 27.6,
           "delta_pct": 9.54,
           "delta_type": "ADDED",
           "filer": "Appaloosa (Tepper)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.896,
-          "manager_quality_score": 0.668,
+          "freshness_score": 0.932,
+          "manager_quality_score": 0.762,
           "port_weight_pct": 4.703,
           "position_tier": "TOP10",
           "report_date": "2026-06-30",
           "weight_vs_median": 2.12
         },
         {
-          "alpha_score": 25.8,
+          "alpha_score": 26.0,
           "delta_pct": 20.35,
           "delta_type": "ADDED",
           "filer": "Sound Shore Management",
           "filing_date": "2026-08-12",
           "filing_date_actual": "2026-08-12",
-          "freshness_score": 0.838,
-          "manager_quality_score": 0.717,
+          "freshness_score": 0.849,
+          "manager_quality_score": 0.743,
           "port_weight_pct": 2.82,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
           "weight_vs_median": 1.1
         },
         {
-          "alpha_score": 26.3,
+          "alpha_score": 23.1,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "Thiel Macro (Thiel)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 1.0,
-          "manager_quality_score": 0.44,
+          "freshness_score": 0.607,
+          "manager_quality_score": 0.507,
           "port_weight_pct": 14.123,
           "position_tier": "TOP3",
           "report_date": "2026-06-30",
@@ -1009,7 +1034,18 @@
         "until": "2026-09-06"
       },
       "insider_score": 57.0,
-      "mq_signal": {},
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 3,
+        "build_score": 0.75,
+        "flags": [
+          "MULTI_QUARTER_BUILD"
+        ],
+        "silent_build": false,
+        "total_quarters": 3,
+        "weight_slope": -0.046
+      },
       "name": "VISTRA CORP",
       "option_eligible": true,
       "overall_rank": 3,
@@ -1023,7 +1059,7 @@
       "rank": 3,
       "reasons": {
         "accumulation": [
-          "First quarter of buying \u2013 no multi-quarter build yet"
+          "Built over 4 consecutive quarters"
         ],
         "activity": [
           "Thiel Macro (Thiel) opened a NEW position at 14.1% of its book",
@@ -1047,23 +1083,23 @@
           "1 distinct insider bought including the CEO"
         ],
         "manager_quality": [
-          "Highest-quality buyer: Sound Shore Management (quality 0.72)",
-          "Average buyer quality 0.61 across 3 managers"
+          "Highest-quality buyer: Appaloosa (Tepper) (quality 0.76)",
+          "Average buyer quality 0.67 across 3 managers"
         ]
       },
-      "score_13f": 76.5,
+      "score_13f": 86.9,
       "signal_class": "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION",
       "signal_label": "Early smart money + insider confirmation",
-      "signal_score": 80.0,
+      "signal_score": 88.9,
       "ticker": "VST",
       "tradable_ticker_validated": true,
       "why": {
         "bullets": [
           "Thiel Macro (Thiel) opened a NEW position at 14.1% of its book",
           "Largest buyer weight: 14.1% of Thiel Macro (Thiel)'s portfolio (rank TOP3)",
-          "Highest-quality buyer: Sound Shore Management (quality 0.72)",
+          "Highest-quality buyer: Appaloosa (Tepper) (quality 0.76)",
           "$1,173,069 of open-market insider purchases since quarter-end",
-          "Institutional accumulation and insider buying confirm each other (13F 76, insider 57) \u2192 +6 confluence"
+          "Institutional accumulation and insider buying confirm each other (13F 87, insider 57) \u2192 +6 confluence"
         ],
         "summary": "VST ranks on new / add activity, portfolio conviction and manager quality, confirmed by $1,173,069 of insider open-market buying since quarter-end.",
         "top_drivers": [
@@ -1080,20 +1116,20 @@
           {
             "factor": "manager_quality",
             "label": "Manager quality",
-            "points": 10.11
+            "points": 10.88
           }
         ]
       },
       "commentary": {
         "ticker": "VST",
-        "why_strongest": "Thiel Macro opened a new position at 14.1% of its book, a top-three weight, alongside adds from Appaloosa and Sound Shore. The data is unusually fresh and insider activity is one-sided in the same direction. Crowding among tracked filers is low despite the sector's popularity.",
-        "insider_read": "Yes: $1,173,069 of open-market purchases across 3 trades by 1 insider, officer or director involved, with no sales recorded.",
+        "why_strongest": "Thiel Macro opened a new position at 14.1% of its reported book, a top-three conviction weight, alongside adds from Appaloosa and Sound Shore after three prior build quarters. Institutional accumulation and insider purchases point the same way, and crowding is low.",
+        "insider_read": "Yes: $1,173,069 of open-market purchases across 3 trades by one insider, officer or director involved, with no reported sales.",
         "risks": [
-          "A 14.1% book weight at a macro-oriented filer may be an expression of a thematic view, not a single-name thesis",
-          "Only three buyers, so consensus is narrower than the top-tier score implies",
-          "No prior build quarters"
+          "Only three buyers, so consensus is narrower than the top-line score implies",
+          "Thiel Macro's concentrated weight reflects a small reported long book",
+          "Utility and power demand theses are macro-sensitive and can reverse quickly"
         ],
-        "verdict": "UNUSUALLY_STRONG"
+        "verdict": "STRONG"
       },
       "option": {
         "ticker": "VST",
@@ -1155,490 +1191,110 @@
       }
     },
     {
-      "alpha_score_legacy": 11.7,
-      "confluence_bonus": 5.1,
-      "contributions": {
-        "accumulation": 1.5,
-        "activity": 11.73,
-        "consensus": 13.23,
-        "conviction": 15.0,
-        "crowding": 3.75,
-        "freshness": 8.98,
-        "insider": 6.2,
-        "manager_quality": 13.44
-      },
-      "crowding_label": "MODERATE",
-      "factors": {
-        "accumulation": 15.0,
-        "activity": 78.2,
-        "consensus": 88.2,
-        "conviction": 100.0,
-        "crowding": 75.0,
-        "freshness": 89.8,
-        "insider": 41.3,
-        "manager_quality": 89.6
-      },
-      "filer_count": 6,
-      "filers": [
-        {
-          "alpha_score": 11.7,
-          "delta_pct": 0.9,
-          "delta_type": "ADDED",
-          "filer": "H&H International Investment (Li Lu)",
-          "filing_date": "2026-08-14",
-          "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.998,
-          "manager_quality_score": 0.984,
-          "port_weight_pct": 24.18,
-          "position_tier": "TOP3",
-          "report_date": "2026-06-30",
-          "weight_vs_median": 25.89
-        },
-        {
-          "alpha_score": 8.4,
-          "delta_pct": 23.46,
-          "delta_type": "ADDED",
-          "filer": "Himalaya Capital Management (Li Lu)",
-          "filing_date": "2026-08-14",
-          "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.939,
-          "manager_quality_score": 0.963,
-          "port_weight_pct": 14.977,
-          "position_tier": "TOP5",
-          "report_date": "2026-06-30",
-          "weight_vs_median": 1.21
-        },
-        {
-          "alpha_score": 4.1,
-          "delta_pct": 0.38,
-          "delta_type": "ADDED",
-          "filer": "Muhlenkamp & Co",
-          "filing_date": "2026-08-18",
-          "filing_date_actual": "2026-08-18",
-          "freshness_score": 0.962,
-          "manager_quality_score": 0.826,
-          "port_weight_pct": 5.579,
-          "position_tier": "TOP10",
-          "report_date": "2026-06-30",
-          "weight_vs_median": 1.41
-        },
-        {
-          "alpha_score": 7.0,
-          "delta_pct": 7.95,
-          "delta_type": "ADDED",
-          "filer": "Semper Augustus Investments Group",
-          "filing_date": "2026-08-14",
-          "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.968,
-          "manager_quality_score": 0.847,
-          "port_weight_pct": 15.451,
-          "position_tier": "TOP3",
-          "report_date": "2026-06-30",
-          "weight_vs_median": 41.2
-        },
-        {
-          "alpha_score": 0.5,
-          "delta_pct": 2.21,
-          "delta_type": "ADDED",
-          "filer": "Sound Shore Management",
-          "filing_date": "2026-08-12",
-          "filing_date_actual": "2026-08-12",
-          "freshness_score": 0.838,
-          "manager_quality_score": 0.717,
-          "port_weight_pct": 3.142,
-          "position_tier": "TOP5",
-          "report_date": "2026-06-30",
-          "weight_vs_median": 1.23
-        },
-        {
-          "alpha_score": 0.0,
-          "delta_pct": 40.26,
-          "delta_type": "ADDED",
-          "filer": "Two Sigma Investments (Quant)",
-          "filing_date": "2026-08-14",
-          "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.832,
-          "manager_quality_score": 0.242,
-          "port_weight_pct": 0.824,
-          "position_tier": "TOP10",
-          "report_date": "2026-06-30",
-          "weight_vs_median": 9.05
-        }
-      ],
-      "flags": [
-        "AGGRESSIVE_ADD",
-        "CLUSTER",
-        "EARLY_SMART_MONEY_ACCUMULATION",
-        "OUTSIZED_VS_MANAGER_TYPICAL",
-        "TOP3_POSITION",
-        "TOP5_POSITION"
-      ],
-      "grade": "VERY_STRONG",
-      "insider": {
-        "cik": "0001067983",
-        "error": null,
-        "foreign_issuer_skipped": {
-          "DVA": 1
-        },
-        "form4_count": 5,
-        "reasons": [
-          "$250,072 of open-market insider purchases since quarter-end",
-          "1 distinct insider bought including an officer",
-          "Largest buy lifted that insider's own stake by 56%"
-        ],
-        "score": 41.3,
-        "since": "2026-06-30",
-        "summary": {
-          "buy_count": 3,
-          "buy_value_usd": 250072.03,
-          "buyer_roles": [
-            "OFFICER"
-          ],
-          "buys": [
-            {
-              "accession": "0001193125-26-349574",
-              "date": "2026-08-12",
-              "filing_date": "2026-08-13",
-              "insider": "O'Sullivan Michael J.",
-              "is_director": false,
-              "is_officer": true,
-              "planned": false,
-              "price": 510.64,
-              "role": "See Remarks",
-              "role_key": "OFFICER",
-              "security": "Class B Common Stock",
-              "shares": 45.0,
-              "shares_after": 708.0,
-              "stake_change_pct": 6.8,
-              "value_usd": 22978.8
-            },
-            {
-              "accession": "0001193125-26-349574",
-              "date": "2026-08-12",
-              "filing_date": "2026-08-13",
-              "insider": "O'Sullivan Michael J.",
-              "is_director": false,
-              "is_officer": true,
-              "planned": false,
-              "price": 512.52,
-              "role": "See Remarks",
-              "role_key": "OFFICER",
-              "security": "Class B Common Stock",
-              "shares": 400.0,
-              "shares_after": 1108.0,
-              "stake_change_pct": 56.5,
-              "value_usd": 205008.0
-            },
-            {
-              "accession": "0001193125-26-349574",
-              "date": "2026-08-12",
-              "filing_date": "2026-08-13",
-              "insider": "O'Sullivan Michael J.",
-              "is_director": false,
-              "is_officer": true,
-              "planned": false,
-              "price": 513.61,
-              "role": "See Remarks",
-              "role_key": "OFFICER",
-              "security": "Class B Common Stock",
-              "shares": 43.0,
-              "shares_after": 1151.0,
-              "stake_change_pct": 3.9,
-              "value_usd": 22085.23
-            }
-          ],
-          "cluster_buyers": [],
-          "cluster_buying": false,
-          "discretionary_sell_value_usd": 0,
-          "distinct_buyers": [
-            "O'Sullivan Michael J."
-          ],
-          "max_stake_change_pct": 56.5,
-          "net_stance": "NET_BUYING",
-          "net_value_usd": 250072.03,
-          "officer_or_director_buyers": [
-            "O'Sullivan Michael J."
-          ],
-          "planned_sell_count": 0,
-          "planned_sell_value_usd": 0,
-          "sell_count": 0,
-          "sell_value_usd": 0,
-          "sells": [],
-          "significant_buy_count": 1,
-          "skipped_securities": {},
-          "top_role": "OFFICER"
-        },
-        "ticker": "BRK/B",
-        "until": "2026-09-06"
-      },
-      "insider_score": 41.3,
-      "mq_signal": {},
-      "name": "BERKSHIRE HATHAWAY INC DEL",
-      "option_eligible": true,
-      "overall_rank": 4,
-      "post_filing_perf": {
-        "current_price": 506.03,
-        "days_since_filing": 68,
-        "filing_close": 500.39,
-        "pct_change": 1.1
-      },
-      "price_penalty": 0.0,
-      "rank": 4,
-      "reasons": {
-        "accumulation": [
-          "First quarter of buying \u2013 no multi-quarter build yet"
-        ],
-        "activity": [
-          "Two Sigma Investments (Quant) added +40% to an existing position",
-          "6 tracked managers bought this quarter"
-        ],
-        "consensus": [
-          "6 independent buyers incl. H&H International Investment (Li Lu), Himalaya Capital Management (Li Lu), Muhlenkamp & Co \u2026"
-        ],
-        "conviction": [
-          "Largest buyer weight: 24.2% of H&H International Investment (Li Lu)'s portfolio (rank TOP3)",
-          "Position is \u22655\u00d7 the manager's own median position size"
-        ],
-        "crowding": [
-          "Crowding MODERATE \u2013 room for further institutional sponsorship"
-        ],
-        "freshness": [
-          "Filing is 19 days old; low-turnover buyers keep it informative"
-        ],
-        "insider": [
-          "$250,072 of open-market insider purchases since quarter-end",
-          "1 distinct insider bought including an officer",
-          "Largest buy lifted that insider's own stake by 56%"
-        ],
-        "manager_quality": [
-          "Highest-quality buyer: H&H International Investment (Li Lu) (quality 0.98)",
-          "Average buyer quality 0.76 across 6 managers"
-        ]
-      },
-      "same_issuer_alternates": [
-        {
-          "signal_score": 63.7,
-          "ticker": "BRK/A"
-        }
-      ],
-      "score_13f": 79.6,
-      "signal_class": "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION",
-      "signal_label": "Early smart money + insider confirmation",
-      "signal_score": 78.9,
-      "ticker": "BRK/B",
-      "tradable_ticker_validated": true,
-      "why": {
-        "bullets": [
-          "Largest buyer weight: 24.2% of H&H International Investment (Li Lu)'s portfolio (rank TOP3)",
-          "Highest-quality buyer: H&H International Investment (Li Lu) (quality 0.98)",
-          "6 independent buyers incl. H&H International Investment (Li Lu), Himalaya Capital Management (Li Lu), Muhlenkamp & Co \u2026",
-          "$250,072 of open-market insider purchases since quarter-end",
-          "Institutional accumulation and insider buying confirm each other (13F 80, insider 41) \u2192 +5 confluence"
-        ],
-        "summary": "BRK/B ranks on portfolio conviction, manager quality and smart-money consensus, confirmed by $250,072 of insider open-market buying since quarter-end.",
-        "top_drivers": [
-          {
-            "factor": "conviction",
-            "label": "Portfolio conviction",
-            "points": 15.0
-          },
-          {
-            "factor": "manager_quality",
-            "label": "Manager quality",
-            "points": 13.44
-          },
-          {
-            "factor": "consensus",
-            "label": "Smart-money consensus",
-            "points": 13.23
-          }
-        ]
-      },
-      "commentary": {
-        "ticker": "BRK/B",
-        "why_strongest": "Six independent filers increased reported long positions, and manager quality is the standout: H&H International at 0.98 holds it at 24.2% of its book. Most adds are small in percentage terms, so this reads as reinforcement of long-standing positions rather than new conviction. Price is roughly flat since quarter-end.",
-        "insider_read": "Yes, modestly: $250,072 of open-market purchases across 3 trades by 1 insider, officer or director involved, and no sales.",
-        "risks": [
-          "Add sizes of +0% to +23% are maintenance-scale, not fresh accumulation",
-          "Crowding is moderate, reducing the differentiation value of the signal",
-          "The insider purchase total is small relative to the company's size"
-        ],
-        "verdict": "STRONG"
-      },
-      "option": {
-        "ticker": "BRK/B",
-        "current_price": 506.03,
-        "change_pct": -0.42,
-        "expiries_checked": [
-          "2026-12-18",
-          "2027-01-15"
-        ],
-        "iv_metrics": {
-          "iv_rank": 40.2,
-          "hv_30d_pct": 14.7,
-          "iv_hv_ratio": 1.06,
-          "verdict": "MODERATE"
-        },
-        "status": "OK",
-        "contract": {
-          "symbol": "BRKB270115C00520000",
-          "strike": 520.0,
-          "expiration": "2027-01-15",
-          "dte": 131,
-          "bid": 15.35,
-          "ask": 16.25,
-          "mid": 15.8,
-          "spread_pct": 5.7,
-          "volume": 13,
-          "open_interest": 7580,
-          "delta": 0.461,
-          "implied_volatility": 0.151,
-          "moneyness_pct": 2.8,
-          "max_risk_per_contract": 1580.0,
-          "breakeven": 535.8,
-          "selection_cost": 0.2422
-        },
-        "eligible_count": 4,
-        "candidates_checked": 128,
-        "rejections": {
-          "delta": 115,
-          "open_interest": 78,
-          "spread": 48,
-          "volume": 116
-        },
-        "runner_up": [
-          {
-            "symbol": "BRKB270115C00530000",
-            "delta": 0.374,
-            "selection_cost": 0.5519
-          },
-          {
-            "symbol": "BRKB270115C00510000",
-            "delta": 0.552,
-            "selection_cost": 0.6646
-          },
-          {
-            "symbol": "BRKB270115C00500000",
-            "delta": 0.639,
-            "selection_cost": 1.0755
-          }
-        ],
-        "filters": {
-          "expiry_days": "90\u2013180 days to expiration",
-          "delta": "0.30\u20130.70 call delta (target 0.45)",
-          "spread": "bid-ask spread \u2264 8% of mid",
-          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
-          "open_interest": "open interest \u2265 500",
-          "iv": "implied volatility \u2264 70%"
-        },
-        "rule_rationale": "Delta 0.46 sits closest to the 0.45 target, strike 2.8% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 5.7% with volume 13 and open interest 7,580 keeps entry and exit liquid."
-      }
-    },
-    {
-      "alpha_score_legacy": 27.3,
+      "alpha_score_legacy": 29.3,
       "confluence_bonus": 5.5,
       "contributions": {
-        "accumulation": 1.5,
+        "accumulation": 10.0,
         "activity": 15.0,
-        "consensus": 11.13,
+        "consensus": 11.82,
         "conviction": 15.0,
         "crowding": 5.0,
-        "freshness": 7.06,
+        "freshness": 7.88,
         "insider": 6.93,
-        "manager_quality": 8.93
+        "manager_quality": 10.46
       },
       "crowding_label": "LOW",
       "factors": {
-        "accumulation": 15.0,
+        "accumulation": 100.0,
         "activity": 100.0,
-        "consensus": 74.2,
+        "consensus": 78.8,
         "conviction": 100.0,
         "crowding": 100.0,
-        "freshness": 70.6,
+        "freshness": 78.8,
         "insider": 46.2,
-        "manager_quality": 59.5
+        "manager_quality": 69.7
       },
       "filer_count": 6,
       "filers": [
         {
-          "alpha_score": 27.3,
+          "alpha_score": 29.3,
           "delta_pct": 24.29,
           "delta_type": "ADDED",
           "filer": "Appaloosa (Tepper)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.896,
-          "manager_quality_score": 0.668,
+          "freshness_score": 0.932,
+          "manager_quality_score": 0.762,
           "port_weight_pct": 10.547,
           "position_tier": "TOP3",
           "report_date": "2026-06-30",
           "weight_vs_median": 4.76
         },
         {
-          "alpha_score": 22.7,
+          "alpha_score": 23.6,
           "delta_pct": 19.06,
           "delta_type": "ADDED",
           "filer": "Duquesne Family Office (Druckenmiller)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.782,
-          "manager_quality_score": 0.529,
+          "freshness_score": 0.795,
+          "manager_quality_score": 0.559,
           "port_weight_pct": 5.404,
           "position_tier": "TOP3",
           "report_date": "2026-06-30",
           "weight_vs_median": 12.69
         },
         {
-          "alpha_score": 21.6,
+          "alpha_score": 27.0,
           "delta_pct": 6.59,
           "delta_type": "ADDED",
           "filer": "Harvard Management Co",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.446,
-          "manager_quality_score": 0.633,
+          "freshness_score": 0.737,
+          "manager_quality_score": 0.778,
           "port_weight_pct": 8.2,
           "position_tier": "TOP3",
           "report_date": "2026-06-30",
           "weight_vs_median": 2.89
         },
         {
-          "alpha_score": 17.3,
+          "alpha_score": 18.5,
           "delta_pct": 49.5,
           "delta_type": "ADDED",
           "filer": "Renaissance Technologies (Quant)",
           "filing_date": "2026-08-13",
           "filing_date_actual": "2026-08-13",
-          "freshness_score": 0.817,
-          "manager_quality_score": 0.229,
+          "freshness_score": 0.839,
+          "manager_quality_score": 0.28,
           "port_weight_pct": 0.558,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
           "weight_vs_median": 6.13
         },
         {
-          "alpha_score": 15.8,
+          "alpha_score": 19.9,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "Situational Awareness LP",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.368,
-          "manager_quality_score": 0.326,
+          "freshness_score": 0.599,
+          "manager_quality_score": 0.43,
           "port_weight_pct": 6.369,
           "position_tier": "TOP5",
           "report_date": "2026-06-30",
           "weight_vs_median": 2.97
         },
         {
-          "alpha_score": 21.3,
+          "alpha_score": 24.4,
           "delta_pct": 67.27,
           "delta_type": "ADDED",
           "filer": "Third Point (Loeb)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.668,
-          "manager_quality_score": 0.525,
+          "freshness_score": 0.776,
+          "manager_quality_score": 0.643,
           "port_weight_pct": 4.724,
           "position_tier": "TOP10",
           "report_date": "2026-06-30",
@@ -1960,10 +1616,21 @@
         "until": "2026-09-06"
       },
       "insider_score": 46.2,
-      "mq_signal": {},
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 3,
+        "build_score": 1.21,
+        "flags": [
+          "MULTI_QUARTER_BUILD"
+        ],
+        "silent_build": false,
+        "total_quarters": 3,
+        "weight_slope": 0.612
+      },
       "name": "TAIWAN SEMICONDUCTOR MANUFAC",
       "option_eligible": true,
-      "overall_rank": 5,
+      "overall_rank": 4,
       "post_filing_perf": {
         "current_price": 428.91,
         "days_since_filing": 68,
@@ -1971,10 +1638,10 @@
         "pct_change": -10.2
       },
       "price_penalty": 0.0,
-      "rank": 5,
+      "rank": 4,
       "reasons": {
         "accumulation": [
-          "First quarter of buying \u2013 no multi-quarter build yet"
+          "Built over 4 consecutive quarters"
         ],
         "activity": [
           "Situational Awareness LP opened a NEW position at 6.4% of its book",
@@ -1992,7 +1659,7 @@
           "Crowding LOW \u2013 room for further institutional sponsorship"
         ],
         "freshness": [
-          "Filing is 23 days old; high-turnover buyers make it staler"
+          "Filing is 23 days old; low-turnover buyers keep it informative"
         ],
         "insider": [
           "$400,340 of open-market insider purchases since quarter-end",
@@ -2000,14 +1667,14 @@
           "Largest buy lifted that insider's own stake by 21%"
         ],
         "manager_quality": [
-          "Highest-quality buyer: Appaloosa (Tepper) (quality 0.67)",
-          "Average buyer quality 0.49 across 6 managers"
+          "Highest-quality buyer: Harvard Management Co (quality 0.78)",
+          "Average buyer quality 0.58 across 6 managers"
         ]
       },
-      "score_13f": 74.8,
+      "score_13f": 88.4,
       "signal_class": "ACCUMULATION_WITH_INSIDER_CONFIRMATION",
       "signal_label": "Accumulation + insider confirmation",
-      "signal_score": 76.0,
+      "signal_score": 87.6,
       "ticker": "TSM",
       "tradable_ticker_validated": true,
       "why": {
@@ -2016,7 +1683,7 @@
           "Largest buyer weight: 10.5% of Appaloosa (Tepper)'s portfolio (rank TOP3)",
           "6 independent buyers incl. Appaloosa (Tepper), Duquesne Family Office (Druckenmiller), Harvard Management Co \u2026",
           "$400,340 of open-market insider purchases since quarter-end",
-          "Institutional accumulation and insider buying confirm each other (13F 75, insider 46) \u2192 +6 confluence"
+          "Institutional accumulation and insider buying confirm each other (13F 88, insider 46) \u2192 +6 confluence"
         ],
         "summary": "TSM ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $400,340 of insider open-market buying since quarter-end.",
         "top_drivers": [
@@ -2033,18 +1700,18 @@
           {
             "factor": "consensus",
             "label": "Smart-money consensus",
-            "points": 11.13
+            "points": 11.82
           }
         ]
       },
       "commentary": {
         "ticker": "TSM",
-        "why_strongest": "Six filers increased reported long positions, including a new 6.4% book position at Situational Awareness LP and a 10.5% weight at Appaloosa. Insider purchases were spread across 23 trades by two insiders with no offsetting sales, which is a broader participation pattern than a single block buy. Manager quality is the softest factor.",
-        "insider_read": "Yes: $400,340 of open-market purchases across 23 trades by 2 insiders, officer or director involved, with no sales.",
+        "why_strongest": "Six independent filers increased reported long positions, including Appaloosa at 10.5% of its book and a new 6.4% Situational Awareness holding, following three prior build quarters. Modest but real insider purchases and low crowding round out a broad-based signal.",
+        "insider_read": "Confirming but small: $400,340 of open-market purchases across 23 trades by two insiders, with no reported sales.",
         "risks": [
-          "Average manager quality (0.595) is the lowest among the top five",
-          "Insider purchase value is small in dollar terms despite the trade count",
-          "Price is down 10% since quarter-end, so filers' entry levels differ from current ones"
+          "Insider purchase value is small relative to the position sizes involved",
+          "Foreign issuer reporting means Form 4 coverage is limited and may understate activity",
+          "Price is down 10% since quarter-end; filings predate that move"
         ],
         "verdict": "STRONG"
       },
@@ -2119,54 +1786,445 @@
       }
     },
     {
-      "alpha_score_legacy": 25.3,
-      "confluence_bonus": 6.2,
+      "alpha_score_legacy": 11.3,
+      "confluence_bonus": 5.1,
       "contributions": {
-        "accumulation": 1.5,
+        "accumulation": 10.0,
+        "activity": 11.73,
+        "consensus": 13.32,
+        "conviction": 15.0,
+        "crowding": 3.75,
+        "freshness": 8.98,
+        "insider": 6.2,
+        "manager_quality": 13.44
+      },
+      "crowding_label": "MODERATE",
+      "factors": {
+        "accumulation": 100.0,
+        "activity": 78.2,
+        "consensus": 88.8,
+        "conviction": 100.0,
+        "crowding": 75.0,
+        "freshness": 89.8,
+        "insider": 41.3,
+        "manager_quality": 89.6
+      },
+      "filer_count": 6,
+      "filers": [
+        {
+          "alpha_score": 11.3,
+          "delta_pct": 0.9,
+          "delta_type": "ADDED",
+          "filer": "H&H International Investment (Li Lu)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.981,
+          "manager_quality_score": 0.97,
+          "port_weight_pct": 24.18,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 25.89
+        },
+        {
+          "alpha_score": 8.8,
+          "delta_pct": 23.46,
+          "delta_type": "ADDED",
+          "filer": "Himalaya Capital Management (Li Lu)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.965,
+          "manager_quality_score": 0.976,
+          "port_weight_pct": 14.977,
+          "position_tier": "TOP5",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.21
+        },
+        {
+          "alpha_score": 4.8,
+          "delta_pct": 0.38,
+          "delta_type": "ADDED",
+          "filer": "Muhlenkamp & Co",
+          "filing_date": "2026-08-18",
+          "filing_date_actual": "2026-08-18",
+          "freshness_score": 0.976,
+          "manager_quality_score": 0.867,
+          "port_weight_pct": 5.579,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.41
+        },
+        {
+          "alpha_score": 7.5,
+          "delta_pct": 7.95,
+          "delta_type": "ADDED",
+          "filer": "Semper Augustus Investments Group",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.985,
+          "manager_quality_score": 0.866,
+          "port_weight_pct": 15.451,
+          "position_tier": "TOP3",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 41.2
+        },
+        {
+          "alpha_score": 1.1,
+          "delta_pct": 2.21,
+          "delta_type": "ADDED",
+          "filer": "Sound Shore Management",
+          "filing_date": "2026-08-12",
+          "filing_date_actual": "2026-08-12",
+          "freshness_score": 0.849,
+          "manager_quality_score": 0.743,
+          "port_weight_pct": 3.142,
+          "position_tier": "TOP5",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.23
+        },
+        {
+          "alpha_score": 0.0,
+          "delta_pct": 40.26,
+          "delta_type": "ADDED",
+          "filer": "Two Sigma Investments (Quant)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.773,
+          "manager_quality_score": 0.228,
+          "port_weight_pct": 0.824,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 9.05
+        }
+      ],
+      "flags": [
+        "AGGRESSIVE_ADD",
+        "CLUSTER",
+        "EARLY_SMART_MONEY_ACCUMULATION",
+        "OUTSIZED_VS_MANAGER_TYPICAL",
+        "TOP3_POSITION",
+        "TOP5_POSITION"
+      ],
+      "grade": "VERY_STRONG",
+      "insider": {
+        "cik": "0001067983",
+        "error": null,
+        "foreign_issuer_skipped": {
+          "DVA": 1
+        },
+        "form4_count": 5,
+        "reasons": [
+          "$250,072 of open-market insider purchases since quarter-end",
+          "1 distinct insider bought including an officer",
+          "Largest buy lifted that insider's own stake by 56%"
+        ],
+        "score": 41.3,
+        "since": "2026-06-30",
+        "summary": {
+          "buy_count": 3,
+          "buy_value_usd": 250072.03,
+          "buyer_roles": [
+            "OFFICER"
+          ],
+          "buys": [
+            {
+              "accession": "0001193125-26-349574",
+              "date": "2026-08-12",
+              "filing_date": "2026-08-13",
+              "insider": "O'Sullivan Michael J.",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 510.64,
+              "role": "See Remarks",
+              "role_key": "OFFICER",
+              "security": "Class B Common Stock",
+              "shares": 45.0,
+              "shares_after": 708.0,
+              "stake_change_pct": 6.8,
+              "value_usd": 22978.8
+            },
+            {
+              "accession": "0001193125-26-349574",
+              "date": "2026-08-12",
+              "filing_date": "2026-08-13",
+              "insider": "O'Sullivan Michael J.",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 512.52,
+              "role": "See Remarks",
+              "role_key": "OFFICER",
+              "security": "Class B Common Stock",
+              "shares": 400.0,
+              "shares_after": 1108.0,
+              "stake_change_pct": 56.5,
+              "value_usd": 205008.0
+            },
+            {
+              "accession": "0001193125-26-349574",
+              "date": "2026-08-12",
+              "filing_date": "2026-08-13",
+              "insider": "O'Sullivan Michael J.",
+              "is_director": false,
+              "is_officer": true,
+              "planned": false,
+              "price": 513.61,
+              "role": "See Remarks",
+              "role_key": "OFFICER",
+              "security": "Class B Common Stock",
+              "shares": 43.0,
+              "shares_after": 1151.0,
+              "stake_change_pct": 3.9,
+              "value_usd": 22085.23
+            }
+          ],
+          "cluster_buyers": [],
+          "cluster_buying": false,
+          "discretionary_sell_value_usd": 0,
+          "distinct_buyers": [
+            "O'Sullivan Michael J."
+          ],
+          "max_stake_change_pct": 56.5,
+          "net_stance": "NET_BUYING",
+          "net_value_usd": 250072.03,
+          "officer_or_director_buyers": [
+            "O'Sullivan Michael J."
+          ],
+          "planned_sell_count": 0,
+          "planned_sell_value_usd": 0,
+          "sell_count": 0,
+          "sell_value_usd": 0,
+          "sells": [],
+          "significant_buy_count": 1,
+          "skipped_securities": {},
+          "top_role": "OFFICER"
+        },
+        "ticker": "BRK/B",
+        "until": "2026-09-06"
+      },
+      "insider_score": 41.3,
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 3,
+        "build_score": 0.75,
+        "flags": [
+          "MULTI_QUARTER_BUILD"
+        ],
+        "silent_build": false,
+        "total_quarters": 3,
+        "weight_slope": -0.472
+      },
+      "name": "BERKSHIRE HATHAWAY INC DEL",
+      "option_eligible": true,
+      "overall_rank": 5,
+      "post_filing_perf": {
+        "current_price": 506.03,
+        "days_since_filing": 68,
+        "filing_close": 500.39,
+        "pct_change": 1.1
+      },
+      "price_penalty": 0.0,
+      "rank": 5,
+      "reasons": {
+        "accumulation": [
+          "Built over 4 consecutive quarters"
+        ],
+        "activity": [
+          "Two Sigma Investments (Quant) added +40% to an existing position",
+          "6 tracked managers bought this quarter"
+        ],
+        "consensus": [
+          "6 independent buyers incl. H&H International Investment (Li Lu), Himalaya Capital Management (Li Lu), Muhlenkamp & Co \u2026"
+        ],
+        "conviction": [
+          "Largest buyer weight: 24.2% of H&H International Investment (Li Lu)'s portfolio (rank TOP3)",
+          "Position is \u22655\u00d7 the manager's own median position size"
+        ],
+        "crowding": [
+          "Crowding MODERATE \u2013 room for further institutional sponsorship"
+        ],
+        "freshness": [
+          "Filing is 19 days old; low-turnover buyers keep it informative"
+        ],
+        "insider": [
+          "$250,072 of open-market insider purchases since quarter-end",
+          "1 distinct insider bought including an officer",
+          "Largest buy lifted that insider's own stake by 56%"
+        ],
+        "manager_quality": [
+          "Highest-quality buyer: Himalaya Capital Management (Li Lu) (quality 0.98)",
+          "Average buyer quality 0.77 across 6 managers"
+        ]
+      },
+      "same_issuer_alternates": [
+        {
+          "signal_score": 72.7,
+          "ticker": "BRK/A"
+        }
+      ],
+      "score_13f": 89.7,
+      "signal_class": "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION",
+      "signal_label": "Early smart money + insider confirmation",
+      "signal_score": 87.5,
+      "ticker": "BRK/B",
+      "tradable_ticker_validated": true,
+      "why": {
+        "bullets": [
+          "Largest buyer weight: 24.2% of H&H International Investment (Li Lu)'s portfolio (rank TOP3)",
+          "Highest-quality buyer: Himalaya Capital Management (Li Lu) (quality 0.98)",
+          "6 independent buyers incl. H&H International Investment (Li Lu), Himalaya Capital Management (Li Lu), Muhlenkamp & Co \u2026",
+          "$250,072 of open-market insider purchases since quarter-end",
+          "Institutional accumulation and insider buying confirm each other (13F 90, insider 41) \u2192 +5 confluence"
+        ],
+        "summary": "BRK/B ranks on portfolio conviction, manager quality and smart-money consensus, confirmed by $250,072 of insider open-market buying since quarter-end.",
+        "top_drivers": [
+          {
+            "factor": "conviction",
+            "label": "Portfolio conviction",
+            "points": 15.0
+          },
+          {
+            "factor": "manager_quality",
+            "label": "Manager quality",
+            "points": 13.44
+          },
+          {
+            "factor": "consensus",
+            "label": "Smart-money consensus",
+            "points": 13.32
+          }
+        ]
+      },
+      "commentary": {
+        "ticker": "BRK/B",
+        "why_strongest": "The highest manager-quality cohort in the report: both Li Lu vehicles added at 24.2% and 15.0% reported weights, joined by Muhlenkamp, Semper Augustus, Sound Shore and Two Sigma. Adds are mostly incremental, but consensus and quality scores are the strongest features here.",
+        "insider_read": "Modestly confirming: $250,072 of open-market purchases across 3 trades by one insider, with no reported sales.",
+        "risks": [
+          "Several adds are near-zero percentage changes, so this is position maintenance more than fresh accumulation",
+          "Crowding is moderate and price is roughly flat since quarter-end, limiting entry advantage",
+          "Insider purchase size is immaterial next to the company's scale"
+        ],
+        "verdict": "ROUTINE"
+      },
+      "option": {
+        "ticker": "BRK/B",
+        "current_price": 506.03,
+        "change_pct": -0.42,
+        "expiries_checked": [
+          "2026-12-18",
+          "2027-01-15"
+        ],
+        "iv_metrics": {
+          "iv_rank": 40.2,
+          "hv_30d_pct": 14.7,
+          "iv_hv_ratio": 1.06,
+          "verdict": "MODERATE"
+        },
+        "status": "OK",
+        "contract": {
+          "symbol": "BRKB270115C00520000",
+          "strike": 520.0,
+          "expiration": "2027-01-15",
+          "dte": 131,
+          "bid": 15.35,
+          "ask": 16.25,
+          "mid": 15.8,
+          "spread_pct": 5.7,
+          "volume": 13,
+          "open_interest": 7580,
+          "delta": 0.461,
+          "implied_volatility": 0.151,
+          "moneyness_pct": 2.8,
+          "max_risk_per_contract": 1580.0,
+          "breakeven": 535.8,
+          "selection_cost": 0.2422
+        },
+        "eligible_count": 4,
+        "candidates_checked": 128,
+        "rejections": {
+          "delta": 115,
+          "open_interest": 78,
+          "spread": 48,
+          "volume": 116
+        },
+        "runner_up": [
+          {
+            "symbol": "BRKB270115C00530000",
+            "delta": 0.374,
+            "selection_cost": 0.5519
+          },
+          {
+            "symbol": "BRKB270115C00510000",
+            "delta": 0.552,
+            "selection_cost": 0.6646
+          },
+          {
+            "symbol": "BRKB270115C00500000",
+            "delta": 0.639,
+            "selection_cost": 1.0755
+          }
+        ],
+        "filters": {
+          "expiry_days": "90\u2013180 days to expiration",
+          "delta": "0.30\u20130.70 call delta (target 0.45)",
+          "spread": "bid-ask spread \u2264 8% of mid",
+          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+          "open_interest": "open interest \u2265 500",
+          "iv": "implied volatility \u2264 70%"
+        },
+        "rule_rationale": "Delta 0.46 sits closest to the 0.45 target, strike 2.8% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 5.7% with volume 13 and open interest 7,580 keeps entry and exit liquid."
+      }
+    },
+    {
+      "alpha_score_legacy": 26.2,
+      "confluence_bonus": 7.4,
+      "contributions": {
+        "accumulation": 10.0,
         "activity": 12.75,
-        "consensus": 7.53,
+        "consensus": 7.59,
         "conviction": 9.75,
         "crowding": 5.0,
-        "freshness": 9.05,
+        "freshness": 9.04,
         "insider": 12.49,
-        "manager_quality": 10.26
+        "manager_quality": 10.77
       },
       "crowding_label": "LOW",
       "factors": {
-        "accumulation": 15.0,
+        "accumulation": 100.0,
         "activity": 85.0,
-        "consensus": 50.2,
+        "consensus": 50.6,
         "conviction": 65.0,
         "crowding": 100.0,
-        "freshness": 90.5,
+        "freshness": 90.4,
         "insider": 83.3,
-        "manager_quality": 68.4
+        "manager_quality": 71.8
       },
       "filer_count": 2,
       "filers": [
         {
-          "alpha_score": 25.3,
+          "alpha_score": 26.2,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "DME Capital Management",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.897,
-          "manager_quality_score": 0.69,
+          "freshness_score": 0.908,
+          "manager_quality_score": 0.74,
           "port_weight_pct": 3.149,
           "position_tier": "TOP10",
           "report_date": "2026-06-30",
           "weight_vs_median": 2.03
         },
         {
-          "alpha_score": 25.2,
+          "alpha_score": 24.6,
           "delta_pct": 3.4,
           "delta_type": "ADDED",
           "filer": "Harris Associates (Oakmark)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.996,
-          "manager_quality_score": 0.66,
+          "freshness_score": 0.981,
+          "manager_quality_score": 0.63,
           "port_weight_pct": 0.555,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
@@ -2182,7 +2240,7 @@
         "SIZE_STRONG",
         "TOP10_ENTRY"
       ],
-      "grade": "STRONG",
+      "grade": "VERY_STRONG",
       "insider": {
         "cik": "0001519751",
         "error": null,
@@ -2299,7 +2357,18 @@
         "until": "2026-09-06"
       },
       "insider_score": 83.3,
-      "mq_signal": {},
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 3,
+        "build_score": 0.75,
+        "flags": [
+          "MULTI_QUARTER_BUILD"
+        ],
+        "silent_build": false,
+        "total_quarters": 3,
+        "weight_slope": -0.093
+      },
       "name": "FORTUNE BRANDS INNOVATIONS I",
       "option_eligible": true,
       "overall_rank": 6,
@@ -2313,7 +2382,7 @@
       "rank": 6,
       "reasons": {
         "accumulation": [
-          "First quarter of buying \u2013 no multi-quarter build yet"
+          "Built over 4 consecutive quarters"
         ],
         "activity": [
           "DME Capital Management opened a NEW position at 3.1% of its book",
@@ -2339,22 +2408,22 @@
           "Largest buy lifted that insider's own stake by 99%"
         ],
         "manager_quality": [
-          "Highest-quality buyer: DME Capital Management (quality 0.69)",
-          "Average buyer quality 0.68 across 2 managers"
+          "Highest-quality buyer: DME Capital Management (quality 0.74)",
+          "Average buyer quality 0.69 across 2 managers"
         ]
       },
-      "score_13f": 65.7,
+      "score_13f": 76.4,
       "signal_class": "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION",
       "signal_label": "Early smart money + insider confirmation",
-      "signal_score": 74.5,
+      "signal_score": 84.8,
       "ticker": "FBIN",
       "tradable_ticker_validated": true,
       "why": {
         "bullets": [
           "DME Capital Management opened a NEW position at 3.1% of its book",
           "$2,015,342 of open-market insider purchases since quarter-end",
-          "Highest-quality buyer: DME Capital Management (quality 0.69)",
-          "Institutional accumulation and insider buying confirm each other (13F 66, insider 83) \u2192 +6 confluence"
+          "Highest-quality buyer: DME Capital Management (quality 0.74)",
+          "Institutional accumulation and insider buying confirm each other (13F 76, insider 83) \u2192 +7 confluence"
         ],
         "summary": "FBIN ranks on new / add activity, insider buying (form 4) and manager quality, confirmed by $2,015,342 of insider open-market buying since quarter-end.",
         "top_drivers": [
@@ -2371,18 +2440,18 @@
           {
             "factor": "manager_quality",
             "label": "Manager quality",
-            "points": 10.26
+            "points": 10.77
           }
         ]
       },
       "commentary": {
         "ticker": "FBIN",
-        "why_strongest": "The insider factor is the highest in the top ten here, with $2,015,342 of open-market purchases following a 21% price decline since quarter-end. DME Capital opened a new position at 3.1% of its book and Harris Associates added modestly. Institutional participation is thin at two buyers, which caps the consensus reading.",
-        "insider_read": "Net buying: $2,015,342 of purchases across 3 trades by 1 insider, officer or director involved, against $30,678 of sales in 1 trade.",
+        "why_strongest": "The insider factor is the highest in the top ten and pairs with a new 3.1% DME Capital position and an incremental Harris Associates add after three prior build quarters. The 21% decline since quarter-end means the accumulation and the insider buying both sit above the current price.",
+        "insider_read": "Net buying: $2,015,342 of purchases across 3 trades by one insider, against $30,678 of sales in a single trade.",
         "risks": [
-          "Only two buyers, one of which added just 3%",
-          "Insider buying after a 21% decline can signal conviction or simply reflect valuation-based averaging",
-          "No suitable listed call option met the engine's liquidity and spread filters"
+          "Only two buyers and a low consensus factor; this is a narrow institutional signal",
+          "Insider conviction rests on one buyer, so it may be idiosyncratic",
+          "No option met the engine's liquidity and spread filters"
         ],
         "verdict": "STRONG"
       },
@@ -2421,68 +2490,68 @@
       }
     },
     {
-      "alpha_score_legacy": 25.0,
-      "confluence_bonus": 6.2,
+      "alpha_score_legacy": 26.5,
+      "confluence_bonus": 6.4,
       "contributions": {
-        "accumulation": 1.5,
+        "accumulation": 10.0,
         "activity": 13.5,
-        "consensus": 9.26,
+        "consensus": 9.87,
         "conviction": 10.5,
         "crowding": 5.0,
-        "freshness": 7.54,
+        "freshness": 8.02,
         "insider": 8.52,
-        "manager_quality": 8.91
+        "manager_quality": 10.21
       },
       "crowding_label": "LOW",
       "factors": {
-        "accumulation": 15.0,
+        "accumulation": 100.0,
         "activity": 90.0,
-        "consensus": 61.7,
+        "consensus": 65.8,
         "conviction": 70.0,
         "crowding": 100.0,
-        "freshness": 75.4,
+        "freshness": 80.2,
         "insider": 56.8,
-        "manager_quality": 59.4
+        "manager_quality": 68.1
       },
       "filer_count": 3,
       "filers": [
         {
-          "alpha_score": 19.8,
+          "alpha_score": 22.3,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "Lone Pine Capital (Mandel)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.662,
-          "manager_quality_score": 0.476,
+          "freshness_score": 0.736,
+          "manager_quality_score": 0.585,
           "port_weight_pct": 3.13,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
           "weight_vs_median": 0.98
         },
         {
-          "alpha_score": 20.3,
+          "alpha_score": 23.3,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "Third Point (Loeb)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.668,
-          "manager_quality_score": 0.525,
+          "freshness_score": 0.776,
+          "manager_quality_score": 0.643,
           "port_weight_pct": 2.031,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
           "weight_vs_median": 1.11
         },
         {
-          "alpha_score": 25.0,
+          "alpha_score": 26.5,
           "delta_pct": 20.37,
           "delta_type": "ADDED",
           "filer": "Whale Rock Capital Management",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.863,
-          "manager_quality_score": 0.628,
+          "freshness_score": 0.886,
+          "manager_quality_score": 0.706,
           "port_weight_pct": 6.352,
           "position_tier": "TOP5",
           "report_date": "2026-06-30",
@@ -2492,13 +2561,14 @@
       "flags": [
         "AGGRESSIVE_ADD",
         "CLUSTER",
+        "EARLY_SMART_MONEY_ACCUMULATION",
         "HIGH_CONVICTION",
         "NEW_POSITION",
         "SIZE_INTERESTING",
         "SIZE_STRONG",
         "TOP5_POSITION"
       ],
-      "grade": "STRONG",
+      "grade": "VERY_STRONG",
       "insider": {
         "cik": "0001116942",
         "error": null,
@@ -2603,7 +2673,18 @@
         "until": "2026-09-06"
       },
       "insider_score": 56.8,
-      "mq_signal": {},
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 3,
+        "build_score": 0.97,
+        "flags": [
+          "MULTI_QUARTER_BUILD"
+        ],
+        "silent_build": false,
+        "total_quarters": 3,
+        "weight_slope": 0.29
+      },
       "name": "TTM TECHNOLOGIES INC",
       "option_eligible": true,
       "overall_rank": 7,
@@ -2617,7 +2698,7 @@
       "rank": 7,
       "reasons": {
         "accumulation": [
-          "First quarter of buying \u2013 no multi-quarter build yet"
+          "Built over 4 consecutive quarters"
         ],
         "activity": [
           "Lone Pine Capital (Mandel) opened a NEW position at 3.1% of its book",
@@ -2643,25 +2724,25 @@
           "Largest buy lifted that insider's own stake by 18%"
         ],
         "manager_quality": [
-          "Highest-quality buyer: Whale Rock Capital Management (quality 0.63)",
-          "Average buyer quality 0.54 across 3 managers"
+          "Highest-quality buyer: Whale Rock Capital Management (quality 0.71)",
+          "Average buyer quality 0.64 across 3 managers"
         ]
       },
-      "score_13f": 66.1,
-      "signal_class": "ACCUMULATION_WITH_INSIDER_CONFIRMATION",
-      "signal_label": "Accumulation + insider confirmation",
-      "signal_score": 70.9,
+      "score_13f": 78.9,
+      "signal_class": "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION",
+      "signal_label": "Early smart money + insider confirmation",
+      "signal_score": 82.0,
       "ticker": "TTMI",
       "tradable_ticker_validated": true,
       "why": {
         "bullets": [
           "Lone Pine Capital (Mandel) opened a NEW position at 3.1% of its book",
           "Largest buyer weight: 6.4% of Whale Rock Capital Management's portfolio (rank TOP5)",
-          "3 independent buyers: Lone Pine Capital (Mandel), Third Point (Loeb), Whale Rock Capital Management",
+          "Highest-quality buyer: Whale Rock Capital Management (quality 0.71)",
           "Discretionary insider selling of $3,720,116 outweighs purchases",
-          "Institutional accumulation and insider buying confirm each other (13F 66, insider 57) \u2192 +6 confluence"
+          "Institutional accumulation and insider buying confirm each other (13F 79, insider 57) \u2192 +6 confluence"
         ],
-        "summary": "TTMI ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $1,642,200 of insider open-market buying since quarter-end.",
+        "summary": "TTMI ranks on new / add activity, portfolio conviction and manager quality, confirmed by $1,642,200 of insider open-market buying since quarter-end.",
         "top_drivers": [
           {
             "factor": "activity",
@@ -2674,20 +2755,20 @@
             "points": 10.5
           },
           {
-            "factor": "consensus",
-            "label": "Smart-money consensus",
-            "points": 9.26
+            "factor": "manager_quality",
+            "label": "Manager quality",
+            "points": 10.21
           }
         ]
       },
       "commentary": {
         "ticker": "TTMI",
-        "why_strongest": "Two new positions from Lone Pine and Third Point plus a 20% add from Whale Rock, which holds it at 6.4% of its book, give three independent buyers in a small-cap name where tracked crowding is low. The 33% drop since quarter-end is the largest in this list, so the filings describe a very different price environment.",
-        "insider_read": "Net selling: $1,642,200 of purchases across 2 trades by 2 insiders is outweighed by a single $3,720,116 sale.",
+        "why_strongest": "Three hedge funds increased reported long exposure, including new Lone Pine and Third Point positions and a Whale Rock weight of 6.4%, after three prior build quarters. The 33% drop since quarter-end is the largest in the report, so filers' marks are well above the current level.",
+        "insider_read": "Net selling: $1,642,200 of purchases across 2 trades by two insiders against a single $3,720,116 sale.",
         "risks": [
-          "A single insider sale exceeds combined purchases",
-          "The 33% decline since quarter-end may already reflect news the filings predate",
-          "Small-cap liquidity; no listed call option passed the engine's filters"
+          "The single large insider sale outweighs the purchases and weakens confirmation",
+          "A 33% decline suggests events the filings do not capture",
+          "Small-cap position sizes can shift materially within the 45-day lag"
         ],
         "verdict": "STRONG"
       },
@@ -2727,110 +2808,110 @@
       }
     },
     {
-      "alpha_score_legacy": 45.0,
+      "alpha_score_legacy": 44.4,
       "confluence_bonus": 0.0,
       "contributions": {
-        "accumulation": 1.5,
+        "accumulation": 10.0,
         "activity": 15.0,
-        "consensus": 12.48,
+        "consensus": 12.64,
         "conviction": 15.0,
         "crowding": 5.0,
-        "freshness": 8.22,
+        "freshness": 8.26,
         "insider": 0.0,
-        "manager_quality": 12.29
+        "manager_quality": 12.66
       },
       "crowding_label": "LOW",
       "factors": {
-        "accumulation": 15.0,
+        "accumulation": 100.0,
         "activity": 100.0,
-        "consensus": 83.2,
+        "consensus": 84.3,
         "conviction": 100.0,
         "crowding": 100.0,
-        "freshness": 82.2,
+        "freshness": 82.6,
         "insider": 0.0,
-        "manager_quality": 81.9
+        "manager_quality": 84.4
       },
       "filer_count": 6,
       "filers": [
         {
-          "alpha_score": 45.0,
+          "alpha_score": 44.4,
           "delta_pct": 630554.95,
           "delta_type": "ADDED",
           "filer": "Dodge & Cox",
           "filing_date": "2026-08-13",
           "filing_date_actual": "2026-08-13",
-          "freshness_score": 0.991,
-          "manager_quality_score": 0.585,
+          "freshness_score": 0.988,
+          "manager_quality_score": 0.552,
           "port_weight_pct": 0.973,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
           "weight_vs_median": 27.41
         },
         {
-          "alpha_score": 18.2,
+          "alpha_score": 18.3,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "Pershing Square Inc",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
           "freshness_score": 0.368,
-          "manager_quality_score": 0.463,
+          "manager_quality_score": 0.472,
           "port_weight_pct": 5.764,
           "position_tier": "TOP10",
           "report_date": "2026-06-30",
           "weight_vs_median": 0.77
         },
         {
-          "alpha_score": 27.6,
+          "alpha_score": 27.8,
           "delta_pct": 95.66,
           "delta_type": "ADDED",
           "filer": "SurgoCap Partners",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.882,
-          "manager_quality_score": 0.741,
+          "freshness_score": 0.856,
+          "manager_quality_score": 0.77,
           "port_weight_pct": 6.257,
           "position_tier": "TOP10",
           "report_date": "2026-06-30",
           "weight_vs_median": 0.75
         },
         {
-          "alpha_score": 34.8,
+          "alpha_score": 35.4,
           "delta_pct": 0.09,
           "delta_type": "ADDED",
           "filer": "TCI Fund Management (Hohn)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.972,
-          "manager_quality_score": 0.922,
+          "freshness_score": 0.989,
+          "manager_quality_score": 0.95,
           "port_weight_pct": 19.826,
           "position_tier": "TOP3",
           "report_date": "2026-06-30",
           "weight_vs_median": 2.98
         },
         {
-          "alpha_score": 25.4,
+          "alpha_score": 26.9,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "Tiger Global (Coleman)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.929,
-          "manager_quality_score": 0.651,
+          "freshness_score": 0.959,
+          "manager_quality_score": 0.736,
           "port_weight_pct": 1.143,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
           "weight_vs_median": 1.03
         },
         {
-          "alpha_score": 25.2,
+          "alpha_score": 25.6,
           "delta_pct": 1.03,
           "delta_type": "ADDED",
           "filer": "Viking Global (Halvorsen)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.824,
-          "manager_quality_score": 0.62,
+          "freshness_score": 0.838,
+          "manager_quality_score": 0.634,
           "port_weight_pct": 6.253,
           "position_tier": "TOP3",
           "report_date": "2026-06-30",
@@ -2849,7 +2930,7 @@
         "TOP10_ENTRY",
         "TOP3_POSITION"
       ],
-      "grade": "STRONG",
+      "grade": "VERY_STRONG",
       "insider": {
         "cik": "0001403161",
         "error": null,
@@ -3042,7 +3123,18 @@
         "until": "2026-09-06"
       },
       "insider_score": 0.0,
-      "mq_signal": {},
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 3,
+        "build_score": 0.8,
+        "flags": [
+          "MULTI_QUARTER_BUILD"
+        ],
+        "silent_build": false,
+        "total_quarters": 3,
+        "weight_slope": 0.069
+      },
       "name": "VISA INC",
       "option_eligible": true,
       "overall_rank": 8,
@@ -3056,7 +3148,7 @@
       "rank": 8,
       "reasons": {
         "accumulation": [
-          "First quarter of buying \u2013 no multi-quarter build yet"
+          "Built over 4 consecutive quarters"
         ],
         "activity": [
           "Pershing Square Inc opened a NEW position at 5.8% of its book",
@@ -3082,23 +3174,23 @@
           "Only insider sales on record since quarter-end (no purchases)"
         ],
         "manager_quality": [
-          "Highest-quality buyer: TCI Fund Management (Hohn) (quality 0.92)",
-          "Average buyer quality 0.66 across 6 managers"
+          "Highest-quality buyer: TCI Fund Management (Hohn) (quality 0.95)",
+          "Average buyer quality 0.69 across 6 managers"
         ]
       },
-      "score_13f": 81.8,
+      "score_13f": 92.4,
       "signal_class": "EARLY_SMART_MONEY_ACCUMULATION",
       "signal_label": "Early smart money accumulation",
-      "signal_score": 69.5,
+      "signal_score": 78.6,
       "ticker": "V",
       "tradable_ticker_validated": true,
       "why": {
         "bullets": [
           "Pershing Square Inc opened a NEW position at 5.8% of its book",
           "Largest buyer weight: 19.8% of TCI Fund Management (Hohn)'s portfolio (rank TOP3)",
-          "6 independent buyers incl. Dodge & Cox, Pershing Square Inc, SurgoCap Partners \u2026"
+          "Highest-quality buyer: TCI Fund Management (Hohn) (quality 0.95)"
         ],
-        "summary": "V ranks on new / add activity, portfolio conviction and smart-money consensus, without confirming insider purchases so far.",
+        "summary": "V ranks on new / add activity, portfolio conviction and manager quality, without confirming insider purchases so far.",
         "top_drivers": [
           {
             "factor": "activity",
@@ -3111,22 +3203,22 @@
             "points": 15.0
           },
           {
-            "factor": "consensus",
-            "label": "Smart-money consensus",
-            "points": 12.48
+            "factor": "manager_quality",
+            "label": "Manager quality",
+            "points": 12.66
           }
         ]
       },
       "commentary": {
         "ticker": "V",
-        "why_strongest": "Six filers increased reported long positions, including a new 5.8% book position at Pershing Square and a 19.8% weight at TCI, a top-three portfolio weight among tracked managers. Manager quality and consensus are both high. The insider factor scores zero, so the entire signal rests on the 13F side.",
-        "insider_read": "No insider confirmation exists yet: zero open-market purchases, against $37,056,411 of sales across 9 trades.",
+        "why_strongest": "Six filers increased reported long positions, including a new Pershing Square holding at 5.8% of its book and TCI at a 19.8% weight, the report's highest-quality large holder. Breadth and manager quality carry the score rather than any insider element.",
+        "insider_read": "No insider confirmation exists yet: zero open-market purchases and $37,056,411 of sales across 9 trades.",
         "risks": [
-          "No insider purchases at all, and substantial recorded selling",
-          "The Dodge & Cox percentage change reflects a near-zero starting base and overstates the add",
-          "Price is up 10% since quarter-end"
+          "Insider factor scores zero and sales are substantial, contradicting the 13F read",
+          "Dodge & Cox's reported percentage change starts from a negligible base",
+          "Price is up 10% since quarter-end, so the entry point has moved away from filers'"
         ],
-        "verdict": "STRONG"
+        "verdict": "ROUTINE"
       },
       "option": {
         "ticker": "V",
@@ -3193,54 +3285,54 @@
       }
     },
     {
-      "alpha_score_legacy": 39.1,
+      "alpha_score_legacy": 39.7,
       "confluence_bonus": 0.0,
       "contributions": {
-        "accumulation": 1.5,
+        "accumulation": 10.0,
         "activity": 15.0,
         "consensus": 8.88,
         "conviction": 15.0,
         "crowding": 5.0,
-        "freshness": 9.2,
+        "freshness": 9.24,
         "insider": 0.0,
-        "manager_quality": 14.7
+        "manager_quality": 14.62
       },
       "crowding_label": "LOW",
       "factors": {
-        "accumulation": 15.0,
+        "accumulation": 100.0,
         "activity": 100.0,
         "consensus": 59.2,
         "conviction": 100.0,
         "crowding": 100.0,
-        "freshness": 92.0,
+        "freshness": 92.4,
         "insider": 0.0,
-        "manager_quality": 98.0
+        "manager_quality": 97.5
       },
       "filer_count": 2,
       "filers": [
         {
-          "alpha_score": 36.8,
+          "alpha_score": 36.6,
           "delta_pct": 26.71,
           "delta_type": "ADDED",
           "filer": "H&H International Investment (Li Lu)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.998,
-          "manager_quality_score": 0.984,
+          "freshness_score": 0.981,
+          "manager_quality_score": 0.97,
           "port_weight_pct": 9.993,
           "position_tier": "TOP3",
           "report_date": "2026-06-30",
           "weight_vs_median": 10.7
         },
         {
-          "alpha_score": 39.1,
+          "alpha_score": 39.7,
           "delta_pct": 133.53,
           "delta_type": "ADDED",
           "filer": "Himalaya Capital Management (Li Lu)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.939,
-          "manager_quality_score": 0.963,
+          "freshness_score": 0.965,
+          "manager_quality_score": 0.976,
           "port_weight_pct": 22.168,
           "position_tier": "TOP3",
           "report_date": "2026-06-30",
@@ -3254,7 +3346,7 @@
         "OUTSIZED_VS_MANAGER_TYPICAL",
         "TOP3_POSITION"
       ],
-      "grade": "STRONG",
+      "grade": "VERY_STRONG",
       "insider": {
         "cik": "0001737806",
         "error": null,
@@ -3310,7 +3402,18 @@
         "until": "2026-09-06"
       },
       "insider_score": 0.0,
-      "mq_signal": {},
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 3,
+        "build_score": 0.75,
+        "flags": [
+          "MULTI_QUARTER_BUILD"
+        ],
+        "silent_build": false,
+        "total_quarters": 3,
+        "weight_slope": -1.602
+      },
       "name": "PDD HOLDINGS INC",
       "option_eligible": true,
       "overall_rank": 9,
@@ -3324,7 +3427,7 @@
       "rank": 9,
       "reasons": {
         "accumulation": [
-          "First quarter of buying \u2013 no multi-quarter build yet"
+          "Built over 4 consecutive quarters"
         ],
         "activity": [
           "Himalaya Capital Management (Li Lu) added +134% to an existing position",
@@ -3348,21 +3451,21 @@
           "Only insider sales on record since quarter-end (no purchases)"
         ],
         "manager_quality": [
-          "Highest-quality buyer: H&H International Investment (Li Lu) (quality 0.98)",
+          "Highest-quality buyer: Himalaya Capital Management (Li Lu) (quality 0.98)",
           "Average buyer quality 0.97 across 2 managers"
         ]
       },
-      "score_13f": 81.5,
+      "score_13f": 91.5,
       "signal_class": "EARLY_SMART_MONEY_ACCUMULATION",
       "signal_label": "Early smart money accumulation",
-      "signal_score": 69.3,
+      "signal_score": 77.7,
       "ticker": "PDD",
       "tradable_ticker_validated": true,
       "why": {
         "bullets": [
           "Himalaya Capital Management (Li Lu) added +134% to an existing position",
           "Largest buyer weight: 22.2% of Himalaya Capital Management (Li Lu)'s portfolio (rank TOP3)",
-          "Highest-quality buyer: H&H International Investment (Li Lu) (quality 0.98)"
+          "Highest-quality buyer: Himalaya Capital Management (Li Lu) (quality 0.98)"
         ],
         "summary": "PDD ranks on new / add activity, portfolio conviction and manager quality, without confirming insider purchases so far.",
         "top_drivers": [
@@ -3379,18 +3482,18 @@
           {
             "factor": "manager_quality",
             "label": "Manager quality",
-            "points": 14.7
+            "points": 14.62
           }
         ]
       },
       "commentary": {
         "ticker": "PDD",
-        "why_strongest": "The highest manager-quality score in the top ten, driven by two related Li Lu vehicles at 0.98 and 0.96 quality, one of which added 134% to reach 22.2% of its book. That is a top-three portfolio weight. Breadth is the limitation: the two buyers are not fully independent views.",
-        "insider_read": "No insider confirmation exists yet: zero open-market purchases, with $140,151 of sales in 1 trade.",
+        "why_strongest": "The narrowest but highest-quality cohort in the report: both Li Lu vehicles added, with Himalaya up 134% to a 22.2% reported weight, a top-three conviction position, after three prior build quarters. Crowding is low and the filings are relatively fresh.",
+        "insider_read": "No insider confirmation exists yet: zero open-market purchases and $140,151 of sales in one trade.",
         "risks": [
-          "The two buyers share a manager, so consensus is effectively one view",
-          "No insider purchases; a small sale is on record",
-          "ADR structure and China exposure add risks the 13F data does not capture"
+          "Only two buyers, and they are related vehicles, so consensus is effectively one decision-maker",
+          "No insider purchases; the sole Form 4 activity was a sale",
+          "China-domiciled issuer with limited insider disclosure and policy risk"
         ],
         "verdict": "STRONG"
       },
@@ -3451,25 +3554,25 @@
       "alpha_score_legacy": 0.0,
       "confluence_bonus": 0.0,
       "contributions": {
-        "accumulation": 1.5,
+        "accumulation": 10.0,
         "activity": 15.0,
-        "consensus": 12.75,
+        "consensus": 12.87,
         "conviction": 14.93,
         "crowding": 2.95,
-        "freshness": 9.02,
+        "freshness": 9.03,
         "insider": 0.0,
-        "manager_quality": 12.88
+        "manager_quality": 12.86
       },
       "crowding_label": "MODERATE",
       "factors": {
-        "accumulation": 15.0,
+        "accumulation": 100.0,
         "activity": 100.0,
-        "consensus": 85.0,
+        "consensus": 85.8,
         "conviction": 99.5,
         "crowding": 59.0,
-        "freshness": 90.2,
+        "freshness": 90.3,
         "insider": 0.0,
-        "manager_quality": 85.9
+        "manager_quality": 85.7
       },
       "filer_count": 8,
       "filers": [
@@ -3480,8 +3583,8 @@
           "filer": "AQR Capital (Asness)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.911,
-          "manager_quality_score": 0.416,
+          "freshness_score": 0.923,
+          "manager_quality_score": 0.427,
           "port_weight_pct": 0.741,
           "position_tier": "TOP10",
           "report_date": "2026-06-30",
@@ -3494,8 +3597,8 @@
           "filer": "Appaloosa (Tepper)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.896,
-          "manager_quality_score": 0.668,
+          "freshness_score": 0.932,
+          "manager_quality_score": 0.762,
           "port_weight_pct": 8.749,
           "position_tier": "TOP5",
           "report_date": "2026-06-30",
@@ -3508,8 +3611,8 @@
           "filer": "Baupost Group (Klarman)",
           "filing_date": "2026-08-13",
           "filing_date_actual": "2026-08-13",
-          "freshness_score": 0.953,
-          "manager_quality_score": 0.948,
+          "freshness_score": 0.91,
+          "manager_quality_score": 0.909,
           "port_weight_pct": 8.95,
           "position_tier": "TOP5",
           "report_date": "2026-06-30",
@@ -3522,8 +3625,8 @@
           "filer": "Berkshire Hathaway (Buffett)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 1.0,
-          "manager_quality_score": 0.965,
+          "freshness_score": 0.988,
+          "manager_quality_score": 0.952,
           "port_weight_pct": 3.21,
           "position_tier": "TOP10",
           "report_date": "2026-06-30",
@@ -3536,8 +3639,8 @@
           "filer": "Harris Associates (Oakmark)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.996,
-          "manager_quality_score": 0.66,
+          "freshness_score": 0.981,
+          "manager_quality_score": 0.63,
           "port_weight_pct": 0.908,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
@@ -3550,8 +3653,8 @@
           "filer": "Lountzis Asset Management",
           "filing_date": "2026-07-31",
           "filing_date_actual": "2026-07-31",
-          "freshness_score": 0.996,
-          "manager_quality_score": 0.794,
+          "freshness_score": 0.985,
+          "manager_quality_score": 0.81,
           "port_weight_pct": 0.611,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
@@ -3564,8 +3667,8 @@
           "filer": "Renaissance Technologies (Quant)",
           "filing_date": "2026-08-13",
           "filing_date_actual": "2026-08-13",
-          "freshness_score": 0.817,
-          "manager_quality_score": 0.229,
+          "freshness_score": 0.839,
+          "manager_quality_score": 0.28,
           "port_weight_pct": 0.767,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
@@ -3578,8 +3681,8 @@
           "filer": "TCI Fund Management (Hohn)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.972,
-          "manager_quality_score": 0.922,
+          "freshness_score": 0.989,
+          "manager_quality_score": 0.95,
           "port_weight_pct": 6.655,
           "position_tier": "TOP10",
           "report_date": "2026-06-30",
@@ -3592,7 +3695,7 @@
         "OUTSIZED_VS_MANAGER_TYPICAL",
         "TOP5_POSITION"
       ],
-      "grade": "STRONG",
+      "grade": "VERY_STRONG",
       "insider": {
         "cik": "0001652044",
         "error": null,
@@ -3686,7 +3789,18 @@
         "until": "2026-09-06"
       },
       "insider_score": 0.0,
-      "mq_signal": {},
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 3,
+        "build_score": 0.75,
+        "flags": [
+          "MULTI_QUARTER_BUILD"
+        ],
+        "silent_build": false,
+        "total_quarters": 3,
+        "weight_slope": -0.036
+      },
       "name": "ALPHABET INC",
       "option_eligible": true,
       "overall_rank": 10,
@@ -3700,7 +3814,7 @@
       "rank": 10,
       "reasons": {
         "accumulation": [
-          "First quarter of buying \u2013 no multi-quarter build yet"
+          "Built over 4 consecutive quarters"
         ],
         "activity": [
           "Renaissance Technologies (Quant) added +684% to an existing position",
@@ -3724,29 +3838,29 @@
           "Only insider sales on record since quarter-end (no purchases)"
         ],
         "manager_quality": [
-          "Highest-quality buyer: Berkshire Hathaway (Buffett) (quality 0.96)",
-          "Average buyer quality 0.70 across 8 managers"
+          "Highest-quality buyer: Berkshire Hathaway (Buffett) (quality 0.95)",
+          "Average buyer quality 0.72 across 8 managers"
         ]
       },
       "same_issuer_alternates": [
         {
-          "signal_score": 65.2,
+          "signal_score": 74.3,
           "ticker": "GOOGL"
         }
       ],
-      "score_13f": 81.2,
-      "signal_class": "SMART_MONEY_CONSENSUS",
-      "signal_label": "Smart-money consensus",
-      "signal_score": 69.0,
+      "score_13f": 91.3,
+      "signal_class": "MULTI_QUARTER_ACCUMULATION",
+      "signal_label": "Multi-quarter accumulation",
+      "signal_score": 77.6,
       "ticker": "GOOG",
       "tradable_ticker_validated": true,
       "why": {
         "bullets": [
           "Renaissance Technologies (Quant) added +684% to an existing position",
           "Largest buyer weight: 8.9% of Baupost Group (Klarman)'s portfolio (rank TOP5)",
-          "Highest-quality buyer: Berkshire Hathaway (Buffett) (quality 0.96)"
+          "8 independent buyers incl. AQR Capital (Asness), Appaloosa (Tepper), Baupost Group (Klarman) \u2026"
         ],
-        "summary": "GOOG ranks on new / add activity, portfolio conviction and manager quality, without confirming insider purchases so far.",
+        "summary": "GOOG ranks on new / add activity, portfolio conviction and smart-money consensus, without confirming insider purchases so far.",
         "top_drivers": [
           {
             "factor": "activity",
@@ -3759,22 +3873,22 @@
             "points": 14.93
           },
           {
-            "factor": "manager_quality",
-            "label": "Manager quality",
-            "points": 12.88
+            "factor": "consensus",
+            "label": "Smart-money consensus",
+            "points": 12.87
           }
         ]
       },
       "commentary": {
         "ticker": "GOOG",
-        "why_strongest": "Eight filers increased reported long positions, the broadest participation in this list, and the buyer roster includes Baupost at 8.9% of its book and Berkshire adding 658%. Manager quality and consensus are both high. Crowding is moderate, which dilutes the differentiation value relative to the lower-ranked but less-owned names.",
-        "insider_read": "No insider confirmation exists yet: zero open-market purchases, with $204,637 of sales across 3 trades.",
+        "why_strongest": "Eight independent filers increased reported long positions, the broadest consensus in the report, including Baupost at 8.9% and a +658% Berkshire add alongside TCI and Appaloosa. Manager quality is high, though most weights are modest and crowding is moderate.",
+        "insider_read": "No insider confirmation exists yet: zero open-market purchases and $204,637 of sales across 3 trades.",
         "risks": [
-          "No insider purchases to corroborate the institutional activity",
-          "Moderate crowding means much of this positioning is widely held already",
-          "Large percentage adds at Renaissance and Berkshire start from small bases and overstate the shift in book weight"
+          "Mega-cap breadth partly reflects index-like exposure rather than differentiated conviction",
+          "Zero insider purchases; the only Form 4 activity was sales",
+          "Moderate crowding reduces the informational edge of the signal"
         ],
-        "verdict": "STRONG"
+        "verdict": "ROUTINE"
       },
       "option": {
         "ticker": "GOOG",
@@ -3847,10 +3961,10 @@
       }
     }
   ],
-  "market_context": "This quarter's tracked filings cluster in semiconductors, power and mega-cap compounders, with most names showing fresh single-quarter builds rather than multi-quarter accumulation. Insider confirmation is uneven: several leaders pair institutional buying with open-market purchases, while the largest-cap names show only sales.",
+  "market_context": "This quarter's filings cluster around semiconductors, power generation and mega-cap compounders, with most top names showing three prior build quarters and low crowding among the 52 tracked filers. Insider confirmation is uneven: several names pair accumulation with open-market purchases, while Visa, PDD and Alphabet show reported sales and no purchases.",
   "commentary_source": "claude-opus-5",
   "llm": {
-    "spent_usd": 0.161,
+    "spent_usd": 0.1549,
     "budget_usd": 1.5,
     "api_calls": 3,
     "cache_hits": 0,
@@ -3860,19 +3974,19 @@
         "tier": "haiku",
         "ok": false,
         "why": "CVNA: insider_read dollar figure $1,500,000 matches no Form 4 total",
-        "cost_usd": 0.01967,
-        "input_tokens": 6152,
-        "output_tokens": 2704,
+        "cost_usd": 0.01894,
+        "input_tokens": 6221,
+        "output_tokens": 2543,
         "cache_read": 0,
         "cache_write": 0
       },
       {
         "tier": "sonnet",
         "ok": false,
-        "why": "CVNA: verdict",
-        "cost_usd": 0.03667,
-        "input_tokens": 6487,
-        "output_tokens": 2370,
+        "why": "FBIN: insider_read claims no insider sales but $30,678 was sold",
+        "cost_usd": 0.03659,
+        "input_tokens": 6577,
+        "output_tokens": 2344,
         "cache_read": 0,
         "cache_write": 1319
       },
@@ -3880,9 +3994,9 @@
         "tier": "opus",
         "ok": true,
         "why": "ok",
-        "cost_usd": 0.10466,
-        "input_tokens": 6487,
-        "output_tokens": 2889,
+        "cost_usd": 0.09936,
+        "input_tokens": 6577,
+        "output_tokens": 2659,
         "cache_read": 0,
         "cache_write": 1251
       }
@@ -3908,23 +4022,23 @@
   },
   "market": {
     "state": "closed",
-    "as_of": "2026-09-06T07:36:20+00:00",
+    "as_of": "2026-09-06T08:15:09+00:00",
     "description": "Market is closed",
     "trading_day": "2026-09-06"
   },
-  "input_fingerprint": "0258bee0032f96b848da8b4347b5b0c1715d5d06179497a2cca4463ce7bda4ae",
-  "ranking_fingerprint": "51b4bb5bfbef598f08ca1bf44eb1c0248dad04c29ff2a71b65c480bb3c93acbb",
+  "input_fingerprint": "d3a678100bb849f7b9f8e07452859308f7a058eff4bce44bed7471e817218eb5",
+  "ranking_fingerprint": "97c0a5cc5c3418f2d59a82ed685078dadf4786df5f0813c2aca3572b908428fc",
   "sell_signals": [
     {
       "filer": "Duke University (DUMAC)",
       "ticker": "ZTO",
       "name": "ZTO EXPRESS CAYMAN INC",
       "type": "EXIT",
-      "manager_quality_score": 0.91,
+      "manager_quality_score": 0.936,
       "prior_rank": 4,
       "prior_port_weight": 0.297,
       "was_top5_position": true,
-      "severity_score": 1.82,
+      "severity_score": 1.872,
       "parallel_selling": false,
       "parallel_sellers": []
     },
@@ -3933,11 +4047,11 @@
       "ticker": "OBDC",
       "name": "Blue Owl Capital Corporation",
       "type": "EXIT",
-      "manager_quality_score": 0.875,
+      "manager_quality_score": 0.921,
       "prior_rank": 3,
       "prior_port_weight": 16.559,
       "was_top5_position": true,
-      "severity_score": 1.75,
+      "severity_score": 1.842,
       "parallel_selling": false,
       "parallel_sellers": []
     },
@@ -3946,11 +4060,11 @@
       "ticker": "ECHO",
       "name": "ECHOSTAR CORP",
       "type": "EXIT",
-      "manager_quality_score": 0.795,
+      "manager_quality_score": 0.868,
       "prior_rank": 3,
       "prior_port_weight": 13.917,
       "was_top5_position": true,
-      "severity_score": 1.59,
+      "severity_score": 1.736,
       "parallel_selling": true,
       "parallel_sellers": [
         "Duquesne Family Office (Druckenmiller)",
@@ -3962,11 +4076,11 @@
       "ticker": "MELI",
       "name": "MERCADOLIBRE INC",
       "type": "EXIT",
-      "manager_quality_score": 0.795,
+      "manager_quality_score": 0.868,
       "prior_rank": 4,
       "prior_port_weight": 12.04,
       "was_top5_position": true,
-      "severity_score": 1.59,
+      "severity_score": 1.736,
       "parallel_selling": true,
       "parallel_sellers": [
         "D1 Capital (Sundheim)",
@@ -3978,37 +4092,11 @@
       "ticker": "489398107",
       "name": "KENNEDY-WILSON HOLDINGS INC",
       "type": "EXIT",
-      "manager_quality_score": 0.794,
+      "manager_quality_score": 0.854,
       "prior_rank": 4,
       "prior_port_weight": 7.427,
       "was_top5_position": true,
-      "severity_score": 1.588,
-      "parallel_selling": false,
-      "parallel_sellers": []
-    },
-    {
-      "filer": "Sound Shore Management",
-      "ticker": "MRVL",
-      "name": "Marvell Technology, Inc.",
-      "type": "EXIT",
-      "manager_quality_score": 0.717,
-      "prior_rank": 3,
-      "prior_port_weight": 3.813,
-      "was_top5_position": true,
-      "severity_score": 1.434,
-      "parallel_selling": false,
-      "parallel_sellers": []
-    },
-    {
-      "filer": "SoftBank Group Corp",
-      "ticker": "XXI",
-      "name": "TWENTY ONE CAP INC",
-      "type": "EXIT",
-      "manager_quality_score": 0.647,
-      "prior_rank": 5,
-      "prior_port_weight": 4.998,
-      "was_top5_position": true,
-      "severity_score": 1.294,
+      "severity_score": 1.708,
       "parallel_selling": false,
       "parallel_sellers": []
     },
@@ -4017,49 +4105,72 @@
       "ticker": "UNP",
       "name": "UNION PAC CORP",
       "type": "EXIT",
-      "manager_quality_score": 0.633,
+      "manager_quality_score": 0.778,
       "prior_rank": 5,
       "prior_port_weight": 8.477,
       "was_top5_position": true,
-      "severity_score": 1.266,
+      "severity_score": 1.556,
       "parallel_selling": true,
       "parallel_sellers": [
         "Baupost Group (Klarman)"
       ]
     },
     {
-      "filer": "H&H International Investment (Li Lu)",
-      "ticker": "TSM",
-      "name": "TAIWAN SEMICONDUCTOR MANUFAC",
+      "filer": "Sound Shore Management",
+      "ticker": "MRVL",
+      "name": "Marvell Technology, Inc.",
       "type": "EXIT",
-      "manager_quality_score": 0.984,
-      "prior_rank": 12,
-      "prior_port_weight": 0.255,
-      "was_top5_position": false,
-      "severity_score": 0.984,
+      "manager_quality_score": 0.743,
+      "prior_rank": 3,
+      "prior_port_weight": 3.813,
+      "was_top5_position": true,
+      "severity_score": 1.486,
+      "parallel_selling": false,
+      "parallel_sellers": []
+    },
+    {
+      "filer": "SoftBank Group Corp",
+      "ticker": "XXI",
+      "name": "TWENTY ONE CAP INC",
+      "type": "EXIT",
+      "manager_quality_score": 0.721,
+      "prior_rank": 5,
+      "prior_port_weight": 4.998,
+      "was_top5_position": true,
+      "severity_score": 1.442,
+      "parallel_selling": false,
+      "parallel_sellers": []
+    },
+    {
+      "filer": "Lone Pine Capital (Mandel)",
+      "ticker": "VST",
+      "name": "VISTRA CORP",
+      "type": "EXIT",
+      "manager_quality_score": 0.585,
+      "prior_rank": 1,
+      "prior_port_weight": 7.415,
+      "was_top5_position": true,
+      "severity_score": 1.17,
       "parallel_selling": true,
       "parallel_sellers": [
-        "D1 Capital (Sundheim)",
-        "Viking Global (Halvorsen)",
-        "SoftBank Group Corp",
-        "Whale Rock Capital Management",
-        "7G Capital Management",
-        "Lone Pine Capital (Mandel)"
+        "Soros Fund Management (Soros)",
+        "Renaissance Technologies (Quant)",
+        "Atreides Management"
       ]
     },
     {
-      "filer": "H&H International Investment (Li Lu)",
-      "ticker": "CRWD",
-      "name": "CROWDSTRIKE HLDGS INC",
+      "filer": "Himalaya Capital Management (Li Lu)",
+      "ticker": "BAC",
+      "name": "BK OF AMERICA CORP",
       "type": "EXIT",
-      "manager_quality_score": 0.984,
-      "prior_rank": 16,
-      "prior_port_weight": 0.02,
+      "manager_quality_score": 0.976,
+      "prior_rank": 6,
+      "prior_port_weight": 4.565,
       "was_top5_position": false,
-      "severity_score": 0.984,
+      "severity_score": 0.976,
       "parallel_selling": true,
       "parallel_sellers": [
-        "AQR Capital (Asness)"
+        "Two Sigma Investments (Quant)"
       ]
     }
   ],

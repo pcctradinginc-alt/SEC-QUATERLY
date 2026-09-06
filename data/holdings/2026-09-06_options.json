@@ -4,8 +4,8 @@
     "INTC",
     "CVNA",
     "VST",
-    "BRK/B",
     "TSM",
+    "BRK/B",
     "FBIN",
     "TTMI",
     "V",
@@ -211,74 +211,6 @@
       },
       "rule_rationale": "Delta 0.56 sits closest to the 0.45 target, strike 0.5% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 3.4% with volume 137 and open interest 3,608 keeps entry and exit liquid."
     },
-    "BRK/B": {
-      "ticker": "BRK/B",
-      "current_price": 506.03,
-      "change_pct": -0.42,
-      "expiries_checked": [
-        "2026-12-18",
-        "2027-01-15"
-      ],
-      "iv_metrics": {
-        "iv_rank": 40.2,
-        "hv_30d_pct": 14.7,
-        "iv_hv_ratio": 1.06,
-        "verdict": "MODERATE"
-      },
-      "status": "OK",
-      "contract": {
-        "symbol": "BRKB270115C00520000",
-        "strike": 520.0,
-        "expiration": "2027-01-15",
-        "dte": 131,
-        "bid": 15.35,
-        "ask": 16.25,
-        "mid": 15.8,
-        "spread_pct": 5.7,
-        "volume": 13,
-        "open_interest": 7580,
-        "delta": 0.461,
-        "implied_volatility": 0.151,
-        "moneyness_pct": 2.8,
-        "max_risk_per_contract": 1580.0,
-        "breakeven": 535.8,
-        "selection_cost": 0.2422
-      },
-      "eligible_count": 4,
-      "candidates_checked": 128,
-      "rejections": {
-        "delta": 115,
-        "open_interest": 78,
-        "spread": 48,
-        "volume": 116
-      },
-      "runner_up": [
-        {
-          "symbol": "BRKB270115C00530000",
-          "delta": 0.374,
-          "selection_cost": 0.5519
-        },
-        {
-          "symbol": "BRKB270115C00510000",
-          "delta": 0.552,
-          "selection_cost": 0.6646
-        },
-        {
-          "symbol": "BRKB270115C00500000",
-          "delta": 0.639,
-          "selection_cost": 1.0755
-        }
-      ],
-      "filters": {
-        "expiry_days": "90\u2013180 days to expiration",
-        "delta": "0.30\u20130.70 call delta (target 0.45)",
-        "spread": "bid-ask spread \u2264 8% of mid",
-        "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
-        "open_interest": "open interest \u2265 500",
-        "iv": "implied volatility \u2264 70%"
-      },
-      "rule_rationale": "Delta 0.46 sits closest to the 0.45 target, strike 2.8% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 5.7% with volume 13 and open interest 7,580 keeps entry and exit liquid."
-    },
     "TSM": {
       "ticker": "TSM",
       "current_price": 428.91,
@@ -347,6 +279,74 @@
         "iv": "implied volatility \u2264 70%"
       },
       "rule_rationale": "Delta 0.43 sits closest to the 0.45 target, strike 7.2% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 3.3% with volume 24 and open interest 3,756 keeps entry and exit liquid."
+    },
+    "BRK/B": {
+      "ticker": "BRK/B",
+      "current_price": 506.03,
+      "change_pct": -0.42,
+      "expiries_checked": [
+        "2026-12-18",
+        "2027-01-15"
+      ],
+      "iv_metrics": {
+        "iv_rank": 40.2,
+        "hv_30d_pct": 14.7,
+        "iv_hv_ratio": 1.06,
+        "verdict": "MODERATE"
+      },
+      "status": "OK",
+      "contract": {
+        "symbol": "BRKB270115C00520000",
+        "strike": 520.0,
+        "expiration": "2027-01-15",
+        "dte": 131,
+        "bid": 15.35,
+        "ask": 16.25,
+        "mid": 15.8,
+        "spread_pct": 5.7,
+        "volume": 13,
+        "open_interest": 7580,
+        "delta": 0.461,
+        "implied_volatility": 0.151,
+        "moneyness_pct": 2.8,
+        "max_risk_per_contract": 1580.0,
+        "breakeven": 535.8,
+        "selection_cost": 0.2422
+      },
+      "eligible_count": 4,
+      "candidates_checked": 128,
+      "rejections": {
+        "delta": 115,
+        "open_interest": 78,
+        "spread": 48,
+        "volume": 116
+      },
+      "runner_up": [
+        {
+          "symbol": "BRKB270115C00530000",
+          "delta": 0.374,
+          "selection_cost": 0.5519
+        },
+        {
+          "symbol": "BRKB270115C00510000",
+          "delta": 0.552,
+          "selection_cost": 0.6646
+        },
+        {
+          "symbol": "BRKB270115C00500000",
+          "delta": 0.639,
+          "selection_cost": 1.0755
+        }
+      ],
+      "filters": {
+        "expiry_days": "90\u2013180 days to expiration",
+        "delta": "0.30\u20130.70 call delta (target 0.45)",
+        "spread": "bid-ask spread \u2264 8% of mid",
+        "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+        "open_interest": "open interest \u2265 500",
+        "iv": "implied volatility \u2264 70%"
+      },
+      "rule_rationale": "Delta 0.46 sits closest to the 0.45 target, strike 2.8% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 5.7% with volume 13 and open interest 7,580 keeps entry and exit liquid."
     },
     "FBIN": {
       "ticker": "FBIN",
@@ -602,7 +602,7 @@
   },
   "market": {
     "state": "closed",
-    "as_of": "2026-09-06T07:36:20+00:00",
+    "as_of": "2026-09-06T08:15:09+00:00",
     "description": "Market is closed",
     "trading_day": "2026-09-06"
   },
