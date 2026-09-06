@@ -53,6 +53,25 @@ peers happened to be scored. Weights sum to 100 (`config.SIGNAL_WEIGHTS`):
 | Filing freshness | 10 | `exp(-k · turnover · filing delay)` and the age of the filing |
 | Institutional crowding | 5 | inverse of the crowding proxy (hedge-fund-hotel list + oversized cluster) |
 
+**Institutional dissent penalty (max −15).** Managers disagree, and the bull
+score cannot express that. When tracked managers sell the same name others are
+accumulating, a capped penalty is subtracted — deliberately *not* a ninth
+factor, because buying and selling are not symmetric and a sell factor would
+double-count what Activity and Consensus already measure.
+
+Counting sellers is not enough: a full exit from a former top-3 position by a
+patient manager means something, a 22 % trim of a 0.4 % holding by a 200-name
+quant book does not. Each sale is weighed by severity (EXIT > deep cut > small
+trim), by the conviction the position carried *before* the sale, and by the
+seller's quality. Independent sellers combine with diminishing returns, and the
+result is modulated by how much of the tracked activity in that name is selling.
+Sales that cannot be read as a decision never count: corporate actions, capped
+books where a rank drop is indistinguishable from a sale, filers with no prior
+baseline, reductions under 20 %, and a manager appearing on both sides of one
+issuer (a share-class swap, netted to the buy side). Related vehicles count once,
+as on the buy side. Stances: `NO_DISSENT`, `MINOR_DISSENT`, `MIXED`,
+`STRONG_DISSENT`, `SELL_DOMINANT`.
+
 **Confluence bonus (max +10).** A weighted sum rates "excellent 13F, no insider"
 the same as "average 13F, excellent insider". The engine is looking for the two
 firing *together*, so the 13F side and the insider side are scored separately
@@ -62,7 +81,14 @@ deterministic `signal_class`, the strongest being
 `EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION`.
 
 A capped **price-action penalty** (max −15) is subtracted for names that already
-ran ≥15 % / ≥25 % since the quarter-end. Ties break on insider score, then
+ran ≥15 % / ≥25 % since the quarter-end. The final score is therefore:
+
+```
+base score (8 factors, 0–100) + confluence − price action − institutional dissent
+```
+
+and the report shows that derivation line by line. The eight factor weights are
+unchanged, so scores stay comparable with earlier runs. Ties break on insider score, then
 consensus, then ticker A→Z. CUSIP-only rows (no resolvable ticker) are scored
 but never enter the Top 10 because they cannot be traded or looked up.
 
@@ -306,6 +332,17 @@ guard or a loud warning:
 | The information table is checked against the filing's own cover page when its filename suggests another period | SurgoCap ships a Q2-2026 filing whose table is named `Surgo_13F_09302025.xml`; the cover page confirms the real period, so the filename alone is never trusted |
 | Multi-quarter history is deduplicated by reporting quarter | Two pipeline runs for one quarter would otherwise count as two quarters of accumulation |
 | The latest filing for the quarter wins, amendments preferred on a tie | A 13F-HR/A restates the original |
+| Common stock, CALLs and PUTs are three separate exposures | A 13F CALL reports an option's notional share count, not shares owned. Merging it into the common line made an options buyer look like a share buyer and an expiring option look like a sale; the share-count delta now compares common stock with common stock, and options-only positions are reported but never scored as accumulation |
+| OpenFIGI matches are checked for market sector and security type | Without a US equity match the code fell back to the first row of any kind, so a warrant or a foreign line could enter the universe wearing a plausible ticker; `security_type_validated` records what was actually matched |
+| The backtest pins `engine_version` | Once the dissent penalty changed the ranking, older rows are a different model and must not be pooled when judging what produced alpha |
+| `NO_BASELINE` is its own delta type | A filer with no prior quarter on file cannot have "opened" anything. Those positions count for AUM and weight but never as NEW/ADD activity, cluster, consensus or accumulation |
+| Form 4/A supersedes the filing it restates | An amendment repeats the original's transactions; summing both turned one insider purchase into two, worth up to 25 score points |
+| Only purchases above `INSIDER_MIN_PURCHASE_USD` drive the insider value score | A hundred token-sized trades would otherwise score like a single conviction buy; the gross figure is still reported |
+| A contract with unknown implied volatility is not eligible | Every filter must be satisfied, and an unknown IV cannot be asserted to be in range |
+| Turnover is not measured on capped books | A name sliding from rank 490 to 510 leaves the stored subset without being sold, inventing churn - the same reason EXITs are not derived there |
+| Consensus counts economic decision-makers, not filings | Two Li Lu vehicles are one decision; corporate treasuries lend no breadth at all |
+| `analyze` runs only after the test job is green, and the gate cannot be skipped with `--from` | A red suite must never be able to compute signals and mail them in parallel |
+| The Form 4 candidate pool is bounded by reachability, not a fixed number | A stock is fetched while its score plus the maximum insider gain still clears the tenth-best |
 | Zero EXITs or all-NEW across the universe raises a data-quality warning | The comparison being broken is far more likely than a quarter in which nobody sold anything |
 
 ---

@@ -40,7 +40,8 @@ from datetime import date
 from config import (
     run_date,
     CONFLUENCE_MAX_BONUS, CONFLUENCE_MIN_13F_SCORE, CONFLUENCE_MIN_INSIDER,
-    CROWDING_FACTOR_BY_LABEL, DATA_DIR, PRICE_ACTION_DOWNGRADE_PCT,
+    CORPORATE_STRATEGIC_FILERS, CROWDING_FACTOR_BY_LABEL, DATA_DIR, DISSENT_MAX_PENALTY,
+    economic_group, PRICE_ACTION_DOWNGRADE_PCT,
     PRICE_ACTION_WARN_PCT, SIGNAL_CANDIDATE_POOL, SIGNAL_PRICE_PENALTY_CAP,
     SIGNAL_WEIGHTS, TOP_N,
 )
@@ -216,15 +217,37 @@ def factor_accumulation(mq: dict, is_buy_now: bool) -> tuple[float, list[str]]:
     return round(score, 1), reasons
 
 
+def independent_buyers(filers: list[dict]) -> list[dict]:
+    """
+    One entry per economic decision-maker.
+
+    Two Li Lu vehicles buying the same stock is one decision, not two, and a
+    corporate treasury's strategic stake is not a stock-picking vote at all.
+    Both stay in the data and in the buyers table; neither adds breadth.
+    """
+    best: dict[str, dict] = {}
+    for f in filers:
+        if f["filer"] in CORPORATE_STRATEGIC_FILERS:
+            continue
+        g = economic_group(f["filer"])
+        if g not in best or (f.get("manager_quality_score") or 0) > (best[g].get("manager_quality_score") or 0):
+            best[g] = f
+    return sorted(best.values(), key=lambda f: f["filer"])
+
+
 def factor_consensus(filers: list[dict]) -> tuple[float, list[str]]:
-    n = len(filers)
-    qs = [f.get("manager_quality_score") or 0.5 for f in filers]
+    independent = independent_buyers(filers) or filers[:1]
+    n = len(independent)
+    qs = [f.get("manager_quality_score") or 0.5 for f in independent]
     avg_q = sum(qs) / n
     base = {1: 30.0, 2: 60.0, 3: 80.0, 4: 95.0}.get(n, 100.0)
     score = _clamp(base * (0.5 + 0.5 * avg_q))
-    names = ", ".join(sorted(f["filer"] for f in filers))
+    names = ", ".join(sorted(f["filer"] for f in independent))
     reasons = [f"{n} independent buyer{'s' if n != 1 else ''}: {names}"] if n <= 4 else \
-              [f"{n} independent buyers incl. {', '.join(sorted(f['filer'] for f in filers)[:3])} …"]
+              [f"{n} independent buyers incl. {', '.join(sorted(f['filer'] for f in independent)[:3])} …"]
+    if len(independent) < len(filers):
+        reasons.append(f"{len(filers) - len(independent)} further filer(s) share a decision-maker "
+                       f"or are corporate treasuries and do not add breadth")
     return round(score, 1), reasons
 
 
@@ -328,12 +351,14 @@ def _filer_rows(agg: dict, scored_flat: list[dict]) -> list[dict]:
 
 
 def score_ticker(agg: dict, scored_flat: list[dict], mq_signals: dict,
-                 insider: dict | None, today: date) -> dict:
+                 insider: dict | None, today: date,
+                 sell_by_ticker: dict[str, list[dict]] | None = None) -> dict:
     filers = _filer_rows(agg, scored_flat)
     factors: dict[str, float] = {}
     reasons: dict[str, list[str]] = {}
 
     factors["activity"],        reasons["activity"]        = factor_activity(filers)
+    independent = independent_buyers(filers)
     factors["conviction"],      reasons["conviction"]      = factor_conviction(filers)
     factors["manager_quality"], reasons["manager_quality"] = factor_manager_quality(filers)
     factors["accumulation"],    reasons["accumulation"]    = factor_accumulation(mq_signals.get(agg["ticker"], {}), True)
@@ -355,7 +380,15 @@ def score_ticker(agg: dict, scored_flat: list[dict], mq_signals: dict,
     bonus, bonus_reason = confluence_bonus(score_13f, insider_sc)
 
     penalty, penalty_reason = price_penalty(agg.get("post_filing_perf"))
-    score = round(_clamp(raw + bonus - penalty), 1)
+
+    # Managers disagreeing about the same name is information the bull score
+    # cannot express, so it is subtracted rather than averaged in.
+    import dissent as dissent_mod
+    dissent_info = dissent_mod.compute(
+        (sell_by_ticker or {}).get(agg["ticker"], []), filers)
+    dissent_penalty = dissent_info["penalty"]
+
+    score = round(_clamp(raw + bonus - penalty - dissent_penalty), 1)
 
     top_drivers = sorted(contributions.items(), key=lambda kv: (-kv[1], kv[0]))[:3]
     why_bullets = []
@@ -365,6 +398,8 @@ def score_ticker(agg: dict, scored_flat: list[dict], mq_signals: dict,
         why_bullets.append(reasons["insider"][0])
     if bonus_reason:
         why_bullets.append(bonus_reason)
+    if dissent_penalty > 0:
+        why_bullets.append(dissent_info["reason"])
     if penalty_reason:
         why_bullets.append(penalty_reason)
 
@@ -375,6 +410,8 @@ def score_ticker(agg: dict, scored_flat: list[dict], mq_signals: dict,
         "score_13f":         score_13f,
         "insider_score":     insider_sc,
         "confluence_bonus":  bonus,
+        "dissent_penalty":   dissent_penalty,
+        "institutional_dissent": dissent_info,
         "grade":             _grade(score),
         "factors":           factors,
         "contributions":     contributions,
@@ -387,6 +424,7 @@ def score_ticker(agg: dict, scored_flat: list[dict], mq_signals: dict,
         },
         "filers":            filers,
         "filer_count":       len(filers),
+        "independent_buyer_count": len(independent),
         "flags":             sorted(agg.get("flags", [])),
         "crowding_label":    ("LOW" if factors["crowding"] > 75 else "MODERATE" if factors["crowding"] > 50
                               else "HIGH" if factors["crowding"] > 25 else "EXTREME"),
@@ -420,8 +458,14 @@ def compute_signals(scores: dict, insider_by_ticker: dict[str, dict], today: dat
     scored_flat = scores.get("scored_flat", [])
     mq_signals  = scores.get("mq_signals", {})
 
+    sell_by_ticker: dict[str, list[dict]] = defaultdict(list)
+    for s in scores.get("sell_signals", []):
+        if s.get("ticker"):
+            sell_by_ticker[s["ticker"]].append(s)
+
     rows = [
-        score_ticker(agg, scored_flat, mq_signals, insider_by_ticker.get(agg["ticker"]), today)
+        score_ticker(agg, scored_flat, mq_signals, insider_by_ticker.get(agg["ticker"]),
+                     today, sell_by_ticker)
         for agg in aggregated
         if agg.get("ticker") and agg.get("filers")
     ]
@@ -458,6 +502,7 @@ def compute_signals(scores: dict, insider_by_ticker: dict[str, dict], today: dat
     fingerprint_src = json.dumps(
         {"aggregated": aggregated, "mq": mq_signals,
          "insider": {t: (v.get("summary"), v.get("score")) for t, v in sorted(insider_by_ticker.items())},
+         "sell_signals": scores.get("sell_signals", []),
          "weights": SIGNAL_WEIGHTS, "date": today.isoformat()},
         sort_keys=True, default=str,
     )
@@ -488,7 +533,23 @@ def candidate_pool(scores: dict, today: date) -> tuple[list[str], dict[str, str]
     (latest 13F quarter-end among its buyers).
     """
     pre = compute_signals(scores, {}, today)
-    pool = [r["ticker"] for r in pre["ranking"] if r["tradable_ticker_validated"]][:SIGNAL_CANDIDATE_POOL]
+    eligible = [r for r in pre["ranking"] if r["tradable_ticker_validated"]]
+
+    # A fixed cut can drop a winner: insider data is worth up to
+    # SIGNAL_WEIGHTS["insider"] weighted points plus the confluence bonus, so a
+    # name below the cut could still overtake the tenth. Fetch while a stock's
+    # theoretical maximum still clears the current tenth-best score, then stop.
+    max_insider_gain = SIGNAL_WEIGHTS["insider"] + CONFLUENCE_MAX_BONUS
+    cutoff = eligible[TOP_N - 1]["signal_score"] if len(eligible) >= TOP_N else 0.0
+    pool = []
+    for r in eligible:
+        if r["signal_score"] + max_insider_gain < cutoff:
+            break                      # ranking is sorted: nothing below can reach it
+        pool.append(r["ticker"])
+        if len(pool) >= SIGNAL_CANDIDATE_POOL:
+            break                      # hard ceiling on EDGAR traffic
+    print(f"   cut-off {cutoff:.1f}, reachable with max insider gain "
+          f"{max_insider_gain:.0f} → {len(pool)} candidates")
 
     since: dict[str, str] = {}
     for r in pre["ranking"]:

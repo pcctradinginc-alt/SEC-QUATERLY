@@ -274,13 +274,37 @@ def is_common_stock(security_title: str) -> bool:
 
 # ── Aggregation & scoring ─────────────────────────────────────────────────────
 
+def _transaction_key(owner_ciks: str, tx: dict) -> tuple:
+    """
+    Identity of a reported transaction, independent of which filing carried it.
+
+    A Form 4/A restates an earlier Form 4 and repeats its transactions. Summing
+    both would count one purchase twice - and a single insider buy can move a
+    name by up to 25 points here, so a duplicate is not cosmetic.
+    """
+    return (owner_ciks, tx.get("date", ""), tx.get("code", ""),
+            (tx.get("security") or "").upper(), round(tx.get("shares", 0.0), 4),
+            round(tx.get("price", 0.0), 6))
+
+
 def summarize_form4s(parsed_filings: list[dict], since: str) -> dict:
     """
-    parsed_filings: [{filing_date, accession, owners, transactions}]
+    parsed_filings: [{filing_date, accession, owners, transactions, form}]
     Aggregates open-market buys (code P, acquired) and sells (code S, disposed)
     with transaction dates strictly after `since`.
+
+    Amendments supersede: filings are walked newest first and a transaction
+    already seen from a later filing is not counted again.
     """
     buys, sells = [], []
+    seen_transactions: set = set()
+    superseded = 0
+    # Newest filing first, amendments ahead of the original they restate.
+    parsed_filings = sorted(
+        parsed_filings,
+        key=lambda f: (f.get("filing_date", ""), f.get("form", "") == "4/A"),
+        reverse=True,
+    )
     skipped_securities: dict[str, int] = {}
     for f in parsed_filings:
         owner_names = [o["name"] for o in f["owners"]] or ["(unknown)"]
@@ -288,9 +312,15 @@ def summarize_form4s(parsed_filings: list[dict], since: str) -> dict:
         director = any(o["is_director"] for o in f["owners"])
         ten_pct = any(o["is_ten_pct"] for o in f["owners"])
         role_key, role_label = classify_role(f["owners"])
+        owner_ciks = "|".join(sorted(o.get("cik", "") for o in f["owners"]))
         for tx in f["transactions"]:
             if tx["date"] and tx["date"] <= since:
                 continue
+            key = _transaction_key(owner_ciks, tx)
+            if key in seen_transactions:
+                superseded += 1
+                continue
+            seen_transactions.add(key)
             if not is_common_stock(tx.get("security", "")):
                 key = tx.get("security") or "(untitled)"
                 skipped_securities[key] = skipped_securities.get(key, 0) + 1
@@ -322,8 +352,12 @@ def summarize_form4s(parsed_filings: list[dict], since: str) -> dict:
     buys.sort(key=lambda r: (r["date"], r["accession"], r["insider"]))
     sells.sort(key=lambda r: (r["date"], r["accession"], r["insider"]))
 
+    # Token-sized purchases are excluded by configuration, so they must not
+    # reach the value component either: a hundred $10k trades would otherwise
+    # score like a single $1M conviction buy.
     sig_buys = [b for b in buys if b["value_usd"] >= INSIDER_MIN_PURCHASE_USD]
-    buy_value  = round(sum(b["value_usd"] for b in buys), 2)
+    buy_value      = round(sum(b["value_usd"] for b in sig_buys), 2)   # drives the score
+    gross_buy_value = round(sum(b["value_usd"] for b in buys), 2)      # reported, not scored
     sell_value = round(sum(s["value_usd"] for s in sells), 2)
 
     # Rule 10b5-1 sales were scheduled in advance; only discretionary sales say
@@ -358,15 +392,18 @@ def summarize_form4s(parsed_filings: list[dict], since: str) -> dict:
 
     if not buys and not sells:
         stance = "NO_ACTIVITY"
-    elif buy_value > sell_value:
+    elif gross_buy_value > sell_value:
         stance = "NET_BUYING"
-    elif sell_value > buy_value:
+    elif sell_value > gross_buy_value:
         stance = "NET_SELLING"
     else:
         stance = "BALANCED"
 
     return {
         "net_stance":              stance,
+        "gross_buy_value_usd":     gross_buy_value,
+        "significant_buy_value_usd": buy_value,
+        "superseded_transactions": superseded,
         "skipped_securities":      dict(sorted(skipped_securities.items())),
         "planned_sell_value_usd":       planned_sell_value,
         "discretionary_sell_value_usd": discretionary_sell_value,
@@ -456,7 +493,7 @@ def fetch_insider_activity(ticker: str, since: str, until: str | None = None) ->
     # v3: adds 10b5-1 planned-sale detection, insider roles and stake changes.
     # v2 added issuer verification + the common-stock filter; v1 snapshots hold
     # other issuers' transactions outright. Older snapshots are never reused.
-    cache_path = INSIDER_CACHE_DIR / f"{safe_t}_{since}_{until}_v3.json"
+    cache_path = INSIDER_CACHE_DIR / f"{safe_t}_{since}_{until}_v4.json"
     if cache_path.exists():
         cached = json.load(open(cache_path))
         # Always re-derive the score from the cached raw summary so a change to
@@ -500,6 +537,7 @@ def fetch_insider_activity(ticker: str, since: str, until: str | None = None) ->
         parsed.append({**f, **p})
 
     result["form4_count"]        = len(parsed)
+    result["amendments"]        = sum(1 for f in parsed if f.get("form") == "4/A")
     result["foreign_issuer_skipped"] = dict(sorted(foreign.items()))
     summary = summarize_form4s(parsed, since)
     score, reasons = insider_score(summary)

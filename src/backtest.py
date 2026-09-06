@@ -139,7 +139,11 @@ def run() -> dict:
             r180 = perf.get("return_d180_pct")
             rows.append({
                 "report_date":      report_date,
-                "engine":           "v2_deterministic" if analysis.get("top10") else "v1_llm_top5",
+                # Pin the rule version, not just "v2": once the dissent penalty
+                # changes the ranking, older v2 rows are a different model and
+                # must not be pooled with it when judging what produced alpha.
+                "engine":           analysis.get("engine_version") or (
+                    "v2.0_deterministic" if analysis.get("top10") else "v1_llm_top5"),
                 "benchmark_d90_pct":  b90,
                 "benchmark_d180_pct": b180,
                 "excess_d90_pct":   round(r90 - b90, 1) if (r90 is not None and b90 is not None) else None,

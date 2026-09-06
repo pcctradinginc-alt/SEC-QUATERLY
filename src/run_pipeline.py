@@ -43,6 +43,13 @@ def main() -> int:
         os.environ["SEC_RUN_DATE"] = args.date
 
     todo = STEPS[STEPS.index(args.start): STEPS.index(args.stop) + 1]
+
+    # Defence in depth: resuming at a later step must not skip the gate, or
+    # "fail closed" becomes optional for anyone typing --from scoring.
+    if any(s in todo for s in ("scoring", "signals", "options", "explain", "report")) \
+            and "gate" not in todo:
+        print("↩︎  Re-running the data-quality gate first (it may not be skipped)")
+        todo = ["gate"] + todo
     print(f"▶ pipeline {args.date}: {' → '.join(todo)}")
     t0 = time.time()
 

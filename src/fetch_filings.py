@@ -348,8 +348,36 @@ def _openfigi_headers() -> dict:
     return h
 
 
+# OpenFIGI marketSector / securityType2 values that mean "an ordinary share we
+# can price and trade". Anything else (warrants, rights, units, depositary
+# receipts on a foreign line, bonds) is not the security the signal is about.
+_TRADABLE_SECURITY_TYPES = {
+    "COMMON STOCK", "REIT", "MUTUAL FUND", "ETP", "DEPOSITARY RECEIPT",
+    "CLOSED-END FUND", "ROYALTY TRUST", "TRACKING STOCK",
+}
+_US_EXCHANGES = ("US", "UN", "UW", "UA", "UQ", "UR", "UV")
+
+
+def _figi_is_tradable_equity(item: dict) -> bool:
+    if (item.get("marketSector") or "").upper() != "EQUITY":
+        return False
+    stype = (item.get("securityType2") or item.get("securityType") or "").upper()
+    return not stype or stype in _TRADABLE_SECURITY_TYPES
+
+
 def map_cusips_to_tickers(cusips: list[str]) -> dict[str, str]:
+    """
+    {cusip: ticker} plus, in `map_cusips_to_tickers.metadata`, what OpenFIGI
+    said the instrument actually is.
+
+    A syntactically valid symbol is not proof of a tradable US common share:
+    without a US equity match the old code fell back to the first FIGI hit of
+    any kind, so a warrant or a foreign line could enter the universe wearing a
+    plausible ticker.
+    """
     mapping = {}
+    meta: dict[str, dict] = {}
+    map_cusips_to_tickers.metadata = meta
     if not cusips:
         return mapping
 
@@ -377,14 +405,7 @@ def map_cusips_to_tickers(cusips: list[str]) -> dict[str, str]:
                         if r2.status_code == 200:
                             for cusip, result in zip(chunk, r2.json()):
                                 if "data" in result and result["data"]:
-                                    for figi_item in result["data"]:
-                                        ticker = figi_item.get("ticker", "")
-                                        exch   = figi_item.get("exchCode", "")
-                                        if exch in ("US", "UN", "UW", "UA"):
-                                            mapping[cusip] = ticker
-                                            break
-                                    else:
-                                        mapping[cusip] = result["data"][0].get("ticker", "")
+                                    _record_figi_match(cusip, result["data"], mapping, meta)
                     except Exception as e2:
                         print(f"  ⚠️  OpenFIGI chunk failed: {e2}")
                     time.sleep(0.5)
@@ -395,19 +416,28 @@ def map_cusips_to_tickers(cusips: list[str]) -> dict[str, str]:
             results = resp.json()
             for cusip, result in zip(batch, results):
                 if "data" in result and result["data"]:
-                    for figi_item in result["data"]:
-                        ticker = figi_item.get("ticker", "")
-                        exch   = figi_item.get("exchCode", "")
-                        if exch in ("US", "UN", "UW", "UA"):
-                            mapping[cusip] = ticker
-                            break
-                    else:
-                        mapping[cusip] = result["data"][0].get("ticker", "")
+                    _record_figi_match(cusip, result["data"], mapping, meta)
         except Exception as e:
             print(f"  ⚠️  OpenFIGI batch failed: {e}")
         time.sleep(0.5)
 
     return mapping
+
+
+def _record_figi_match(cusip: str, data: list[dict], mapping: dict, meta: dict) -> None:
+    """Prefer a US-listed ordinary share; record what was actually matched."""
+    for item in data:
+        if (item.get("exchCode") or "") in _US_EXCHANGES and _figi_is_tradable_equity(item):
+            mapping[cusip] = item.get("ticker", "")
+            meta[cusip] = {"exchange": item.get("exchCode"), "market_sector": item.get("marketSector"),
+                           "security_type": item.get("securityType2") or item.get("securityType"),
+                           "security_type_validated": True}
+            return
+    first = data[0]
+    mapping[cusip] = first.get("ticker", "")
+    meta[cusip] = {"exchange": first.get("exchCode"), "market_sector": first.get("marketSector"),
+                   "security_type": first.get("securityType2") or first.get("securityType"),
+                   "security_type_validated": False}
 
 
 # ── Step 4b: SEC name-based ticker fallback ──────────────────────────────────
@@ -622,7 +652,10 @@ def run():
 
     print(f"\n🔍 Mapping {len(all_cusips)} CUSIPs to tickers via OpenFIGI...")
     cusip_to_ticker = map_cusips_to_tickers(list(all_cusips))
-    print(f"   OpenFIGI mapped: {len(cusip_to_ticker)} / {len(all_cusips)}")
+    figi_meta = getattr(map_cusips_to_tickers, "metadata", {})
+    validated = sum(1 for m in figi_meta.values() if m.get("security_type_validated"))
+    print(f"   OpenFIGI mapped: {len(cusip_to_ticker)} / {len(all_cusips)} "
+          f"({validated} confirmed as US-listed ordinary shares)")
 
     # Fallback: SEC company_tickers.json for any CUSIP OpenFIGI couldn't resolve
     sec_extra = _sec_ticker_fallback(all_data, cusip_to_ticker)
@@ -647,6 +680,7 @@ def run():
         "date":            today_str,
         "report_date":     want,
         "cusip_to_ticker": cusip_to_ticker,
+        "cusip_security_meta": figi_meta,
         "recent_splits":   splits,
         "filers":          all_data,
     }

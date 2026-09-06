@@ -107,6 +107,28 @@ FILERS = {
     "SurgoCap Partners":                    "0001960830",
 }
 
+# ── Economic decision-makers ──────────────────────────────────────────────────
+# Several entries file separately but answer to the same investment process.
+# Counting them as independent buyers manufactures consensus: PDD's "two
+# independent managers" were both Li Lu vehicles. Consensus counts distinct
+# groups; filers not listed here are their own group.
+FILER_ECONOMIC_GROUP = {
+    "Pershing Square (Ackman)":               "PERSHING_SQUARE",
+    "Pershing Square Inc":                    "PERSHING_SQUARE",
+    "H&H International Investment (Li Lu)":   "LI_LU",
+    "Himalaya Capital Management (Li Lu)":    "LI_LU",
+}
+
+# Corporate treasuries file 13F for strategic stakes, not a stock-picking
+# mandate. They stay in the data, but they cannot lend breadth to a consensus
+# or count towards a cluster.
+CORPORATE_STRATEGIC_FILERS = {"NVIDIA Corp", "Alphabet Inc", "SoftBank Group Corp"}
+
+
+def economic_group(filer_name: str) -> str:
+    return FILER_ECONOMIC_GROUP.get(filer_name, filer_name)
+
+
 # ── Filer quality tiers (static bootstrap prior) ─────────────────────────────
 # University endowments / concentrated value investors: long-horizon,
 # fundamental -> higher weight. Quant / diversified / non-traditional
@@ -308,6 +330,9 @@ NO_SUITABLE_OPTION     = "NO_SUITABLE_OPTION_FOUND"
 # does not change just because a different set of peers was scored).
 # Weights sum to 100. Crowding is a positive factor (LOW crowding = 100).
 # A capped price-action penalty is subtracted afterwards (see below).
+# Rule version of the scoring model. Bump it whenever the ranking rules change,
+# so the backtest never pools results produced by different models.
+ENGINE_VERSION = "v2.1_dissent"
 TOP_N = 10
 SIGNAL_WEIGHTS = {
     "activity":        15,   # NEW / ADD activity strength
@@ -344,6 +369,26 @@ INSIDER_STAKE_FULL_PCT       = 25.0        # a buy lifting an insider's own stak
 # Role weighting: the people closest to the numbers carry the most signal.
 INSIDER_ROLE_POINTS = {"CEO": 25.0, "CFO": 25.0, "OFFICER": 18.0, "DIRECTOR": 12.0, "TEN_PCT": 6.0, "OTHER": 6.0}
 INSIDER_DISCRETIONARY_SELL_PENALTY = 25.0  # max points removed for genuine discretionary selling
+
+# ── Institutional Dissent Penalty ────────────────────────────────────────────
+# Subtracted after the bull score, like the price-action penalty - not a ninth
+# factor. Buying and selling are not symmetric, and a sell factor with its own
+# weight would double-count what Activity and Consensus already measure.
+DISSENT_MAX_PENALTY = 15.0
+# (minimum reduction %, severity) ascending; below the first entry there is no
+# interpretable sell signal at all.
+DISSENT_SEVERITY_BANDS = [
+    (20.0, 0.25),
+    (35.0, 0.45),
+    (50.0, 0.65),
+    (75.0, 0.85),
+]
+DISSENT_CONVICTION_FLOOR = 0.30   # even a tiny position counts for something
+DISSENT_BANDS = [                 # (max penalty inclusive, label) ascending
+    (3.0,  "MINOR_DISSENT"),
+    (7.0,  "MIXED"),
+    (11.0, "STRONG_DISSENT"),
+]
 
 # ── Confluence: 13F accumulation confirmed by insider buying ─────────────────
 # A weighted sum treats "great 13F, no insider" the same as "mediocre 13F, great

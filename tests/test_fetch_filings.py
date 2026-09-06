@@ -115,3 +115,30 @@ def test_a_filer_without_the_target_quarter_is_excluded(monkeypatch):
     }
     monkeypatch.setattr(ff, "edgar_get", lambda url: _Resp({"filings": {"recent": recent}}))
     assert ff.get_latest_13f_filing("0000000001", "2026-06-30") is None
+
+
+def test_a_us_ordinary_share_is_preferred_over_any_first_hit():
+    """Without a US equity match the old code took the first FIGI row of any
+    kind, so a warrant could enter the universe wearing a plausible ticker."""
+    mapping, meta = {}, {}
+    ff._record_figi_match("X", [
+        {"ticker": "WTF", "exchCode": "LN", "marketSector": "Equity", "securityType2": "Warrant"},
+        {"ticker": "ABC", "exchCode": "UN", "marketSector": "Equity", "securityType2": "Common Stock"},
+    ], mapping, meta)
+    assert mapping["X"] == "ABC"
+    assert meta["X"]["security_type_validated"] is True
+
+
+def test_a_non_equity_match_is_recorded_as_unvalidated():
+    mapping, meta = {}, {}
+    ff._record_figi_match("Y", [
+        {"ticker": "WRNT", "exchCode": "LN", "marketSector": "Equity", "securityType2": "Warrant"},
+    ], mapping, meta)
+    assert meta["Y"]["security_type_validated"] is False
+    assert meta["Y"]["security_type"] == "Warrant"
+
+    mapping2, meta2 = {}, {}
+    ff._record_figi_match("Z", [
+        {"ticker": "BOND", "exchCode": "UN", "marketSector": "Corp", "securityType2": "Note"},
+    ], mapping2, meta2)
+    assert meta2["Z"]["security_type_validated"] is False

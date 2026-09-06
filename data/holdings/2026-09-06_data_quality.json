@@ -7,15 +7,17 @@
   "summary": {
     "counts": {
       "NEW": 830,
-      "ADDED": 1073,
-      "REDUCED": 1163,
-      "UNCHANGED": 516,
-      "SOLD": 0
+      "ADDED": 1068,
+      "REDUCED": 1165,
+      "UNCHANGED": 514,
+      "SOLD": 5,
+      "NO_BASELINE": 0
     },
     "exits": 345,
     "total_positions": 3582,
     "matched_positions": 2752,
     "new_ratio": 0.23171412618648798,
+    "no_baseline_positions": 0,
     "filers_with_prior": 48,
     "filers_without_prior": 1,
     "capped_without_exits": 3

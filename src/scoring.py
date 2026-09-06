@@ -303,6 +303,8 @@ def build_scored_universe(
 
         mq_info         = manager_quality.get(filer_name, {})
         quality_score   = mq_info.get("quality_score", 0.5)
+        quality_source  = "BOOTSTRAPPED" if mq_info.get("is_bootstrapped") else "DATA_DRIVEN"
+        quality_quarters = mq_info.get("quarters_used")
         fresh_info      = freshness_by_filer.get(filer_name, {})
         freshness_score = fresh_info.get("freshness_score", 0.5)
         # report_date = quarter-end (price anchor + Form 4 window start);
@@ -312,6 +314,9 @@ def build_scored_universe(
 
         for pos in filer_data["positions"]:
             tx_type = pos["delta"]["type"]
+            # NO_BASELINE means this filer has no prior quarter on file, so the
+            # position cannot be scored as accumulation - it may have been held
+            # unchanged for years. It still counts for AUM and portfolio weight.
             if tx_type not in ("NEW", "ADDED"):
                 continue
             if pos["port_weight_pct"] < MIN_PORTFOLIO_WEIGHT_PCT:
@@ -322,6 +327,10 @@ def build_scored_universe(
             # Section 18: don't treat a likely merger/spin-off/share-class
             # swap as a genuine new buy decision.
             if pos.get("possible_corporate_action"):
+                continue
+            # Options-only exposure is not share accumulation. It stays in the
+            # book and is reported, but the share-count signal needs shares.
+            if pos.get("exposure_type", "COMMON_LONG") != "COMMON_LONG":
                 continue
 
             delta_pct = pos["delta"].get("delta_pct")
@@ -347,6 +356,8 @@ def build_scored_universe(
                 "filing_date_actual":     filing_date_actual,
                 "position_change_raw":    position_change_raw,
                 "manager_quality_score":  quality_score,
+                "manager_quality_source": quality_source,
+                "manager_quality_quarters": quality_quarters,
                 "freshness_score":        freshness_score,
                 "filing_delay_days":      fresh_info.get("filing_delay_days"),
                 "flags":                  [],
@@ -565,6 +576,8 @@ def aggregate_by_ticker(scored: list[dict]) -> list[dict]:
             "delta_type":             entry["delta_type"],
             "alpha_score":            entry["alpha_score"],
             "manager_quality_score":  entry["manager_quality_score"],
+            "manager_quality_source": entry.get("manager_quality_source"),
+            "manager_quality_quarters": entry.get("manager_quality_quarters"),
             "freshness_score":        entry["freshness_score"],
             "weight_vs_median":       entry.get("weight_vs_median"),
             "position_tier":          entry.get("position_tier"),
@@ -622,6 +635,11 @@ def build_sell_signals(parsed: dict, manager_quality: dict[str, dict]) -> list[d
                 "manager_quality_score": quality,
                 "current_rank":          pos.get("rank"),
                 "port_weight_pct":       pos["port_weight_pct"],
+                # Conviction BEFORE the cut is what makes a reduction meaningful:
+                # trimming a former top-3 holding is not the same as trimming a
+                # rounding-error position.
+                "prior_port_weight":     pos.get("prior_port_weight"),
+                "prior_rank":            pos.get("prior_rank"),
                 "delta_pct":             delta_pct,
                 "severity_score":        round(quality * abs(delta_pct) / 100.0, 3),
             })

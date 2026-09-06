@@ -35,7 +35,7 @@ FILTERS_DESCRIPTION = {
     "volume":        (f"volume ≥ {OPTION_MIN_VOLUME} "
                       f"(waived when open interest ≥ {OPTION_OI_WAIVES_VOLUME:,})"),
     "open_interest": f"open interest ≥ {OPTION_MIN_OPEN_INT}",
-    "iv":            f"implied volatility ≤ {OPTION_MAX_IV:.0%}",
+    "iv":            f"implied volatility known and ≤ {OPTION_MAX_IV:.0%}",
 }
 
 
@@ -84,12 +84,18 @@ def check_contract(opt: dict, today: date) -> list[str]:
     if int(opt.get("volume") or 0) < OPTION_MIN_VOLUME and oi < OPTION_OI_WAIVES_VOLUME:
         fails.append("volume")
 
+    # Every filter must be satisfied, so an unknown IV is a failure rather than
+    # a pass: we cannot claim a contract is not over-priced when we do not know
+    # what it costs in volatility terms.
     iv = opt.get("implied_volatility")
     try:
-        if iv is not None and float(iv) > OPTION_MAX_IV:
-            fails.append("iv")
+        iv = float(iv) if iv is not None else None
     except (TypeError, ValueError):
-        pass
+        iv = None
+    if iv is None:
+        fails.append("iv_missing")
+    elif iv > OPTION_MAX_IV:
+        fails.append("iv")
     return fails
 
 

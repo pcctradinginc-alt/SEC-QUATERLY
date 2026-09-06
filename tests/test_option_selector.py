@@ -69,6 +69,17 @@ def test_contract_fields():
     assert "Delta" in r["rule_rationale"]
 
 
+def test_unknown_iv_fails_the_filter():
+    """Every filter must be satisfied; an unknown IV cannot be asserted to be
+    within range, so the contract is not eligible."""
+    no_iv = contract("NOIV")
+    no_iv["greeks"].pop("smv_vol")
+    assert osel.check_contract(osel._flatten(no_iv), TODAY) == ["iv_missing"]
+    r = osel.select_call([no_iv], TODAY)
+    assert r["status"] == "NO_SUITABLE_OPTION_FOUND"
+    assert r["rejections"]["iv_missing"] == 1
+
+
 def test_deep_open_interest_waives_the_volume_floor():
     """Volume resets each morning; deep OI still counts as liquid (and OI is never waived)."""
     thin_volume_deep_oi = contract("DEEP", vol=5, oi=30000)

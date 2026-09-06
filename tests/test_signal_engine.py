@@ -240,6 +240,28 @@ def test_insider_confirmation_upgrades_the_signal_class():
     assert "INSIDER_CONFIRMATION" not in without["signal_class"]
 
 
+def test_related_vehicles_count_as_one_decision_maker():
+    """PDD's "two independent buyers" were both Li Lu vehicles - one decision."""
+    li_lu = [_filer("H&H International Investment (Li Lu)", 10.0, q=0.99),
+             _filer("Himalaya Capital Management (Li Lu)", 22.0, q=1.00)]
+    solo = [_filer("Himalaya Capital Management (Li Lu)", 22.0, q=1.00)]
+    two_real = [_filer("Baupost Group (Klarman)", 10.0, q=0.99),
+                _filer("ValueAct Holdings", 9.0, q=0.99)]
+
+    assert len(se.independent_buyers(li_lu)) == 1
+    assert len(se.independent_buyers(two_real)) == 2
+    assert se.factor_consensus(li_lu)[0] == se.factor_consensus(solo)[0]
+    assert se.factor_consensus(two_real)[0] > se.factor_consensus(li_lu)[0]
+
+
+def test_corporate_treasuries_do_not_lend_breadth():
+    picker = [_filer("Baupost Group (Klarman)", 8.0, q=0.95)]
+    with_corp = picker + [_filer("NVIDIA Corp", 47.0, q=0.55),
+                          _filer("SoftBank Group Corp", 66.0, q=0.30)]
+    assert [f["filer"] for f in se.independent_buyers(with_corp)] == ["Baupost Group (Klarman)"]
+    assert se.factor_consensus(with_corp)[0] == se.factor_consensus(picker)[0]
+
+
 def test_json_roundtrip_stable():
     r = se.compute_signals(make_scores(), INSIDER, TODAY)
     again = json.loads(json.dumps(r, sort_keys=True))
