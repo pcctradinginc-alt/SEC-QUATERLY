@@ -7,10 +7,10 @@
   "summary": {
     "counts": {
       "NEW": 830,
-      "ADDED": 1073,
-      "REDUCED": 1163,
-      "UNCHANGED": 516,
-      "SOLD": 0,
+      "ADDED": 1068,
+      "REDUCED": 1165,
+      "UNCHANGED": 514,
+      "SOLD": 5,
       "NO_BASELINE": 0
     },
     "exits": 345,

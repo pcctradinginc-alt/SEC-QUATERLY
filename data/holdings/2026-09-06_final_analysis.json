@@ -1,7 +1,8 @@
 {
   "date": "2026-09-06",
+  "engine_version": "v2.1_dissent",
   "quarter_label": "Q2 2026 filings",
-  "stocks_scored": 361,
+  "stocks_scored": 366,
   "top10": [
     {
       "alpha_score_legacy": 46.7,
@@ -470,13 +471,14 @@
       },
       "commentary": {
         "ticker": "CVNA",
-        "why_strongest": "CVNA ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $1,544,981 of insider open-market buying since quarter-end.",
-        "insider_read": "Form 4 filings show $1,544,981 of open-market insider buying since quarter-end.",
+        "why_strongest": "Five independent filers increased reported long positions in the same quarter, including RV Capital at 30.3% of its book and Lone Pine adding +500% to an existing holding. Conviction and activity both score at the ceiling, and crowding among tracked filers remains low despite the price advancing since quarter-end.",
+        "insider_read": "Insiders were net sellers: $27,599,960 sold across 39 trades against $1,544,981 purchased in 2 trades by one insider, so Form 4 activity does not confirm the 13F signal.",
         "risks": [
-          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
-          "Reported weights use long-only AUM and overstate true portfolio exposure."
+          "No prior build quarters, so this is a single-quarter cluster rather than a sustained accumulation pattern",
+          "Heavy insider selling cuts against the institutional read",
+          "Price is already +13% since quarter-end, so filings may lag the move"
         ],
-        "verdict": "STRONG"
+        "verdict": "UNUSUALLY_STRONG"
       },
       "option": {
         "ticker": "CVNA",
@@ -882,11 +884,12 @@
       },
       "commentary": {
         "ticker": "BRK/B",
-        "why_strongest": "BRK/B ranks on portfolio conviction, manager quality and smart-money consensus, confirmed by $205,008 of insider open-market buying since quarter-end.",
-        "insider_read": "Form 4 filings show $205,008 of open-market insider buying since quarter-end.",
+        "why_strongest": "The buyer list is unusually high quality, led by Li Lu's two vehicles at 24.2% and 15.0% weights alongside Semper Augustus and Muhlenkamp. Consensus and manager quality both score high, and the filing is fresh with low-turnover holders whose small percentage adds still represent meaningful capital.",
+        "insider_read": "Net buying: $205,008 of open-market purchases across 3 trades by one insider, with no recorded sales, a modest but directionally consistent confirmation.",
         "risks": [
-          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
-          "Reported weights use long-only AUM and overstate true portfolio exposure."
+          "Percentage increases are small (+0% to +23%) for most buyers; this is maintenance, not fresh conviction",
+          "Insider purchase value is small in absolute terms",
+          "One quant filer (Two Sigma) carries zero quality weight"
         ],
         "verdict": "STRONG"
       },
@@ -965,39 +968,39 @@
       "contributions": {
         "accumulation": 1.5,
         "activity": 15.0,
-        "consensus": 11.45,
+        "consensus": 11.51,
         "conviction": 14.01,
         "crowding": 5.0,
-        "freshness": 8.1,
+        "freshness": 8.15,
         "insider": 11.52,
-        "manager_quality": 10.24
+        "manager_quality": 10.29
       },
       "crowding_label": "LOW",
       "dissent_penalty": 7.2,
       "factors": {
         "accumulation": 15.0,
         "activity": 100.0,
-        "consensus": 76.3,
+        "consensus": 76.7,
         "conviction": 93.4,
         "crowding": 100.0,
-        "freshness": 81.0,
+        "freshness": 81.5,
         "insider": 76.8,
-        "manager_quality": 68.3
+        "manager_quality": 68.6
       },
       "filer_count": 4,
       "filers": [
         {
-          "alpha_score": 13.1,
+          "alpha_score": 13.8,
           "delta_pct": 1.53,
           "delta_type": "ADDED",
           "filer": "Atreides Management",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.575,
+          "freshness_score": 0.604,
           "manager_quality_quarters": 3,
-          "manager_quality_score": 0.383,
+          "manager_quality_score": 0.414,
           "manager_quality_source": "DATA_DRIVEN",
-          "port_weight_pct": 0.774,
+          "port_weight_pct": 0.831,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
           "weight_vs_median": 1.08
@@ -1130,8 +1133,8 @@
       },
       "insider_score": 76.8,
       "institutional_dissent": {
-        "dissent_score": 59.4,
-        "dissent_share": 0.21,
+        "dissent_score": 59.6,
+        "dissent_share": 0.211,
         "exit_count": 1,
         "penalty": 7.2,
         "prior_rank": 41,
@@ -1143,10 +1146,10 @@
           {
             "delta_pct": null,
             "filer": "Duquesne Family Office (Druckenmiller)",
-            "manager_quality_score": 0.564,
+            "manager_quality_score": 0.569,
             "prior_rank": 41,
             "prior_weight_pct": 0.538,
-            "strength": 0.594,
+            "strength": 0.596,
             "type": "EXIT"
           }
         ],
@@ -1197,10 +1200,10 @@
           "Average buyer quality 0.61 across 4 managers"
         ]
       },
-      "score_13f": 76.8,
+      "score_13f": 77.0,
       "signal_class": "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION",
       "signal_label": "Early smart money + insider confirmation",
-      "signal_score": 77.0,
+      "signal_score": 77.2,
       "ticker": "INTC",
       "tradable_ticker_validated": true,
       "why": {
@@ -1232,13 +1235,14 @@
       },
       "commentary": {
         "ticker": "INTC",
-        "why_strongest": "INTC ranks on new / add activity, portfolio conviction and insider buying (form 4), confirmed by $9,999,985 of insider open-market buying since quarter-end.",
-        "insider_read": "Form 4 filings show $9,999,985 of open-market insider buying since quarter-end.",
+        "why_strongest": "Two managers opened new positions, including SurgoCap at 8.3% of its book, and Tiger Global added +160%. This is one of the few names where the 13F and insider components score near-identically high, and it comes after a 31% decline since quarter-end.",
+        "insider_read": "Net buying: a single $9,999,985 open-market purchase by one insider, the largest insider commitment in this cohort.",
         "risks": [
-          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
-          "Reported weights use long-only AUM and overstate true portfolio exposure."
+          "Druckenmiller fully exited a 0.5% position, drawing a 7.2 point dissent penalty",
+          "The 31% drawdown since quarter-end means filers are underwater on these adds",
+          "Insider confirmation rests on one trade by one person"
         ],
-        "verdict": "STRONG"
+        "verdict": "UNUSUALLY_STRONG"
       },
       "option": {
         "ticker": "INTC",
@@ -1365,10 +1369,10 @@
           "manager_quality_quarters": 3,
           "manager_quality_score": 0.64,
           "manager_quality_source": "DATA_DRIVEN",
-          "port_weight_pct": 0.555,
+          "port_weight_pct": 0.557,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
-          "weight_vs_median": 5.78
+          "weight_vs_median": 5.74
         }
       ],
       "flags": [
@@ -1592,11 +1596,12 @@
       },
       "commentary": {
         "ticker": "FBIN",
-        "why_strongest": "FBIN ranks on new / add activity, insider buying (form 4) and manager quality, confirmed by $2,015,342 of insider open-market buying since quarter-end.",
-        "insider_read": "Form 4 filings show $2,015,342 of open-market insider buying since quarter-end.",
+        "why_strongest": "A narrow but clean setup: DME Capital opened a new position at 3.1% of its book and Harris Associates added, with the strongest insider factor score in the top five. The name is uncrowded among tracked filers and the filing is among the freshest here.",
+        "insider_read": "Net buying: $2,015,342 purchased across 3 trades by one insider, against $30,678 sold in 1 trade.",
         "risks": [
-          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
-          "Reported weights use long-only AUM and overstate true portfolio exposure."
+          "Only two buyers, so consensus support is thin",
+          "Insider purchases come from a single individual",
+          "Down 21% since quarter-end; the thesis has not worked so far"
         ],
         "verdict": "STRONG"
       },
@@ -1865,11 +1870,12 @@
       },
       "commentary": {
         "ticker": "ALK",
-        "why_strongest": "ALK ranks on portfolio conviction, manager quality and filing freshness, confirmed by $1,001,510 of insider open-market buying since quarter-end.",
-        "insider_read": "Form 4 filings show $1,001,510 of open-market insider buying since quarter-end.",
+        "why_strongest": "The rare name here with a multi-quarter pattern: two prior build quarters plus a further add from Semper Augustus at 10.6% of its portfolio, the highest-quality buyer in this position. Freshness scores highest in the cohort and crowding is low.",
+        "insider_read": "Net buying: $1,001,510 purchased in 1 trade by one insider, against $263,256 sold in 1 trade.",
         "risks": [
-          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
-          "Reported weights use long-only AUM and overstate true portfolio exposure."
+          "A single institutional buyer, so the consensus factor is weak at 27.9",
+          "Both the purchase and the sale rest on one trade each",
+          "Down 20% since quarter-end"
         ],
         "verdict": "STRONG"
       },
@@ -2194,11 +2200,12 @@
       },
       "commentary": {
         "ticker": "TTMI",
-        "why_strongest": "TTMI ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $1,642,200 of insider open-market buying since quarter-end.",
-        "insider_read": "Form 4 filings show $1,642,200 of open-market insider buying since quarter-end.",
+        "why_strongest": "Three independent managers acted in the same quarter, with Lone Pine and Third Point opening new positions and Whale Rock adding to a holding worth 6.4% of its book. Activity scores near the top and the name is uncrowded among tracked filers.",
+        "insider_read": "Insiders were net sellers: $3,720,116 sold in 1 trade against $1,642,200 purchased in 2 trades by two insiders, so confirmation is at best partial.",
         "risks": [
-          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
-          "Reported weights use long-only AUM and overstate true portfolio exposure."
+          "Discretionary selling exceeds purchases",
+          "No prior build quarters",
+          "Down 33% since quarter-end, the largest drawdown in this list"
         ],
         "verdict": "STRONG"
       },
@@ -2450,11 +2457,12 @@
       },
       "commentary": {
         "ticker": "UAA",
-        "why_strongest": "UAA ranks on portfolio conviction, manager quality and filing freshness, confirmed by $100,181 of insider open-market buying since quarter-end.",
-        "insider_read": "Form 4 filings show $100,181 of open-market insider buying since quarter-end.",
+        "why_strongest": "Fairfax added to a position now at 11.0% of its reported book, extending a pattern across two prior build quarters. The combination of a high-quality, low-turnover holder and sustained accumulation is what carries this name rather than breadth.",
+        "insider_read": "Net buying: $100,181 purchased in 1 trade by one insider, with no recorded sales; small in size but directionally consistent.",
         "risks": [
-          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
-          "Reported weights use long-only AUM and overstate true portfolio exposure."
+          "Single buyer; consensus factor is low at 27.4",
+          "Insider purchase is very small in absolute terms",
+          "Down 18% since quarter-end"
         ],
         "verdict": "STRONG"
       },
@@ -2506,7 +2514,7 @@
         "manager_quality": 10.2
       },
       "crowding_label": "LOW",
-      "dissent_penalty": 11.7,
+      "dissent_penalty": 11.8,
       "factors": {
         "accumulation": 15.0,
         "activity": 100.0,
@@ -2682,12 +2690,12 @@
       "insider_score": 57.0,
       "institutional_dissent": {
         "dissent_score": 86.6,
-        "dissent_share": 0.613,
+        "dissent_share": 0.62,
         "exit_count": 2,
-        "penalty": 11.7,
+        "penalty": 11.8,
         "prior_rank": 1,
         "prior_weight_pct": 7.415,
-        "reason": "Lone Pine Capital (Mandel) fully exited its former #1 position, alongside 3 other independent sellers \u2014 11.7 point dissent penalty",
+        "reason": "Lone Pine Capital (Mandel) fully exited its former #1 position, alongside 3 other independent sellers \u2014 11.8 point dissent penalty",
         "reduce_count": 2,
         "seller_count": 4,
         "sellers": [
@@ -2703,16 +2711,16 @@
           {
             "delta_pct": null,
             "filer": "Atreides Management",
-            "manager_quality_score": 0.383,
+            "manager_quality_score": 0.414,
             "prior_rank": 19,
             "prior_weight_pct": 1.877,
-            "strength": 0.542,
+            "strength": 0.551,
             "type": "EXIT"
           },
           {
             "delta_pct": -98.27,
             "filer": "Soros Fund Management (Soros)",
-            "manager_quality_score": 0.269,
+            "manager_quality_score": 0.27,
             "prior_rank": 55,
             "prior_weight_pct": 0.009,
             "strength": 0.433,
@@ -2777,7 +2785,7 @@
       "score_13f": 76.8,
       "signal_class": "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION",
       "signal_label": "Early smart money + insider confirmation",
-      "signal_score": 68.5,
+      "signal_score": 68.4,
       "ticker": "VST",
       "tradable_ticker_validated": true,
       "why": {
@@ -2787,7 +2795,7 @@
           "Highest-quality buyer: Appaloosa (Tepper) (quality 0.72)",
           "$1,173,069 of open-market insider purchases since quarter-end",
           "Institutional accumulation and insider buying confirm each other (13F 77, insider 57) \u2192 +6 confluence",
-          "Lone Pine Capital (Mandel) fully exited its former #1 position, alongside 3 other independent sellers \u2014 11.7 point dissent penalty"
+          "Lone Pine Capital (Mandel) fully exited its former #1 position, alongside 3 other independent sellers \u2014 11.8 point dissent penalty"
         ],
         "summary": "VST ranks on new / add activity, portfolio conviction and manager quality, confirmed by $1,173,069 of insider open-market buying since quarter-end.",
         "top_drivers": [
@@ -2810,11 +2818,12 @@
       },
       "commentary": {
         "ticker": "VST",
-        "why_strongest": "VST ranks on new / add activity, portfolio conviction and manager quality, confirmed by $1,173,069 of insider open-market buying since quarter-end.",
-        "insider_read": "Form 4 filings show $1,173,069 of open-market insider buying since quarter-end.",
+        "why_strongest": "Thiel Macro opened a new position at 14.1% of its book, alongside adds from Appaloosa and Sound Shore. Activity and conviction both score at the ceiling, and insider purchases run in the same direction as the institutional flow.",
+        "insider_read": "Net buying: $1,173,069 purchased across 3 trades by one insider, with no recorded sales.",
         "risks": [
-          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
-          "Reported weights use long-only AUM and overstate true portfolio exposure."
+          "Lone Pine fully exited its former #1 position alongside three other sellers, an 11.8 point dissent penalty",
+          "No prior build quarters",
+          "The largest weight comes from the lowest-quality buyer in the group"
         ],
         "verdict": "STRONG"
       },
@@ -2888,7 +2897,7 @@
         "crowding": 5.0,
         "freshness": 7.43,
         "insider": 6.48,
-        "manager_quality": 9.93
+        "manager_quality": 9.95
       },
       "crowding_label": "LOW",
       "dissent_penalty": 11.2,
@@ -2900,7 +2909,7 @@
         "crowding": 100.0,
         "freshness": 74.3,
         "insider": 43.2,
-        "manager_quality": 66.2
+        "manager_quality": 66.3
       },
       "filer_count": 6,
       "filers": [
@@ -2921,20 +2930,20 @@
           "weight_vs_median": 4.76
         },
         {
-          "alpha_score": 18.7,
+          "alpha_score": 19.1,
           "delta_pct": 19.06,
           "delta_type": "ADDED",
           "filer": "Duquesne Family Office (Druckenmiller)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.815,
+          "freshness_score": 0.822,
           "manager_quality_quarters": 3,
-          "manager_quality_score": 0.564,
+          "manager_quality_score": 0.569,
           "manager_quality_source": "DATA_DRIVEN",
-          "port_weight_pct": 5.404,
+          "port_weight_pct": 6.468,
           "position_tier": "TOP3",
           "report_date": "2026-06-30",
-          "weight_vs_median": 12.69
+          "weight_vs_median": 13.27
         },
         {
           "alpha_score": 20.2,
@@ -2953,7 +2962,7 @@
           "weight_vs_median": 2.89
         },
         {
-          "alpha_score": 6.9,
+          "alpha_score": 7.0,
           "delta_pct": 49.5,
           "delta_type": "ADDED",
           "filer": "Renaissance Technologies (Quant)",
@@ -2979,10 +2988,10 @@
           "manager_quality_quarters": 3,
           "manager_quality_score": 0.353,
           "manager_quality_source": "DATA_DRIVEN",
-          "port_weight_pct": 6.369,
+          "port_weight_pct": 6.272,
           "position_tier": "TOP5",
           "report_date": "2026-06-30",
-          "weight_vs_median": 2.97
+          "weight_vs_median": 2.92
         },
         {
           "alpha_score": 18.0,
@@ -3399,7 +3408,7 @@
           "First quarter of buying \u2013 no multi-quarter build yet"
         ],
         "activity": [
-          "Situational Awareness LP opened a NEW position at 6.4% of its book",
+          "Situational Awareness LP opened a NEW position at 6.3% of its book",
           "Third Point (Loeb) added +67% to an existing position",
           "6 tracked managers bought this quarter"
         ],
@@ -3426,15 +3435,15 @@
           "Average buyer quality 0.57 across 6 managers"
         ]
       },
-      "score_13f": 77.2,
+      "score_13f": 77.3,
       "signal_class": "ACCUMULATION_WITH_INSIDER_CONFIRMATION",
       "signal_label": "Accumulation + insider confirmation",
-      "signal_score": 66.2,
+      "signal_score": 66.3,
       "ticker": "TSM",
       "tradable_ticker_validated": true,
       "why": {
         "bullets": [
-          "Situational Awareness LP opened a NEW position at 6.4% of its book",
+          "Situational Awareness LP opened a NEW position at 6.3% of its book",
           "Largest buyer weight: 10.5% of Appaloosa (Tepper)'s portfolio (rank TOP3)",
           "6 independent buyers incl. Appaloosa (Tepper), Duquesne Family Office (Druckenmiller), Harvard Management Co \u2026",
           "$251,113 of open-market insider purchases since quarter-end",
@@ -3462,11 +3471,12 @@
       },
       "commentary": {
         "ticker": "TSM",
-        "why_strongest": "TSM ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $251,113 of insider open-market buying since quarter-end.",
-        "insider_read": "Form 4 filings show $251,113 of open-market insider buying since quarter-end.",
+        "why_strongest": "Six independent filers increased reported long positions, including Appaloosa at 10.5% of its book and Third Point adding +67%, with Situational Awareness opening a new 6.3% position. Breadth is the distinguishing feature here, and insider activity runs the same way.",
+        "insider_read": "Net buying: $251,113 purchased across 22 trades by two insiders, with no recorded sales; frequent but small in value.",
         "risks": [
-          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
-          "Reported weights use long-only AUM and overstate true portfolio exposure."
+          "Seven independent sellers including a full Li Lu exit, an 11.2 point dissent penalty",
+          "One buyer is a quant filer with zero quality weight",
+          "Insider purchase value is modest relative to the position sizes"
         ],
         "verdict": "STRONG"
       },
@@ -3546,10 +3556,10 @@
       "contributions": {
         "accumulation": 1.5,
         "activity": 15.0,
-        "consensus": 11.87,
+        "consensus": 11.88,
         "conviction": 14.25,
         "crowding": 5.0,
-        "freshness": 7.8,
+        "freshness": 7.81,
         "insider": 0.0,
         "manager_quality": 9.72
       },
@@ -3558,30 +3568,30 @@
       "factors": {
         "accumulation": 15.0,
         "activity": 100.0,
-        "consensus": 79.1,
+        "consensus": 79.2,
         "conviction": 95.0,
         "crowding": 100.0,
-        "freshness": 78.0,
+        "freshness": 78.1,
         "insider": 0.0,
         "manager_quality": 64.8
       },
       "filer_count": 5,
       "filers": [
         {
-          "alpha_score": 18.8,
+          "alpha_score": 19.0,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "Duquesne Family Office (Druckenmiller)",
           "filing_date": "2026-08-14",
           "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.815,
+          "freshness_score": 0.822,
           "manager_quality_quarters": 3,
-          "manager_quality_score": 0.564,
+          "manager_quality_score": 0.569,
           "manager_quality_source": "DATA_DRIVEN",
-          "port_weight_pct": 0.813,
+          "port_weight_pct": 0.973,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
-          "weight_vs_median": 1.91
+          "weight_vs_median": 2.0
         },
         {
           "alpha_score": 8.3,
@@ -3928,10 +3938,10 @@
           "Average buyer quality 0.58 across 5 managers"
         ]
       },
-      "score_13f": 76.6,
+      "score_13f": 76.7,
       "signal_class": "LARGE_NEW_POSITION",
       "signal_label": "Large new position",
-      "signal_score": 65.1,
+      "signal_score": 65.2,
       "ticker": "AMD",
       "tradable_ticker_validated": true,
       "why": {
@@ -3955,19 +3965,20 @@
           {
             "factor": "consensus",
             "label": "Smart-money consensus",
-            "points": 11.87
+            "points": 11.88
           }
         ]
       },
       "commentary": {
         "ticker": "AMD",
-        "why_strongest": "AMD ranks on new / add activity, portfolio conviction and smart-money consensus, without confirming insider purchases so far.",
-        "insider_read": "No open-market insider purchases confirm the 13F signal yet.",
+        "why_strongest": "Five filers were active, with Tiger Global and Duquesne opening new positions and Whale Rock adding +2081% to reach 7.0% of its book. Consensus and activity score highly, but this ranks last in the top ten because the insider factor contributes nothing.",
+        "insider_read": "No insider confirmation exists: zero open-market purchases, against $52,043,431 of sales across 47 trades.",
         "risks": [
-          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
-          "Reported weights use long-only AUM and overstate true portfolio exposure."
+          "Insider selling is the largest in this cohort with no offsetting purchases",
+          "Two of the five buyers are quant filers carrying zero quality weight",
+          "No prior build quarters and down 18% since quarter-end"
         ],
-        "verdict": "STRONG"
+        "verdict": "ROUTINE"
       },
       "option": {
         "ticker": "AMD",
@@ -4040,10 +4051,10 @@
       }
     }
   ],
-  "market_context": "52 tracked filers were screened; the ten strongest names are led by CVNA (score 81.7). 9 of the ten carry confirming insider purchases since quarter-end.",
-  "commentary_source": "rule_based",
+  "market_context": "This quarter's tracked filings cluster in semiconductors and consumer-cyclical names, with several managers opening large-weight new positions rather than trimming. Insider confirmation is mixed: some names pair institutional accumulation with open-market purchases, while others show sizeable discretionary selling.",
+  "commentary_source": "claude-opus-5",
   "llm": {
-    "spent_usd": 0.1509,
+    "spent_usd": 0.1549,
     "budget_usd": 1.5,
     "api_calls": 3,
     "cache_hits": 0,
@@ -4052,10 +4063,10 @@
       {
         "tier": "haiku",
         "ok": false,
-        "why": "CVNA: insider_read dollar figure $2,100,000 matches no Form 4 total",
-        "cost_usd": 0.01861,
+        "why": "CVNA: insider_read dollar figure $1,500,000 matches no Form 4 total",
+        "cost_usd": 0.0211,
         "input_tokens": 6066,
-        "output_tokens": 2509,
+        "output_tokens": 3006,
         "cache_read": 0,
         "cache_write": 0
       },
@@ -4063,19 +4074,19 @@
         "tier": "sonnet",
         "ok": false,
         "why": "CVNA: insider_read dollar figure $1,500,000 matches no Form 4 total",
-        "cost_usd": 0.03359,
+        "cost_usd": 0.03623,
         "input_tokens": 6441,
-        "output_tokens": 2071,
+        "output_tokens": 2335,
         "cache_read": 0,
         "cache_write": 1319
       },
       {
         "tier": "opus",
-        "ok": false,
-        "why": "CVNA: insider_read dollar figure $1,500,000 matches no Form 4 total",
-        "cost_usd": 0.09873,
+        "ok": true,
+        "why": "ok",
+        "cost_usd": 0.09756,
         "input_tokens": 6441,
-        "output_tokens": 2661,
+        "output_tokens": 2614,
         "cache_read": 0,
         "cache_write": 1251
       }
@@ -4101,12 +4112,12 @@
   },
   "market": {
     "state": "closed",
-    "as_of": "2026-09-06T17:15:29+00:00",
+    "as_of": "2026-09-06T18:07:20+00:00",
     "description": "Market is closed",
     "trading_day": "2026-09-06"
   },
-  "input_fingerprint": "cd62244e65d7a56a535a2e4045d9c63d354434f618e9f3971296c71f02e1ee19",
-  "ranking_fingerprint": "47b965798d4663869960ccd326dfdba22febde548b7bd67256ea459e13738679",
+  "input_fingerprint": "113dabc881afa465f6895adf0b35170f26631ff08c65e875ad5fe060837f572a",
+  "ranking_fingerprint": "aa9845904a4573b995570e0c276057af097782e0671bf710081a70cdfefc2a83",
   "sell_signals": [
     {
       "filer": "Duke University (DUMAC)",
