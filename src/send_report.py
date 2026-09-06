@@ -475,7 +475,7 @@ def track_record_block(bt: dict | None) -> str:
 
     return f"""
     <div style="background:{CARD};border:1px solid {LINE};border-radius:18px;padding:18px 24px;margin-top:18px">
-      <div class="k2">Track record · 90 days · vs {esc(s.get('benchmark', 'SPY'))}</div>
+      <div class="k2">Stock signal record · 90 days · vs {esc(s.get('benchmark', 'SPY'))}</div>
       <div style="font-size:14px;color:{INK};margin-top:6px">
         <span style="font-weight:600;color:{col}">{excess:+.1f}% excess</span> on average
         ({ret:+.1f}% signal vs {bench:+.1f}% benchmark) across {done} completed signals ·
@@ -485,6 +485,49 @@ def track_record_block(bt: dict | None) -> str:
       <div style="font-size:11px;color:{INK3};margin-top:6px">
         Stock returns, not option returns. The current engine has only just begun its forward record;
         legacy rows come from the earlier LLM-selected top-5 pipeline and are not evidence for it.
+      </div>
+    </div>"""
+
+
+def option_record_block(bt: dict | None) -> str:
+    """
+    What the recommended calls actually did - kept apart from the stock record.
+
+    A call can expire worthless on a stock that rose, so the two questions
+    ("does the signal find good stocks?" and "is the option expression
+    profitable?") must never be answered with one number.
+    """
+    o = ((bt or {}).get("summary") or {}).get("options") or {}
+    if not o.get("contracts_tracked"):
+        return ""
+
+    if not o.get("completed"):
+        body = (f"{o['contracts_tracked']} contracts recommended, "
+                f"{o.get('pending', 0)} still open and none settled yet. "
+                f"A long call is only measurable once it expires.")
+        if o.get("no_suitable_option"):
+            body += (f" {o['no_suitable_option']} signal(s) had no contract meeting the "
+                     f"liquidity filters, so no trade was proposed.")
+        return f"""
+    <div style="background:{CARD};border:1px solid {LINE};border-radius:18px;padding:18px 24px;margin-top:14px">
+      <div class="k2">Option record · settled at expiry</div>
+      <div style="font-size:13px;color:{INK2};margin-top:6px">{esc(body)}</div>
+    </div>"""
+
+    ret = o.get("avg_return_pct")
+    col = GREEN if (ret or 0) > 0 else RED
+    return f"""
+    <div style="background:{CARD};border:1px solid {LINE};border-radius:18px;padding:18px 24px;margin-top:14px">
+      <div class="k2">Option record · settled at expiry</div>
+      <div style="font-size:14px;color:{INK};margin-top:6px">
+        <span style="font-weight:600;color:{col}">{ret:+.1f}% average</span> on premium paid across
+        {o['completed']} settled contracts · win rate {o.get('win_rate_pct')}% ·
+        {o.get('expired_worthless', 0)} expired worthless
+      </div>
+      <div style="font-size:11px;color:{INK3};margin-top:6px">
+        Measured on the premium, not the share price: a call can expire worthless on a stock that rose.
+        {esc(str(o.get('pending', 0)))} contracts are still open and
+        {esc(str(o.get('no_suitable_option', 0)))} signal(s) had no contract meeting the liquidity filters.
       </div>
     </div>"""
 
@@ -625,6 +668,7 @@ def _generate_html_report(a: dict) -> str:
 
   {sell_block(a.get('sell_signals', []))}
   {track_record_block(a.get('backtest'))}
+  {option_record_block(a.get('backtest'))}
   {methodology_block(a)}
 
   <div style="font-size:11px;color:{INK3};line-height:1.6;margin-top:28px;padding:0 4px">

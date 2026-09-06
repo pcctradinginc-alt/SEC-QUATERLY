@@ -110,6 +110,85 @@ def check_stock_performance(ticker: str, signal_date_str: str) -> dict:
         return {"error": str(e)}
 
 
+# ── Option strategy outcome ──────────────────────────────────────────────────
+
+def _underlying_close_on_or_after(ticker: str, day: date) -> float | None:
+    """First available close on or after `day`, for settling an option."""
+    if not YF_AVAILABLE:
+        return None
+    try:
+        hist = yf.Ticker(_yf_ticker(ticker)).history(
+            start=day.isoformat(), end=(day + timedelta(days=10)).isoformat())
+        if hist.empty:
+            return None
+        return round(float(hist["Close"].iloc[0]), 2)
+    except Exception:
+        return None
+
+
+def option_outcome(stock: dict, signal_date_str: str) -> dict:
+    """
+    What the recommended Call actually did.
+
+    Two horizons, because they answer different questions and must never be
+    blended with the stock return:
+
+      at expiry  a long call settles at max(0, S − K), so once the contract has
+                 expired the result is exact and needs only the underlying.
+      at 90 days a mark-to-market mid-life value, which needs an option quote we
+                 do not store historically - reported only when available.
+
+    A stock can rise and the call still expire worthless; that is precisely the
+    distinction this measures.
+    """
+    opt = (stock.get("option") or {})
+    contract = opt.get("contract")
+    if not contract:
+        return {"option_status": "NO_OPTION", "option_reason": opt.get("status")}
+
+    entry = contract.get("mid")
+    strike = contract.get("strike")
+    expiry = contract.get("expiration")
+    if not (entry and strike and expiry):
+        return {"option_status": "INCOMPLETE"}
+
+    out = {
+        "option_symbol":     contract.get("symbol"),
+        "option_strike":     strike,
+        "option_expiration": expiry,
+        "option_entry_mid":  entry,
+        "option_max_risk":   contract.get("max_risk_per_contract"),
+        "option_breakeven":  contract.get("breakeven"),
+    }
+
+    try:
+        expiry_date = date.fromisoformat(expiry)
+    except ValueError:
+        out["option_status"] = "INCOMPLETE"
+        return out
+
+    if expiry_date > date.today():
+        out["option_status"] = "pending"
+        out["option_days_to_expiry"] = (expiry_date - date.today()).days
+        return out
+
+    settle = _underlying_close_on_or_after(stock.get("ticker", ""), expiry_date)
+    if settle is None:
+        out["option_status"] = "no_price_data"
+        return out
+
+    intrinsic = max(0.0, settle - float(strike))
+    ret = (intrinsic - float(entry)) / float(entry) * 100.0
+    out.update({
+        "option_status":            "win" if intrinsic > float(entry) else "loss",
+        "underlying_at_expiry":     settle,
+        "option_value_at_expiry":   round(intrinsic, 2),
+        "option_return_pct":        round(ret, 1),
+        "option_expired_worthless": intrinsic == 0.0,
+    })
+    return out
+
+
 def run() -> dict:
     today_str = run_date()
 
@@ -133,6 +212,7 @@ def run() -> dict:
             perf = check_stock_performance(ticker, report_date)
             ret90 = perf.get("return_d90_pct")
             print(f"{f'+{ret90}%' if ret90 and ret90 > 0 else (f'{ret90}%' if ret90 is not None else perf.get('status_d90', '?'))}")
+            opt_result = option_outcome(stock, report_date)
             b90  = benchmark_return(report_date, 90)
             b180 = benchmark_return(report_date, 180)
             r90  = perf.get("return_d90_pct")
@@ -149,6 +229,7 @@ def run() -> dict:
                 "excess_d90_pct":   round(r90 - b90, 1) if (r90 is not None and b90 is not None) else None,
                 "excess_d180_pct":  round(r180 - b180, 1) if (r180 is not None and b180 is not None) else None,
                 "ticker":           ticker,
+                **opt_result,
                 "company":          stock.get("company_name") or stock.get("name", ""),
                 "signal_score":     stock.get("signal_score", stock.get("conviction_score")),
                 "primary_flag":     stock.get("grade") or stock.get("primary_flag", ""),
@@ -191,9 +272,26 @@ def run() -> dict:
                 "beat_benchmark_pct": _beat(sub),
             }
 
+    # Option results are kept in their own block. A call can expire worthless on
+    # a stock that rose, so pooling the two would hide exactly what matters.
+    opt_done = [r for r in rows if r.get("option_status") in ("win", "loss")]
+    opt_pending = sum(1 for r in rows if r.get("option_status") == "pending")
+    no_option = sum(1 for r in rows if r.get("option_status") == "NO_OPTION")
+    options_summary = {
+        "contracts_tracked":  sum(1 for r in rows if r.get("option_symbol")),
+        "completed":          len(opt_done),
+        "pending":            opt_pending,
+        "no_suitable_option": no_option,
+        "win_rate_pct":       (round(sum(1 for r in opt_done if r["option_status"] == "win")
+                                     / len(opt_done) * 100, 1) if opt_done else None),
+        "avg_return_pct":     _avg(opt_done, "option_return_pct"),
+        "expired_worthless":  sum(1 for r in opt_done if r.get("option_expired_worthless")),
+    }
+
     summary = {
         "generated_at":       today_str,
         "benchmark":          _BENCH,
+        "options":            options_summary,
         "avg_benchmark_90d_pct": _avg(done_90, "benchmark_d90_pct"),
         "avg_excess_90d_pct":    _avg(done_90, "excess_d90_pct"),
         "beat_benchmark_90d_pct": _beat(done_90),
@@ -215,6 +313,12 @@ def run() -> dict:
 
     print(f"\n{'─'*40}")
     print(f"BACKTEST SUMMARY ({len(rows)} signals tracked)")
+    o = options_summary
+    print(f"  Options      : {o['contracts_tracked']} contracts, {o['completed']} settled, "
+          f"{o['pending']} open, {o['no_suitable_option']} without a qualifying call")
+    if o["completed"]:
+        print(f"  Option return: {o['avg_return_pct']:+.1f}% avg, win rate {o['win_rate_pct']}%, "
+              f"{o['expired_worthless']} expired worthless")
     if summary["win_rate_90d_pct"] is not None:
         print(f"  90d  win rate : {summary['win_rate_90d_pct']}%  "
               f"(avg {summary['avg_return_90d_pct']:+.1f}%)")
