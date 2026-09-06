@@ -247,14 +247,16 @@ def quote_note(s: dict) -> str:
 def option_block(s: dict) -> str:
     o = s.get("option") or {}
     c = o.get("contract")
-    note = (s.get("commentary") or {}).get("option_note") or o.get("rule_rationale", "")
+    # Deterministic, from the selected contract - never model-generated.
+    note = o.get("rule_rationale", "")
     if not c:
         rej = o.get("rejections") or {}
         rej_txt = ", ".join(f"{k} {v}" for k, v in rej.items()) if rej else "no chain inside the expiry window"
         if o.get("status") == "NOT_EVALUATED":
             body = "Option chain not evaluated in this run (no Tradier key)."
         else:
-            body = f"No Call passed every filter · rejected on: {rej_txt}."
+            body = ("No option currently satisfies the minimum liquidity, delta and "
+                    f"spread requirements · rejected on: {rej_txt}.")
         return f"""
     <div style="background:{BG};border-radius:12px;padding:16px;margin-top:14px">
       <div class="k2">Call option</div>

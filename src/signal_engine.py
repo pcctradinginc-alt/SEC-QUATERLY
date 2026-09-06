@@ -63,11 +63,22 @@ def _clamp(x: float, lo: float = 0.0, hi: float = 100.0) -> float:
     return max(lo, min(hi, x))
 
 
-def _is_option_eligible_ticker(t: str) -> bool:
-    """CUSIP-only keys (9 alphanumerics) and blanks cannot be traded/looked up."""
+def is_tradable_ticker(t: str) -> bool:
+    """
+    True only for a resolved, tradable US symbol.
+
+    An unmapped CUSIP ("G4474Y214", "68634K106") is an internal identifier, not
+    a ticker: it cannot be priced, cannot be looked up on an options chain and
+    must never appear in a public ranking. Such holdings stay in the book for
+    AUM and weight accounting, but they do not enter the candidate universe.
+    """
     if not t or len(t) > 6:
         return False
     return t[0].isalpha()
+
+
+# Legacy alias
+_is_option_eligible_ticker = is_tradable_ticker
 
 
 _ISSUER_SUFFIX_RE = re.compile(
@@ -383,7 +394,8 @@ def score_ticker(agg: dict, scored_flat: list[dict], mq_signals: dict,
         "mq_signal":         mq_signals.get(agg["ticker"], {}),
         "insider":           insider or {},
         "alpha_score_legacy": agg.get("alpha_score"),
-        "option_eligible":   _is_option_eligible_ticker(agg["ticker"]),
+        "tradable_ticker_validated": is_tradable_ticker(agg["ticker"]),
+        "option_eligible":   is_tradable_ticker(agg["ticker"]),
     }
     row["signal_class"], row["signal_label"] = classify_signal(row, bonus)
     return row
@@ -417,7 +429,7 @@ def compute_signals(scores: dict, insider_by_ticker: dict[str, dict], today: dat
     for i, r in enumerate(rows, 1):
         r["overall_rank"] = i          # position among every scored name (incl. CUSIP-only rows)
 
-    eligible = [r for r in rows if r["option_eligible"]]
+    eligible = [r for r in rows if r["tradable_ticker_validated"]]
 
     # One instrument occupies one slot: keep the highest-scoring share class and
     # record the ones folded into it. A row is folded only when BOTH the issuer
@@ -458,7 +470,8 @@ def compute_signals(scores: dict, insider_by_ticker: dict[str, dict], today: dat
         "input_fingerprint":  hashlib.sha256(fingerprint_src.encode()).hexdigest(),
         "ranking_fingerprint": hashlib.sha256(
             json.dumps([(r["ticker"], r["signal_score"]) for r in rows]).encode()).hexdigest(),
-        "excluded_no_ticker": [r["ticker"] for r in rows if not r["option_eligible"]][:20],
+        "excluded_no_ticker": [r["ticker"] for r in rows if not r["tradable_ticker_validated"]][:20],
+        "excluded_no_ticker_count": sum(1 for r in rows if not r["tradable_ticker_validated"]),
         "excluded_same_issuer": [
             {"ticker": r["ticker"], "superseded_by": r["superseded_by"]}
             for r in rows if r.get("superseded_by")
@@ -475,7 +488,7 @@ def candidate_pool(scores: dict, today: date) -> tuple[list[str], dict[str, str]
     (latest 13F quarter-end among its buyers).
     """
     pre = compute_signals(scores, {}, today)
-    pool = [r["ticker"] for r in pre["ranking"] if r["option_eligible"]][:SIGNAL_CANDIDATE_POOL]
+    pool = [r["ticker"] for r in pre["ranking"] if r["tradable_ticker_validated"]][:SIGNAL_CANDIDATE_POOL]
 
     since: dict[str, str] = {}
     for r in pre["ranking"]:

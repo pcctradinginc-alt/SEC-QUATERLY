@@ -83,3 +83,35 @@ def test_target_report_date_follows_the_45_day_deadline():
     assert t("2026-08-13") == "2026-03-31"   # deadline not reached yet
     assert t("2026-02-16") == "2025-12-31"
     assert t("2026-01-10") == "2025-12-31"
+
+
+class _Resp:
+    def __init__(self, payload): self._p = payload
+    def json(self): return self._p
+
+
+def test_amendment_supersedes_the_original_for_the_same_quarter(monkeypatch):
+    """A 13F-HR/A restates the original; the latest filing for the quarter wins."""
+    recent = {
+        "form":            ["13F-HR/A", "13F-HR", "13F-HR"],
+        "accessionNumber": ["acc-amend", "acc-orig", "acc-old"],
+        "filingDate":      ["2026-08-20", "2026-08-14", "2026-05-15"],
+        "reportDate":      ["2026-06-30", "2026-06-30", "2026-03-31"],
+        "primaryDocument": ["a.xml", "b.xml", "c.xml"],
+    }
+    monkeypatch.setattr(ff, "edgar_get", lambda url: _Resp({"filings": {"recent": recent}}))
+    got = ff.get_latest_13f_filing("0000000001", "2026-06-30")
+    assert got["accessionNumber"] == "acc-amend"
+    assert got["isAmendment"] is True
+
+
+def test_a_filer_without_the_target_quarter_is_excluded(monkeypatch):
+    recent = {
+        "form":            ["13F-HR"],
+        "accessionNumber": ["acc-old"],
+        "filingDate":      ["2025-11-14"],
+        "reportDate":      ["2025-09-30"],
+        "primaryDocument": ["c.xml"],
+    }
+    monkeypatch.setattr(ff, "edgar_get", lambda url: _Resp({"filings": {"recent": recent}}))
+    assert ff.get_latest_13f_filing("0000000001", "2026-06-30") is None

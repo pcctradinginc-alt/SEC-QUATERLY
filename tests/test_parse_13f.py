@@ -50,3 +50,38 @@ def test_manager_history_chains_across_a_rename():
     r = mq.compute_manager_quality(hist)
     assert list(r) == ["Scion Asset Management (Burry)"]     # no stale duplicate
     assert r["Scion Asset Management (Burry)"]["quarters_used"] == 3
+
+
+def _holding(cusip, shares, value):
+    return {"cusip": cusip, "nameOfIssuer": cusip, "titleOfClass": "COM",
+            "value_usd_thousands": value, "shares": shares, "sshPrnamtType": "SH",
+            "putCall": None, "investmentDiscretion": "SOLE", "ticker": cusip}
+
+
+def test_delta_classification_end_to_end():
+    """Prior AAA/BBB/CCC/DDD 100 each; current AAA 150, BBB 50, CCC 100, EEE 100."""
+    raw = {"date": "2026-09-06", "report_date": "2026-06-30", "recent_splits": {},
+           "filers": {"F": {
+               "cik": "0000000001",
+               "meta": {"filingDate": "2026-08-14", "reportDate": "2026-06-30", "isAmendment": False},
+               "holdings": [_holding("AAA", 150, 150), _holding("BBB", 50, 50),
+                            _holding("CCC", 100, 100), _holding("EEE", 100, 100)]}}}
+    prior = {"date": "2026-05-16", "period_of_report": "2026-03-31", "filers": {"F": {
+        "cik": "0000000001", "reported_aum_k": 400,
+        "positions": [
+            {"ticker": "AAA", "cusip": "AAA", "shares": 100, "value_usd_k": 100, "port_weight_pct": 25.0},
+            {"ticker": "BBB", "cusip": "BBB", "shares": 100, "value_usd_k": 100, "port_weight_pct": 25.0},
+            {"ticker": "CCC", "cusip": "CCC", "shares": 100, "value_usd_k": 100, "port_weight_pct": 25.0},
+            {"ticker": "DDD", "cusip": "DDD", "shares": 100, "value_usd_k": 100, "port_weight_pct": 25.0}]}}}
+
+    out = p13.parse_and_enrich(raw, prior)
+    got = {p["cusip"]: p["delta"]["type"] for p in out["filers"]["F"]["positions"]}
+    assert got == {"AAA": "ADDED", "BBB": "REDUCED", "CCC": "UNCHANGED", "EEE": "NEW"}
+    assert [e["cusip"] for e in out["filers"]["F"]["exited_positions"]] == ["DDD"]
+    assert out["period_of_report"] == "2026-06-30"
+
+    import data_quality as dq
+    out["prior_report_date"] = "2026-03-31"
+    r = dq.evaluate(out)
+    assert r["summary"]["counts"] == {"NEW": 1, "ADDED": 1, "REDUCED": 1, "UNCHANGED": 1, "SOLD": 0}
+    assert r["summary"]["exits"] == 1

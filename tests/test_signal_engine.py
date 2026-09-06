@@ -95,11 +95,23 @@ def test_scores_bounded_and_weights_sum():
         assert 0.0 <= row["score_13f"] <= 100.0
 
 
+def test_unmapped_cusips_never_enter_the_candidate_universe():
+    r = se.compute_signals(make_scores(), INSIDER, TODAY)
+    assert not se.is_tradable_ticker("037833100")
+    assert not se.is_tradable_ticker("G4474Y214")
+    assert not se.is_tradable_ticker("")
+    assert se.is_tradable_ticker("AAPL") and se.is_tradable_ticker("BRK/B")
+    assert "037833100" not in [t["ticker"] for t in r["top10"]]
+    assert r["excluded_no_ticker_count"] >= 1
+    pool, _ = se.candidate_pool(make_scores(), TODAY)
+    assert all(se.is_tradable_ticker(t) for t in pool)
+
+
 def test_top10_excludes_cusip_keys_and_has_sequential_ranks():
     r = se.compute_signals(make_scores(), INSIDER, TODAY)
     top = r["top10"]
     assert len(top) == TOP_N
-    assert all(t["option_eligible"] for t in top)
+    assert all(t["tradable_ticker_validated"] for t in top)
     assert "037833100" not in [t["ticker"] for t in top]
     assert [t["rank"] for t in top] == list(range(1, TOP_N + 1))
 

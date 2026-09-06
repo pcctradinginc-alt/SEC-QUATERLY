@@ -49,7 +49,14 @@ CONTRACT = {"status": "OK", "contract": {
 NO_OPTION = {"status": "NO_SUITABLE_OPTION_FOUND", "contract": None}
 
 
-def test_option_note_must_match_the_selected_contract():
+def test_option_note_is_no_longer_model_generated():
+    """Contract facts are inserted by code, so the schema no longer asks for them."""
+    props = ex.TOOL["input_schema"]["properties"]["stocks"]["items"]
+    assert "option_note" not in props["properties"]
+    assert "option_note" not in props["required"]
+
+
+def test_option_fact_checker_still_available_for_defence_in_depth():
     assert ex._option_facts_ok("Jan 2027 110 call at delta 0.46 costs $10.55 mid.", CONTRACT)[0]
     ok, why = ex._option_facts_ok("The delta 0.80 call is the pick.", CONTRACT)
     assert not ok and "delta" in why
@@ -72,7 +79,6 @@ def test_validator_rejects_a_contradicting_stock():
             "why_strongest": "Eight independent buyers led by TCI and ValueAct built new positions here.",
             "insider_read": "Zero insider buys but no sales either.",
             "risks": ["a", "b"],
-            "option_note": "n/a",
             "verdict": "STRONG",
         }],
     }

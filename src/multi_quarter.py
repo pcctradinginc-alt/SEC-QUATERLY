@@ -16,25 +16,39 @@ from config import DATA_DIR, MULTI_QUARTER_BUILD_MIN, MULTI_QUARTER_MAX
 
 def load_historical_parsed(today_str: str) -> list[dict]:
     """
-    Loads up to MULTI_QUARTER_MAX previous *_holdings_parsed.json files,
-    most recent first, excluding today.
-    """
-    today = date.fromisoformat(today_str)
-    candidates = sorted(DATA_DIR.glob("*_holdings_parsed.json"), reverse=True)
+    Up to MULTI_QUARTER_MAX previous quarters, newest quarter first.
 
-    results = []
-    for c in candidates:
+    Selection is per REPORTING QUARTER, not per file. Running the pipeline
+    twice writes two files for the same quarter, and counting both would report
+    two quarters of accumulation where only one exists. Files whose share counts
+    are all zero cannot show a build either and are skipped.
+    """
+    from parse_13f import has_usable_share_counts, infer_report_date
+
+    today = date.fromisoformat(today_str)
+    by_quarter: dict[str, tuple[str, dict]] = {}
+
+    for c in sorted(DATA_DIR.glob("*_holdings_parsed.json"), reverse=True):
         try:
             d = date.fromisoformat(c.name[:10])
-            if d < today:
-                with open(c) as f:
-                    results.append(json.load(f))
-                if len(results) >= MULTI_QUARTER_MAX:
-                    break
-        except (ValueError, json.JSONDecodeError):
+        except ValueError:
             continue
+        if d >= today:
+            continue
+        try:
+            with open(c) as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            continue
+        if not has_usable_share_counts(data):
+            continue
+        quarter = infer_report_date(data) or c.name[:10]
+        # Newest file wins for a given quarter (a re-run supersedes the earlier one)
+        if quarter not in by_quarter or c.name[:10] > by_quarter[quarter][0]:
+            by_quarter[quarter] = (c.name[:10], data)
 
-    return results  # most recent first
+    ordered = [data for _, (_, data) in sorted(by_quarter.items(), reverse=True)]
+    return ordered[:MULTI_QUARTER_MAX]
 
 
 def build_multi_quarter_signals(today_str: str) -> dict[str, dict]:

@@ -7,6 +7,7 @@ bypassing the unreliable index.json approach.
 """
 
 import json
+import re
 import time
 import xml.etree.ElementTree as ET
 from datetime import date, datetime
@@ -45,6 +46,9 @@ def target_report_date(as_of: str | None = None) -> str:
     not reported yet would contribute a year-old book, and that book would then
     be diffed against the current quarter as if it were fresh.
     """
+    override = os.environ.get("SEC_TARGET_REPORT_DATE", "").strip()
+    if override:
+        return override
     today = date.fromisoformat(as_of or run_date())
     ends = [date(today.year - 1, 12, 31), date(today.year, 3, 31),
             date(today.year, 6, 30), date(today.year, 9, 30), date(today.year, 12, 31)]
@@ -70,7 +74,12 @@ def get_latest_13f_filing(cik: str, want_report_date: str | None = None) -> dict
     report_dates = filings.get("reportDate", [])
 
     want = want_report_date or target_report_date()
-    seen_quarters = []
+
+    # Collect every filing for the target quarter, then take the one filed last.
+    # A 13F-HR/A restates the original, so the newest filing is the truth; an
+    # amendment wins a tie on the same filing date. Relying on EDGAR's array
+    # order alone would leave that to an undocumented assumption.
+    matches, seen_quarters = [], []
     for i, form in enumerate(forms):
         if form not in ("13F-HR", "13F-HR/A"):
             continue
@@ -78,20 +87,24 @@ def get_latest_13f_filing(cik: str, want_report_date: str | None = None) -> dict
         if rd != want:
             seen_quarters.append(rd)
             continue
-        if True:
-            return {
-                "cik":             cik,
-                "accessionNumber": accessions[i],
-                "filingDate":      dates[i],
-                # reportDate = quarter-end (period of report), e.g. 2024-12-31.
-                # Always earlier than filingDate (which can be up to 45 days later).
-                # Use this as the price-comparison anchor so we measure from
-                # when the manager actually held the position, not when they disclosed it.
-                "reportDate":      report_dates[i] if i < len(report_dates) else dates[i],
-                "form":            form,
-                "isAmendment":     form == "13F-HR/A",
-                "primaryDocument": primary_docs[i] if i < len(primary_docs) else "",
-            }
+        matches.append({
+            "cik":             cik,
+            "accessionNumber": accessions[i],
+            "filingDate":      dates[i],
+            # reportDate = quarter-end (period of report). Always earlier than
+            # filingDate, and used as the price anchor and the Form 4 window start.
+            "reportDate":      rd,
+            "form":            form,
+            "isAmendment":     form == "13F-HR/A",
+            "primaryDocument": primary_docs[i] if i < len(primary_docs) else "",
+        })
+
+    if matches:
+        best = max(matches, key=lambda m: (m["filingDate"], m["isAmendment"]))
+        if len(matches) > 1:
+            print(f"  ↺ {len(matches)} filings for {want}; using {best['form']} "
+                  f"filed {best['filingDate']}")
+        return best
 
     if seen_quarters:
         print(f"  ⏭️  STALE_FILER: no 13F for {want} (newest on file: {max(seen_quarters)}) - excluded")
@@ -179,6 +192,49 @@ def find_infotable_filename(items: list[dict]) -> str | None:
     return xml_files[0] if xml_files else None
 
 
+_DATE_IN_NAME = re.compile(r"(20\d{2})[-_]?(\d{2})[-_]?(\d{2})|(\d{2})(\d{2})(20\d{2})")
+
+
+def verify_period_of_report(filing_meta: dict, filename: str) -> bool:
+    """
+    A filer may name its information table anything - SurgoCap ships a Q2-2026
+    filing whose table is called `Surgo_13F_09302025.xml`. The filename is not
+    evidence either way, so when it carries a date that contradicts the target
+    quarter, check the filing's own cover page (`primary_doc.xml`), which is the
+    authoritative period of report.
+    """
+    want = filing_meta.get("reportDate", "")
+    m = _DATE_IN_NAME.search(filename or "")
+    if not m or not want:
+        return True
+    groups = [g for g in m.groups() if g]
+    stamp = "".join(groups)
+    if want.replace("-", "") in stamp:
+        return True
+
+    cik_int = int(filing_meta["cik"])
+    acc = filing_meta["accessionNumber"].replace("-", "")
+    url = f"https://www.sec.gov/Archives/edgar/data/{cik_int}/{acc}/primary_doc.xml"
+    try:
+        text = edgar_get(url).text
+    except Exception:
+        return True                      # cover page unavailable: trust SEC metadata
+    found = re.search(r"<periodOfReport>([^<]+)</periodOfReport>", text)
+    if not found:
+        return True
+    period = found.group(1).strip()
+    normalised = period
+    if "-" in period and len(period) == 10 and period[2] == "-":      # MM-DD-YYYY
+        mm, dd, yyyy = period.split("-")
+        normalised = f"{yyyy}-{mm}-{dd}"
+    ok = normalised == want
+    if not ok:
+        print(f"    ⚠️  {filename}: cover page reports period {normalised}, expected {want}")
+    else:
+        print(f"    ✓ filename suggests another period; cover page confirms {want}")
+    return ok
+
+
 def download_infotable(filing_meta: dict) -> str | None:
     cik_int    = int(filing_meta["cik"])
     accession  = filing_meta["accessionNumber"]
@@ -208,6 +264,11 @@ def download_infotable(filing_meta: dict) -> str | None:
                 continue
 
         print(f"    ⚠️  Could not find infotable XML for {accession}")
+        return None
+
+    if not verify_period_of_report(filing_meta, infotable_filename):
+        print(f"    ⚠️  Rejecting {infotable_filename}: it does not belong to "
+              f"{filing_meta.get('reportDate')}")
         return None
 
     xml_url = f"https://www.sec.gov/Archives/edgar/data/{cik_int}/{acc_nodash}/{infotable_filename}"

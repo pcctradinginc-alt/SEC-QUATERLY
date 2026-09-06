@@ -14,7 +14,7 @@ import json
 import re
 import statistics
 import sys
-from datetime import date
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 from config import run_date, DATA_DIR
@@ -28,50 +28,98 @@ def load_latest_raw(today_str: str) -> dict:
         return json.load(f)
 
 
+def previous_quarter_end(report_date: str) -> str:
+    """The quarter-end immediately before the given one. 2026-06-30 -> 2026-03-31."""
+    d = date.fromisoformat(report_date)
+    ends = {3: (d.year - 1, 12, 31), 6: (d.year, 3, 31),
+            9: (d.year, 6, 30), 12: (d.year, 9, 30)}
+    y, m, day = ends[d.month]
+    return date(y, m, day).isoformat()
+
+
+def infer_report_date(parsed: dict) -> str:
+    """File-level reporting quarter, falling back to what the filers themselves
+    report (files written before report_date was stored have no top-level one)."""
+    rd = parsed.get("period_of_report") or parsed.get("report_date", "")
+    if rd:
+        return rd
+    dates = [f.get("report_date") for f in parsed.get("filers", {}).values() if f.get("report_date")]
+    if not dates:
+        return ""
+    return max(set(dates), key=dates.count)
+
+
+def has_usable_share_counts(parsed: dict, sample: int = 400) -> bool:
+    """
+    A baseline whose share counts are all zero cannot produce a delta: every
+    current holding would come out as NEW. Files written before the nested
+    <sshPrnamt> parsing fix are in exactly that state, so they must not be used
+    as a prior quarter.
+    """
+    seen = nonzero = 0
+    for f in parsed.get("filers", {}).values():
+        for pos in f.get("positions", []):
+            seen += 1
+            if (pos.get("shares") or 0) > 0:
+                nonzero += 1
+            if seen >= sample:
+                break
+        if seen >= sample:
+            break
+    return seen == 0 or nonzero > seen * 0.05
+
+
 def load_prior_quarter(today_str: str, current_report_date: str = "") -> dict | None:
     """
-    Finds the most recent previously saved *_holdings_parsed.json
-    that is NOT today. Returns None if this is the first run.
+    Load the dataset for the quarter immediately preceding `current_report_date`.
 
-    Amendment note: 13F-HR/A filings amend a prior quarter's data.
-    Because fetch_filings.py always retrieves the LATEST filing per filer
-    (which is the amendment if one exists), the data saved today is always
-    the most up-to-date. The delta comparison against the *previous* parsed
-    file is therefore always amendment-aware as long as each run overwrites
-    stale data from the same quarter. If two runs occur within the same
-    quarter (e.g., base + amendment), only the most recent parsed file
-    survives and prior-quarter comparison remains valid.
+    Selection is by `period_of_report`, never by file name or run date: running
+    the pipeline twice writes a second file for the SAME quarter, and diffing a
+    quarter against itself yields no ADDs, no REDUCEs and no EXITs. Amendments
+    restate a quarter, so the newest file for the required quarter wins.
+
+    Returns None when the required quarter is unavailable or unusable; the
+    caller must then stop rather than emit a degenerate all-NEW comparison.
     """
-    today = date.fromisoformat(today_str)
-    candidates = sorted(DATA_DIR.glob("*_holdings_parsed.json"), reverse=True)
+    if not current_report_date:
+        print("  ⚠️  Current reporting period unknown - cannot identify the prior quarter")
+        return None
 
-    for c in candidates:
+    required = previous_quarter_end(current_report_date)
+    print(f"  Expected prior quarter:   {required}")
+
+    best = None
+    for c in sorted(DATA_DIR.glob("*_holdings_parsed.json"), reverse=True):
         try:
-            d = date.fromisoformat(c.name[:10])
-            if d < today:
-                data = json.load(open(c))
-                # Pick the previous QUARTER, not merely an earlier file. Re-running
-                # the pipeline writes another file for the same quarter, and diffing
-                # a quarter against itself yields no ADDs, no REDUCEs and no EXITs.
-                prior_rd = data.get("report_date", "")
-                if current_report_date and prior_rd and prior_rd >= current_report_date:
-                    print(f"  ↩︎  Skipping {data.get('date')} - same reporting quarter "
-                          f"({prior_rd}), not a prior quarter")
-                    continue
-                # Warn if the prior data itself contains amendments, so the
-                # user knows the baseline may have been restated.
-                amendment_filers = [
-                    name for name, fd in data.get("filers", {}).items()
-                    if fd.get("is_amendment")
-                ]
-                if amendment_filers:
-                    print(f"  ℹ️  Prior quarter ({data['date']}) contains amendments "
-                          f"for: {', '.join(amendment_filers)} – baseline has been restated.")
-                return data
-        except (ValueError, json.JSONDecodeError):
+            file_date = c.name[:10]
+            date.fromisoformat(file_date)
+        except ValueError:
+            continue
+        try:
+            with open(c) as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, OSError):
             continue
 
-    return None  # First run
+        if infer_report_date(data) != required:
+            continue
+        if not has_usable_share_counts(data):
+            print(f"  ↩︎  {c.name}: share counts are all zero (pre-fix file) - unusable as a baseline")
+            continue
+        if best is None or file_date > best[0]:
+            best = (file_date, c.name, data)
+
+    if best is None:
+        print(f"  ❌ No usable dataset for the required prior quarter {required}")
+        return None
+
+    data = best[2]
+    amendment_filers = [n for n, fd in data.get("filers", {}).items() if fd.get("is_amendment")]
+    if amendment_filers:
+        print(f"  ℹ️  Prior quarter contains amendments for: {', '.join(amendment_filers)}")
+    print(f"  Loaded prior dataset:     {best[1]}")
+    print(f"  Loaded prior period:      {infer_report_date(data)}")
+    return data
 
 
 def _match_prior_filer(prior: dict | None, filer_name: str, cik: str) -> dict | None:
@@ -494,6 +542,11 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
             "position_count": len(positions),
             "full_position_count": filer_data.get("full_position_count", len(positions)),
             "is_capped":     bool(filer_data.get("is_capped")),
+            # A top-500 subset cannot tell a sale from a rank drop, so EXITs are
+            # simply not derivable for these books - stated, not guessed.
+            "exit_detection_available": not bool(filer_data.get("is_capped")) and bool(prior_lookup_by_key),
+            "exit_detection_note": ("historical book capped" if filer_data.get("is_capped")
+                                    else "" if prior_lookup_by_key else "no prior baseline"),
             "median_position_weight_pct": round(median_weight, 3),
             "positions":     positions,
             "exited_positions": exited_positions,
@@ -510,29 +563,13 @@ def parse_and_enrich(raw: dict, prior: dict | None) -> dict:
 
     _flag_possible_corporate_actions(parsed_filers)
 
-    # Sanity check: across a real universe some managers always exit something.
-    # Zero exits means the comparison itself is broken (a missing prior quarter,
-    # or share counts that failed to parse), not an unusually loyal quarter.
-    total_positions = sum(len(f.get("positions", [])) for f in parsed_filers.values())
-    total_exits     = sum(len(f.get("exited_positions", [])) for f in parsed_filers.values())
-    types = {}
-    for f in parsed_filers.values():
-        for pos in f.get("positions", []):
-            t = pos["delta"]["type"]
-            types[t] = types.get(t, 0) + 1
-    print(f"\n📊 Delta mix: {types}")
-    if prior is not None and total_positions > 500 and total_exits == 0:
-        print("  🚨 DATA QUALITY WARNING: zero EXITs across the entire universe - "
-              "the prior-quarter comparison is almost certainly broken")
-    if prior is not None and total_positions > 500 and types.get("NEW", 0) == total_positions:
-        print("  🚨 DATA QUALITY WARNING: every position reads as NEW - "
-              "share counts or the prior-quarter join failed")
-
     return {
-        "date":          today_str,
-        "report_date":   raw.get("report_date", ""),
+        "date":            today_str,
+        "period_of_report": raw.get("report_date", ""),
+        "report_date":     raw.get("report_date", ""),   # legacy alias
+        "generated_at":    datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "prior_date":    prior["date"] if prior else None,
-        "prior_report_date": (prior or {}).get("report_date", ""),
+        "prior_report_date": infer_report_date(prior) if prior else "",
         "is_first_run":  prior is None,
         "recent_splits": splits,
         "filers":        parsed_filers,
@@ -551,7 +588,7 @@ def run():
 
     print(f"📅 Reporting quarter: {raw.get('report_date', '?')}")
     if prior:
-        print(f"📂 Prior quarter data: {prior['date']} (quarter {prior.get('report_date', '?')})")
+        print(f"📂 Prior quarter data: {prior['date']} (quarter {infer_report_date(prior) or '?'})")
     else:
         print("⚠️  First run – no prior quarter data available. Deltas will be marked as NEW.")
 
@@ -564,6 +601,10 @@ def run():
     tmp_path.replace(output_path)
 
     print(f"\n✅ Parsed holdings saved to {output_path}")
+
+    # Fail closed: a comparison that cannot be trusted must not reach scoring.
+    import data_quality
+    data_quality.gate(today_str, parsed)
 
 
 if __name__ == "__main__":

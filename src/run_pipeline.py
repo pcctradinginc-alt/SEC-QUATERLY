@@ -25,7 +25,7 @@ import sys
 import time
 from datetime import date
 
-STEPS = ["fetch", "parse", "scoring", "signals", "options", "explain", "backtest", "report"]
+STEPS = ["fetch", "parse", "gate", "scoring", "signals", "options", "explain", "backtest", "report"]
 
 
 def main() -> int:
@@ -52,6 +52,8 @@ def main() -> int:
             import fetch_filings; fetch_filings.run()
         elif step == "parse":
             import parse_13f; parse_13f.run()
+        elif step == "gate":
+            import data_quality; data_quality.gate(args.date)
         elif step == "scoring":
             import scoring; scoring.run()
         elif step == "signals":

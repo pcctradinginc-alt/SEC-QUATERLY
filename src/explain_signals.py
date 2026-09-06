@@ -37,6 +37,7 @@ Ground rules:
 - State the insider picture exactly as the net stance says. If sales are above zero you may not write that there were no sales; if purchases are zero you may not write that insiders bought.
 - Trade counts are given. Do not guess how many trades there were.
 - Keep each field within its length limit. Plain text, no markdown.
+- Explain why the signal is interesting. Do not restate machine-readable facts (symbols, strikes, expiries, prices): those are rendered from the data.
 
 Score model (weights out of 100): {json.dumps(SIGNAL_WEIGHTS)}.
 Grades: VERY_STRONG ≥75, STRONG ≥60, MODERATE ≥45, WEAK <45."""
@@ -110,13 +111,12 @@ TOOL = {
                 "items": {
                     "type": "object",
                     "additionalProperties": False,
-                    "required": ["ticker", "why_strongest", "insider_read", "risks", "option_note", "verdict"],
+                    "required": ["ticker", "why_strongest", "insider_read", "risks", "verdict"],
                     "properties": {
                         "ticker":       {"type": "string"},
                         "why_strongest": {"type": "string", "description": "2-3 sentences: why this qualifies as one of the strongest signals, citing the given factors. ≤ 80 words."},
                         "insider_read": {"type": "string", "description": "1 sentence on whether Form 4 activity confirms the 13F signal. ≤ 35 words."},
                         "risks":        {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 3, "description": "Short bullets incl. possible misreads."},
-                        "option_note":  {"type": "string", "description": "1 sentence on how the selected Call expresses the signal, or why none qualified. ≤ 40 words."},
                         "verdict":      {"type": "string", "enum": ["UNUSUALLY_STRONG", "STRONG", "ROUTINE"]},
                     },
                 },
@@ -240,11 +240,8 @@ def make_validator(expected_tickers: list[str], insider_by_ticker: dict[str, dic
                     if not ok:
                         return False, f"{s.get('ticker')}: {field} {why}"
 
-            opt = options_by_ticker.get(str(s.get("ticker", "")).upper())
-            if opt is not None:
-                ok, why = _option_facts_ok(str(s.get("option_note", "")), opt)
-                if not ok:
-                    return False, f"{s.get('ticker')}: option_note {why}"
+            # option_note is no longer model-generated: the contract's facts are
+            # inserted by code, so there is nothing left to hallucinate there.
         mc = str(data.get("market_context", ""))
         if len(mc) < 20 or len(mc.split()) > 90:
             return False, "market_context length"
@@ -260,9 +257,6 @@ def fallback_commentary(signals: dict, options: dict | None) -> dict:
     for s in signals["top10"]:
         ins = (s.get("insider") or {}).get("summary") or {}
         buy_val = ins.get("buy_value_usd", 0) or 0
-        # option_note left empty: the report already prints the rule rationale
-        # (OK) or the per-filter rejection counts (NO_SUITABLE_OPTION_FOUND).
-        option_note = ""
         stocks.append({
             "ticker":        s["ticker"],
             "why_strongest": s["why"]["summary"],
@@ -270,7 +264,6 @@ def fallback_commentary(signals: dict, options: dict | None) -> dict:
                               if buy_val > 0 else "No open-market insider purchases confirm the 13F signal yet."),
             "risks":         ["13F data is up to 45 days stale and shows no shorts, hedges or cash.",
                               "Reported weights use long-only AUM and overstate true portfolio exposure."],
-            "option_note":   option_note,
             "verdict":       "STRONG" if s["grade"] in ("VERY_STRONG", "STRONG") else "ROUTINE",
         })
     n_buy = sum(1 for s in signals["top10"] if (s["factors"]["insider"] or 0) > 0)

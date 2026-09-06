@@ -262,6 +262,34 @@ each was re-verified against the EDGAR submissions feed):
 
 ---
 
+## Data-quality gate (fails closed)
+
+`data_quality.py` sits between parsing and scoring. A quarter-over-quarter
+comparison can break silently in ways that still look like a successful run - a
+missing prior quarter, a prior file for the *same* quarter, a filer join that
+matches nothing, share counts that never parsed - and every one of them produces
+the same symptom: everything reads NEW, nothing is REDUCED, nothing EXITs.
+
+The gate stops the run rather than ranking that noise:
+
+```
+DELTA SUMMARY
+  Current reporting quarter: 2026-06-30
+  Expected prior quarter:    2026-03-31
+  Loaded prior period:       2026-03-31
+  NEW / ADDED / REDUCED / UNCHANGED / EXIT ...
+  Matched current/prior positions: ...
+DATA QUALITY GATE: PASS
+```
+
+It fails when the loaded prior period is not the required one, when no position
+matched the prior quarter, or when more than 95 % of positions read as NEW. On
+failure nothing downstream runs: no scoring, no signal engine, no Form 4
+look-up, no options, no report, no e-mail. A green GitHub Actions run therefore
+cannot mean "invalid signals were generated successfully".
+
+---
+
 ## Data-quality guards
 
 Every one of these was a silent failure found in a live run, so each now has a
@@ -274,7 +302,10 @@ guard or a loud warning:
 | Prior quarter selected by reporting quarter, not file date | Re-running the pipeline wrote a second file for the same quarter, and the next run diffed that quarter against itself |
 | Portfolio weights divide by the full reported book | Quant books are stored capped at 500 positions; dividing by the capped sum inflated every weight, and EXITs are not derived for capped filers because a rank drop is indistinguishable from a sale |
 | Filer history keyed on CIK, in both the delta join and the manager-quality chain | A rename split one manager into two half-length histories and left the wrong old name standing |
-| Unmapped CUSIPs never reach the price feed or the Top 10 | Roughly a hundred failed downloads per run, and CUSIP strings appearing in the ranking |
+| Unmapped CUSIPs never reach the price feed, the candidate pool or the Top 10 (`tradable_ticker_validated`) | Roughly a hundred failed downloads per run, and CUSIP strings appearing in the ranking. They stay in the book for AUM and weight accounting |
+| The information table is checked against the filing's own cover page when its filename suggests another period | SurgoCap ships a Q2-2026 filing whose table is named `Surgo_13F_09302025.xml`; the cover page confirms the real period, so the filename alone is never trusted |
+| Multi-quarter history is deduplicated by reporting quarter | Two pipeline runs for one quarter would otherwise count as two quarters of accumulation |
+| The latest filing for the quarter wins, amendments preferred on a tie | A 13F-HR/A restates the original |
 | Zero EXITs or all-NEW across the universe raises a data-quality warning | The comparison being broken is far more likely than a quarter in which nobody sold anything |
 
 ---
