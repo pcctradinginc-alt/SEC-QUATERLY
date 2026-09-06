@@ -2,15 +2,15 @@
   "date": "2026-09-06",
   "tickers": [
     "INTC",
-    "ELV",
     "CVNA",
-    "SGI",
+    "VST",
     "BRK/B",
     "TSM",
-    "BAC",
+    "FBIN",
+    "TTMI",
     "V",
-    "ALLY",
-    "GLD"
+    "PDD",
+    "GOOG"
   ],
   "options": {
     "INTC": {
@@ -83,39 +83,6 @@
       },
       "rule_rationale": "Delta 0.46 sits closest to the 0.45 target, strike 14.8% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 3.8% with volume 2,382 and open interest 26,879 keeps entry and exit liquid."
     },
-    "ELV": {
-      "ticker": "ELV",
-      "current_price": 407.5,
-      "change_pct": -1.76,
-      "expiries_checked": [
-        "2026-12-18",
-        "2027-01-15"
-      ],
-      "iv_metrics": {
-        "iv_rank": 30.1,
-        "hv_30d_pct": 22.7,
-        "iv_hv_ratio": 1.43,
-        "verdict": "CHEAP \u2013 premium low vs. realised vol"
-      },
-      "status": "NO_SUITABLE_OPTION_FOUND",
-      "contract": null,
-      "eligible_count": 0,
-      "candidates_checked": 117,
-      "rejections": {
-        "delta": 100,
-        "open_interest": 115,
-        "spread": 66,
-        "volume": 117
-      },
-      "filters": {
-        "expiry_days": "90\u2013180 days to expiration",
-        "delta": "0.30\u20130.70 call delta (target 0.45)",
-        "spread": "bid-ask spread \u2264 8% of mid",
-        "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
-        "open_interest": "open interest \u2265 500",
-        "iv": "implied volatility \u2264 70%"
-      }
-    },
     "CVNA": {
       "ticker": "CVNA",
       "current_price": 74.59,
@@ -186,31 +153,54 @@
       },
       "rule_rationale": "Delta 0.48 sits closest to the 0.45 target, strike 9.9% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 6.0% with volume 0 and open interest 2,817 keeps entry and exit liquid."
     },
-    "SGI": {
-      "ticker": "SGI",
-      "current_price": 69.87,
-      "change_pct": 0.51,
+    "VST": {
+      "ticker": "VST",
+      "current_price": 149.3,
+      "change_pct": 3.53,
       "expiries_checked": [
         "2026-12-18",
-        "2027-01-15",
-        "2027-02-19"
+        "2027-01-15"
       ],
       "iv_metrics": {
-        "iv_rank": 59.7,
-        "hv_30d_pct": 35.1,
-        "iv_hv_ratio": 1.24,
-        "verdict": "MODERATE"
+        "iv_rank": 39.1,
+        "hv_30d_pct": 30.7,
+        "iv_hv_ratio": 1.51,
+        "verdict": "CHEAP \u2013 premium low vs. realised vol"
       },
-      "status": "NO_SUITABLE_OPTION_FOUND",
-      "contract": null,
-      "eligible_count": 0,
-      "candidates_checked": 86,
+      "status": "OK",
+      "contract": {
+        "symbol": "VST270115C00150000",
+        "strike": 150.0,
+        "expiration": "2027-01-15",
+        "dte": 131,
+        "bid": 17.1,
+        "ask": 17.7,
+        "mid": 17.4,
+        "spread_pct": 3.4,
+        "volume": 137,
+        "open_interest": 3608,
+        "delta": 0.565,
+        "implied_volatility": 0.471,
+        "moneyness_pct": 0.5,
+        "max_risk_per_contract": 1740.0,
+        "breakeven": 167.4,
+        "selection_cost": 0.6395
+      },
+      "eligible_count": 2,
+      "candidates_checked": 102,
       "rejections": {
-        "delta": 72,
-        "open_interest": 83,
-        "spread": 84,
-        "volume": 86
+        "delta": 85,
+        "open_interest": 67,
+        "spread": 57,
+        "volume": 93
       },
+      "runner_up": [
+        {
+          "symbol": "VST261218C00170000",
+          "delta": 0.363,
+          "selection_cost": 0.8294
+        }
+      ],
       "filters": {
         "expiry_days": "90\u2013180 days to expiration",
         "delta": "0.30\u20130.70 call delta (target 0.45)",
@@ -218,7 +208,8 @@
         "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
         "open_interest": "open interest \u2265 500",
         "iv": "implied volatility \u2264 70%"
-      }
+      },
+      "rule_rationale": "Delta 0.56 sits closest to the 0.45 target, strike 0.5% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 3.4% with volume 137 and open interest 3,608 keeps entry and exit liquid."
     },
     "BRK/B": {
       "ticker": "BRK/B",
@@ -357,65 +348,30 @@
       },
       "rule_rationale": "Delta 0.43 sits closest to the 0.45 target, strike 7.2% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 3.3% with volume 24 and open interest 3,756 keeps entry and exit liquid."
     },
-    "BAC": {
-      "ticker": "BAC",
-      "current_price": 62.68,
-      "change_pct": -0.07,
+    "FBIN": {
+      "ticker": "FBIN",
+      "current_price": 43.11,
+      "change_pct": 2.14,
       "expiries_checked": [
         "2026-12-18",
-        "2027-01-15",
-        "2027-02-19"
+        "2027-01-15"
       ],
       "iv_metrics": {
-        "iv_rank": 55.8,
-        "hv_30d_pct": 16.8,
-        "iv_hv_ratio": 1.44,
+        "iv_rank": 41.7,
+        "hv_30d_pct": 38.2,
+        "iv_hv_ratio": 1.3,
         "verdict": "MODERATE"
       },
-      "status": "OK",
-      "contract": {
-        "symbol": "BAC270115C00065000",
-        "strike": 65.0,
-        "expiration": "2027-01-15",
-        "dte": 131,
-        "bid": 2.91,
-        "ask": 3.0,
-        "mid": 2.96,
-        "spread_pct": 3.0,
-        "volume": 518,
-        "open_interest": 21316,
-        "delta": 0.459,
-        "implied_volatility": 0.244,
-        "moneyness_pct": 3.7,
-        "max_risk_per_contract": 296.0,
-        "breakeven": 67.96,
-        "selection_cost": 0.0635
-      },
-      "eligible_count": 7,
-      "candidates_checked": 84,
+      "status": "NO_SUITABLE_OPTION_FOUND",
+      "contract": null,
+      "eligible_count": 0,
+      "candidates_checked": 40,
       "rejections": {
-        "delta": 72,
-        "open_interest": 40,
-        "spread": 50,
-        "volume": 53
+        "delta": 30,
+        "open_interest": 38,
+        "spread": 40,
+        "volume": 40
       },
-      "runner_up": [
-        {
-          "symbol": "BAC261218C00065000",
-          "delta": 0.439,
-          "selection_cost": 0.36
-        },
-        {
-          "symbol": "BAC270219C00065000",
-          "delta": 0.475,
-          "selection_cost": 0.5139
-        },
-        {
-          "symbol": "BAC270115C00067500",
-          "delta": 0.356,
-          "selection_cost": 0.6078
-        }
-      ],
       "filters": {
         "expiry_days": "90\u2013180 days to expiration",
         "delta": "0.30\u20130.70 call delta (target 0.45)",
@@ -423,8 +379,41 @@
         "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
         "open_interest": "open interest \u2265 500",
         "iv": "implied volatility \u2264 70%"
+      }
+    },
+    "TTMI": {
+      "ticker": "TTMI",
+      "current_price": 125.6,
+      "change_pct": 8.85,
+      "expiries_checked": [
+        "2026-12-18",
+        "2027-01-15"
+      ],
+      "iv_metrics": {
+        "iv_rank": 65.1,
+        "hv_30d_pct": 77.1,
+        "iv_hv_ratio": 1.1,
+        "verdict": "MODERATE"
       },
-      "rule_rationale": "Delta 0.46 sits closest to the 0.45 target, strike 3.7% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 3.0% with volume 518 and open interest 21,316 keeps entry and exit liquid."
+      "status": "NO_SUITABLE_OPTION_FOUND",
+      "contract": null,
+      "eligible_count": 0,
+      "candidates_checked": 86,
+      "rejections": {
+        "delta": 58,
+        "iv": 86,
+        "open_interest": 83,
+        "spread": 63,
+        "volume": 86
+      },
+      "filters": {
+        "expiry_days": "90\u2013180 days to expiration",
+        "delta": "0.30\u20130.70 call delta (target 0.45)",
+        "spread": "bid-ask spread \u2264 8% of mid",
+        "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+        "open_interest": "open interest \u2265 500",
+        "iv": "implied volatility \u2264 70%"
+      }
     },
     "V": {
       "ticker": "V",
@@ -489,30 +478,48 @@
       },
       "rule_rationale": "Delta 0.45 sits closest to the 0.45 target, strike 4.0% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 6.9% with volume 6 and open interest 2,749 keeps entry and exit liquid."
     },
-    "ALLY": {
-      "ticker": "ALLY",
-      "current_price": 43.73,
-      "change_pct": 0.33,
+    "PDD": {
+      "ticker": "PDD",
+      "current_price": 82.21,
+      "change_pct": 0.72,
       "expiries_checked": [
         "2026-12-18",
         "2027-01-15"
       ],
       "iv_metrics": {
-        "iv_rank": 45.3,
-        "hv_30d_pct": 19.7,
-        "iv_hv_ratio": 1.44,
-        "verdict": "MODERATE"
+        "iv_rank": 37.8,
+        "hv_30d_pct": 31.4,
+        "iv_hv_ratio": 1.08,
+        "verdict": "CHEAP \u2013 premium low vs. realised vol"
       },
-      "status": "NO_SUITABLE_OPTION_FOUND",
-      "contract": null,
-      "eligible_count": 0,
-      "candidates_checked": 48,
+      "status": "OK",
+      "contract": {
+        "symbol": "PDD270115C00095000",
+        "strike": 95.0,
+        "expiration": "2027-01-15",
+        "dte": 131,
+        "bid": 2.78,
+        "ask": 3.0,
+        "mid": 2.89,
+        "spread_pct": 7.6,
+        "volume": 19,
+        "open_interest": 2975,
+        "delta": 0.309,
+        "implied_volatility": 0.337,
+        "moneyness_pct": 15.6,
+        "max_risk_per_contract": 289.0,
+        "breakeven": 97.89,
+        "selection_cost": 1.0316
+      },
+      "eligible_count": 1,
+      "candidates_checked": 71,
       "rejections": {
-        "delta": 33,
-        "open_interest": 42,
-        "spread": 46,
-        "volume": 48
+        "delta": 64,
+        "open_interest": 21,
+        "spread": 62,
+        "volume": 43
       },
+      "runner_up": [],
       "filters": {
         "expiry_days": "90\u2013180 days to expiration",
         "delta": "0.30\u20130.70 call delta (target 0.45)",
@@ -520,66 +527,66 @@
         "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
         "open_interest": "open interest \u2265 500",
         "iv": "implied volatility \u2264 70%"
-      }
+      },
+      "rule_rationale": "Delta 0.31 sits closest to the 0.45 target, strike 15.6% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 7.6% with volume 19 and open interest 2,975 keeps entry and exit liquid."
     },
-    "GLD": {
-      "ticker": "GLD",
-      "current_price": 406.77,
-      "change_pct": -0.85,
+    "GOOG": {
+      "ticker": "GOOG",
+      "current_price": 335.31,
+      "change_pct": -1.12,
       "expiries_checked": [
         "2026-12-18",
-        "2026-12-31",
         "2027-01-15",
         "2027-02-19"
       ],
       "iv_metrics": {
-        "iv_rank": 30.6,
-        "hv_30d_pct": 27.5,
-        "iv_hv_ratio": 0.87,
-        "verdict": "CHEAP \u2013 premium low vs. realised vol"
+        "iv_rank": 44.5,
+        "hv_30d_pct": 19.6,
+        "iv_hv_ratio": 1.66,
+        "verdict": "MODERATE"
       },
       "status": "OK",
       "contract": {
-        "symbol": "GLD270115C00425000",
-        "strike": 425.0,
+        "symbol": "GOOG270115C00350000",
+        "strike": 350.0,
         "expiration": "2027-01-15",
         "dte": 131,
-        "bid": 18.55,
-        "ask": 18.8,
-        "mid": 18.68,
-        "spread_pct": 1.3,
-        "volume": 59,
-        "open_interest": 13385,
-        "delta": 0.453,
-        "implied_volatility": 0.244,
-        "moneyness_pct": 4.5,
-        "max_risk_per_contract": 1868.0,
-        "breakeven": 443.68,
-        "selection_cost": -0.0757
+        "bid": 21.5,
+        "ask": 22.1,
+        "mid": 21.8,
+        "spread_pct": 2.8,
+        "volume": 330,
+        "open_interest": 6626,
+        "delta": 0.482,
+        "implied_volatility": 0.32,
+        "moneyness_pct": 4.4,
+        "max_risk_per_contract": 2180.0,
+        "breakeven": 371.8,
+        "selection_cost": 0.1686
       },
-      "eligible_count": 20,
-      "candidates_checked": 595,
+      "eligible_count": 12,
+      "candidates_checked": 224,
       "rejections": {
-        "delta": 503,
-        "open_interest": 385,
-        "spread": 161,
-        "volume": 511
+        "delta": 180,
+        "open_interest": 102,
+        "spread": 51,
+        "volume": 187
       },
       "runner_up": [
         {
-          "symbol": "GLD270115C00420000",
-          "delta": 0.484,
-          "selection_cost": 0.0904
+          "symbol": "GOOG270115C00360000",
+          "delta": 0.424,
+          "selection_cost": 0.3287
         },
         {
-          "symbol": "GLD270115C00430000",
-          "delta": 0.422,
-          "selection_cost": 0.1072
+          "symbol": "GOOG261218C00350000",
+          "delta": 0.467,
+          "selection_cost": 0.4255
         },
         {
-          "symbol": "GLD261218C00420000",
-          "delta": 0.46,
-          "selection_cost": 0.1974
+          "symbol": "GOOG270115C00370000",
+          "delta": 0.37,
+          "selection_cost": 0.4434
         }
       ],
       "filters": {
@@ -590,12 +597,12 @@
         "open_interest": "open interest \u2265 500",
         "iv": "implied volatility \u2264 70%"
       },
-      "rule_rationale": "Delta 0.45 sits closest to the 0.45 target, strike 4.5% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 1.3% with volume 59 and open interest 13,385 keeps entry and exit liquid."
+      "rule_rationale": "Delta 0.48 sits closest to the 0.45 target, strike 4.4% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 2.8% with volume 330 and open interest 6,626 keeps entry and exit liquid."
     }
   },
   "market": {
     "state": "closed",
-    "as_of": "2026-09-06T06:58:49+00:00",
+    "as_of": "2026-09-06T07:36:20+00:00",
     "description": "Market is closed",
     "trading_day": "2026-09-06"
   },
