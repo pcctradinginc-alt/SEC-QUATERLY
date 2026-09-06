@@ -118,7 +118,17 @@ jobs:
           # cache, and a stale snapshot can silently carry wrong data forward.
           git add data/holdings/ data/llm_cache/ reports/
           git diff --staged --quiet || git commit -m "📊 Quarterly 13F signal run $(date +%Y-%m-%d)"
-          git push
+          # Concurrent runs (e.g. two baseline rebuilds) push to the same branch.
+          # Without a rebase the loser's push is rejected and its work is thrown
+          # away even though every analysis step succeeded.
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            echo "push rejected (attempt $attempt) – rebasing onto the branch and retrying"
+            git pull --rebase origin "${GITHUB_REF_NAME}" || exit 1
+          done
+          echo "could not push after 3 attempts"; exit 1
 
       - name: Send failure alert
         if: failure() && steps.date_check.outputs.should_run == 'true'
