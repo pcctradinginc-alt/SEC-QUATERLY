@@ -1,50 +1,36 @@
 {
   "date": "2026-09-06",
   "quarter_label": "Q2 2026 filings",
-  "stocks_scored": 675,
+  "stocks_scored": 655,
   "top10": [
     {
-      "alpha_score_legacy": 44.5,
+      "alpha_score_legacy": 52.4,
       "confluence_bonus": 8.1,
       "contributions": {
         "accumulation": 7.5,
         "activity": 15.0,
-        "consensus": 12.3,
+        "consensus": 12.51,
         "conviction": 15.0,
-        "crowding": 4.2,
-        "freshness": 9.34,
+        "crowding": 4.6,
+        "freshness": 9.38,
         "insider": 11.52,
-        "manager_quality": 11.16
+        "manager_quality": 11.34
       },
       "crowding_label": "LOW",
       "factors": {
         "accumulation": 75.0,
         "activity": 100.0,
-        "consensus": 82.0,
+        "consensus": 83.4,
         "conviction": 100.0,
-        "crowding": 84.0,
-        "freshness": 93.4,
+        "crowding": 92.0,
+        "freshness": 93.8,
         "insider": 76.8,
-        "manager_quality": 74.4
+        "manager_quality": 75.6
       },
-      "filer_count": 8,
+      "filer_count": 7,
       "filers": [
         {
-          "alpha_score": 23.0,
-          "delta_pct": null,
-          "delta_type": "NEW",
-          "filer": "AQR Capital (Asness)",
-          "filing_date": "2026-08-14",
-          "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.939,
-          "manager_quality_score": 0.438,
-          "port_weight_pct": 0.614,
-          "position_tier": "OTHER",
-          "report_date": "2026-06-30",
-          "weight_vs_median": 4.39
-        },
-        {
-          "alpha_score": 27.5,
+          "alpha_score": 35.5,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "Atreides Management",
@@ -58,7 +44,7 @@
           "weight_vs_median": 1.08
         },
         {
-          "alpha_score": 28.6,
+          "alpha_score": 36.6,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "Coatue (Laffont)",
@@ -72,7 +58,7 @@
           "weight_vs_median": 8.64
         },
         {
-          "alpha_score": 39.9,
+          "alpha_score": 47.8,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "NVIDIA Corp",
@@ -86,7 +72,7 @@
           "weight_vs_median": 11.36
         },
         {
-          "alpha_score": 22.6,
+          "alpha_score": 30.5,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "Renaissance Technologies (Quant)",
@@ -94,13 +80,13 @@
           "filing_date_actual": "2026-08-13",
           "freshness_score": 1.0,
           "manager_quality_score": 0.35,
-          "port_weight_pct": 1.793,
+          "port_weight_pct": 1.408,
           "position_tier": "TOP3",
           "report_date": "2026-06-30",
-          "weight_vs_median": 15.46
+          "weight_vs_median": 15.47
         },
         {
-          "alpha_score": 44.5,
+          "alpha_score": 52.4,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "SoftBank Group Corp",
@@ -114,7 +100,7 @@
           "weight_vs_median": 281.88
         },
         {
-          "alpha_score": 31.3,
+          "alpha_score": 39.2,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "SurgoCap Partners",
@@ -128,7 +114,7 @@
           "weight_vs_median": 1.0
         },
         {
-          "alpha_score": 28.2,
+          "alpha_score": 36.1,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "Tiger Global (Coleman)",
@@ -244,10 +230,10 @@
         ],
         "activity": [
           "SoftBank Group Corp opened a NEW position at 66.8% of its book",
-          "8 tracked managers bought this quarter"
+          "7 tracked managers bought this quarter"
         ],
         "consensus": [
-          "8 independent buyers incl. AQR Capital (Asness), Atreides Management, Coatue (Laffont) \u2026"
+          "7 independent buyers incl. Atreides Management, Coatue (Laffont), NVIDIA Corp \u2026"
         ],
         "conviction": [
           "Largest buyer weight: 66.8% of SoftBank Group Corp's portfolio (rank TOP3)",
@@ -265,21 +251,21 @@
         ],
         "manager_quality": [
           "Highest-quality buyer: SurgoCap Partners (quality 0.81)",
-          "Average buyer quality 0.64 across 8 managers"
+          "Average buyer quality 0.67 across 7 managers"
         ]
       },
-      "score_13f": 87.6,
+      "score_13f": 88.6,
       "signal_class": "ACCUMULATION_WITH_INSIDER_CONFIRMATION",
       "signal_label": "Accumulation + insider confirmation",
-      "signal_score": 94.1,
+      "signal_score": 94.9,
       "ticker": "INTC",
       "why": {
         "bullets": [
           "SoftBank Group Corp opened a NEW position at 66.8% of its book",
           "Largest buyer weight: 66.8% of SoftBank Group Corp's portfolio (rank TOP3)",
-          "8 independent buyers incl. AQR Capital (Asness), Atreides Management, Coatue (Laffont) \u2026",
+          "7 independent buyers incl. Atreides Management, Coatue (Laffont), NVIDIA Corp \u2026",
           "$9,999,985 of open-market insider purchases since quarter-end",
-          "Institutional accumulation and insider buying confirm each other (13F 88, insider 77) \u2192 +8 confluence"
+          "Institutional accumulation and insider buying confirm each other (13F 89, insider 77) \u2192 +8 confluence"
         ],
         "summary": "INTC ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $9,999,985 of insider open-market buying since quarter-end.",
         "top_drivers": [
@@ -296,20 +282,20 @@
           {
             "factor": "consensus",
             "label": "Smart-money consensus",
-            "points": 12.3
+            "points": 12.51
           }
         ]
       },
       "commentary": {
         "ticker": "INTC",
-        "why_strongest": "Eight independent new buyers including SoftBank at 66.8% of its book and NVIDIA at 47.3%, both extreme concentration signals. Accumulation and freshness scores are near-max, and insider buying reinforces the institutional build.",
-        "insider_read": "Net buying of $9,999,985 in a single trade by one officer/director confirms the institutional accumulation.",
+        "why_strongest": "INTC ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $9,999,985 of insider open-market buying since quarter-end.",
+        "insider_read": "Form 4 filings show $9,999,985 of open-market insider buying since quarter-end.",
         "risks": [
-          "Stock is down 31% since quarter-end, so buyers are underwater so far",
-          "Single large insider trade may reflect one-off compensation-linked activity, not broad conviction"
+          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
+          "Reported weights use long-only AUM and overstate true portfolio exposure."
         ],
-        "option_note": "The Jan 2027 110-strike call offers a liquid, moderate-delta way to express the multi-buyer accumulation thesis.",
-        "verdict": "UNUSUALLY_STRONG"
+        "option_note": "",
+        "verdict": "STRONG"
       },
       "option": {
         "ticker": "INTC",
@@ -657,14 +643,14 @@
       },
       "commentary": {
         "ticker": "ELV",
-        "why_strongest": "Baupost (quality 0.98) opened a new position at 9.1% of its book, joined by three other quality managers, with top-tier manager_quality and crowding scores. Insider buying of $1,368,280 across three trades adds confirmation.",
-        "insider_read": "Net buying of $1,368,280 in 3 trades by 2 insiders, including an officer/director, aligns with the institutional build.",
+        "why_strongest": "ELV ranks on new / add activity, portfolio conviction and manager quality, confirmed by $1,368,280 of insider open-market buying since quarter-end.",
+        "insider_read": "Form 4 filings show $1,368,280 of open-market insider buying since quarter-end.",
         "risks": [
-          "Accumulation score is low at 15.0, suggesting this may be an initial rather than sustained build",
-          "No suitable option was found for expressing this signal"
+          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
+          "Reported weights use long-only AUM and overstate true portfolio exposure."
         ],
-        "option_note": "No suitable call option was found; rejections spanned delta, open interest, spread, and volume filters.",
-        "verdict": "UNUSUALLY_STRONG"
+        "option_note": "",
+        "verdict": "STRONG"
       },
       "option": {
         "ticker": "ELV",
@@ -701,30 +687,30 @@
       }
     },
     {
-      "alpha_score_legacy": 50.0,
+      "alpha_score_legacy": 49.9,
       "confluence_bonus": 5.7,
       "contributions": {
         "accumulation": 7.5,
         "activity": 15.0,
-        "consensus": 12.3,
+        "consensus": 12.73,
         "conviction": 15.0,
         "crowding": 5.0,
-        "freshness": 8.88,
+        "freshness": 8.77,
         "insider": 7.29,
-        "manager_quality": 12.24
+        "manager_quality": 12.59
       },
       "crowding_label": "LOW",
       "factors": {
         "accumulation": 75.0,
         "activity": 100.0,
-        "consensus": 82.0,
+        "consensus": 84.9,
         "conviction": 100.0,
         "crowding": 100.0,
-        "freshness": 88.8,
+        "freshness": 87.7,
         "insider": 48.6,
-        "manager_quality": 81.6
+        "manager_quality": 83.9
       },
-      "filer_count": 6,
+      "filer_count": 5,
       "filers": [
         {
           "alpha_score": 31.2,
@@ -755,7 +741,7 @@
           "weight_vs_median": 1.32
         },
         {
-          "alpha_score": 50.0,
+          "alpha_score": 49.9,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "RV Capital (Zeller)",
@@ -767,20 +753,6 @@
           "position_tier": "TOP3",
           "report_date": "2026-06-30",
           "weight_vs_median": 9.4
-        },
-        {
-          "alpha_score": 33.4,
-          "delta_pct": null,
-          "delta_type": "NEW",
-          "filer": "Renaissance Technologies (Quant)",
-          "filing_date": "2026-08-13",
-          "filing_date_actual": "2026-08-13",
-          "freshness_score": 1.0,
-          "manager_quality_score": 0.35,
-          "port_weight_pct": 0.591,
-          "position_tier": "OTHER",
-          "report_date": "2026-06-30",
-          "weight_vs_median": 5.09
         },
         {
           "alpha_score": 37.6,
@@ -797,7 +769,7 @@
           "weight_vs_median": 3.22
         },
         {
-          "alpha_score": 39.3,
+          "alpha_score": 39.2,
           "delta_pct": null,
           "delta_type": "NEW",
           "filer": "Whale Rock Capital Management",
@@ -1106,10 +1078,10 @@
         ],
         "activity": [
           "RV Capital (Zeller) opened a NEW position at 30.3% of its book",
-          "6 tracked managers bought this quarter"
+          "5 tracked managers bought this quarter"
         ],
         "consensus": [
-          "6 independent buyers incl. D1 Capital (Sundheim), Lone Pine Capital (Mandel), RV Capital (Zeller) \u2026"
+          "5 independent buyers incl. D1 Capital (Sundheim), Lone Pine Capital (Mandel), RV Capital (Zeller) \u2026"
         ],
         "conviction": [
           "Largest buyer weight: 30.3% of RV Capital (Zeller)'s portfolio (rank TOP3)",
@@ -1130,21 +1102,21 @@
         ],
         "manager_quality": [
           "Highest-quality buyer: RV Capital (Zeller) (quality 0.93)",
-          "Average buyer quality 0.64 across 6 managers"
+          "Average buyer quality 0.70 across 5 managers"
         ]
       },
-      "score_13f": 89.3,
+      "score_13f": 90.1,
       "signal_class": "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION",
       "signal_label": "Early smart money + insider confirmation",
-      "signal_score": 88.9,
+      "signal_score": 89.6,
       "ticker": "CVNA",
       "why": {
         "bullets": [
           "RV Capital (Zeller) opened a NEW position at 30.3% of its book",
           "Largest buyer weight: 30.3% of RV Capital (Zeller)'s portfolio (rank TOP3)",
-          "6 independent buyers incl. D1 Capital (Sundheim), Lone Pine Capital (Mandel), RV Capital (Zeller) \u2026",
+          "5 independent buyers incl. D1 Capital (Sundheim), Lone Pine Capital (Mandel), RV Capital (Zeller) \u2026",
           "Discretionary insider selling of $2,227,500 outweighs purchases",
-          "Institutional accumulation and insider buying confirm each other (13F 89, insider 49) \u2192 +6 confluence"
+          "Institutional accumulation and insider buying confirm each other (13F 90, insider 49) \u2192 +6 confluence"
         ],
         "summary": "CVNA ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $1,544,981 of insider open-market buying since quarter-end.",
         "top_drivers": [
@@ -1161,19 +1133,19 @@
           {
             "factor": "consensus",
             "label": "Smart-money consensus",
-            "points": 12.3
+            "points": 12.73
           }
         ]
       },
       "commentary": {
         "ticker": "CVNA",
-        "why_strongest": "RV Capital opened a new position at 30.3% of its book, one of six independent new buyers, with perfect activity and conviction scores. Multi-quarter building over 2 prior quarters adds context to the fresh 13F entries.",
-        "insider_read": "Net stance is NET_SELLING: $27,599,960 in sales across 39 trades outweighs $1,544,981 in purchases, a clear divergence from the institutional buying.",
+        "why_strongest": "CVNA ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $1,544,981 of insider open-market buying since quarter-end.",
+        "insider_read": "Form 4 filings show $1,544,981 of open-market insider buying since quarter-end.",
         "risks": [
-          "Heavy insider selling directly contradicts the 13F accumulation signal",
-          "Insider score of 48.6 is well below the other top-3 names"
+          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
+          "Reported weights use long-only AUM and overstate true portfolio exposure."
         ],
-        "option_note": "The Jan 2027 82-strike call has zero recent volume, limiting near-term liquidity despite meaningful open interest.",
+        "option_note": "",
         "verdict": "STRONG"
       },
       "option": {
@@ -1245,6 +1217,276 @@
           "iv": "implied volatility \u2264 70%"
         },
         "rule_rationale": "Delta 0.48 sits closest to the 0.45 target, strike 9.9% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 6.0% with volume 0 and open interest 2,817 keeps entry and exit liquid."
+      }
+    },
+    {
+      "alpha_score_legacy": 41.2,
+      "confluence_bonus": 7.6,
+      "contributions": {
+        "accumulation": 7.5,
+        "activity": 15.0,
+        "consensus": 10.17,
+        "conviction": 12.45,
+        "crowding": 5.0,
+        "freshness": 8.58,
+        "insider": 10.7,
+        "manager_quality": 12.07
+      },
+      "crowding_label": "LOW",
+      "factors": {
+        "accumulation": 75.0,
+        "activity": 100.0,
+        "consensus": 67.8,
+        "conviction": 83.0,
+        "crowding": 100.0,
+        "freshness": 85.8,
+        "insider": 71.3,
+        "manager_quality": 80.5
+      },
+      "filer_count": 3,
+      "filers": [
+        {
+          "alpha_score": 41.2,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Abrams Capital Management",
+          "filing_date": "2026-08-13",
+          "filing_date_actual": "2026-08-13",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.878,
+          "port_weight_pct": 8.296,
+          "position_tier": "TOP5",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 2.01
+        },
+        {
+          "alpha_score": 29.2,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "D1 Capital (Sundheim)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 0.639,
+          "manager_quality_score": 0.446,
+          "port_weight_pct": 1.121,
+          "position_tier": "OTHER",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 1.96
+        },
+        {
+          "alpha_score": 38.4,
+          "delta_pct": null,
+          "delta_type": "NEW",
+          "filer": "Third Point (Loeb)",
+          "filing_date": "2026-08-14",
+          "filing_date_actual": "2026-08-14",
+          "freshness_score": 1.0,
+          "manager_quality_score": 0.761,
+          "port_weight_pct": 4.334,
+          "position_tier": "TOP10",
+          "report_date": "2026-06-30",
+          "weight_vs_median": 2.37
+        }
+      ],
+      "flags": [
+        "CLUSTER",
+        "EARLY_SMART_MONEY_ACCUMULATION",
+        "HIGH_CONVICTION",
+        "NEW_POSITION",
+        "SIZE_INTERESTING",
+        "SIZE_STRONG",
+        "SIZE_VERY_STRONG",
+        "TOP10_ENTRY",
+        "TOP5_POSITION"
+      ],
+      "grade": "VERY_STRONG",
+      "insider": {
+        "cik": "0001206264",
+        "error": null,
+        "foreign_issuer_skipped": {},
+        "form4_count": 3,
+        "reasons": [
+          "$1,885,314 of open-market insider purchases since quarter-end",
+          "1 distinct insider bought including the CEO"
+        ],
+        "score": 71.3,
+        "since": "2026-06-30",
+        "summary": {
+          "buy_count": 1,
+          "buy_value_usd": 1885314.0,
+          "buyer_roles": [
+            "CEO"
+          ],
+          "buys": [
+            {
+              "accession": "0001206399-26-000007",
+              "date": "2026-08-27",
+              "filing_date": "2026-08-27",
+              "insider": "THOMPSON SCOTT L",
+              "is_director": true,
+              "is_officer": true,
+              "planned": false,
+              "price": 62.8438,
+              "role": "CEO & PRESIDENT",
+              "role_key": "CEO",
+              "security": "Common Stock",
+              "shares": 30000.0,
+              "shares_after": 4123634.0,
+              "stake_change_pct": 0.7,
+              "value_usd": 1885314.0
+            }
+          ],
+          "cluster_buyers": [],
+          "cluster_buying": false,
+          "discretionary_sell_value_usd": 0,
+          "distinct_buyers": [
+            "THOMPSON SCOTT L"
+          ],
+          "max_stake_change_pct": 0.7,
+          "net_stance": "NET_BUYING",
+          "net_value_usd": 1885314.0,
+          "officer_or_director_buyers": [
+            "THOMPSON SCOTT L"
+          ],
+          "planned_sell_count": 0,
+          "planned_sell_value_usd": 0,
+          "sell_count": 0,
+          "sell_value_usd": 0,
+          "sells": [],
+          "significant_buy_count": 1,
+          "skipped_securities": {},
+          "top_role": "CEO"
+        },
+        "ticker": "SGI",
+        "until": "2026-09-06"
+      },
+      "insider_score": 71.3,
+      "mq_signal": {
+        "accumulation_score": 0.0,
+        "avg_delta_pct": 0.0,
+        "build_quarters": 2,
+        "build_score": 0.59,
+        "flags": [],
+        "silent_build": false,
+        "total_quarters": 2,
+        "weight_slope": 0.178
+      },
+      "name": "SOMNIGROUP INTERNATIONAL INC",
+      "option_eligible": true,
+      "overall_rank": 4,
+      "post_filing_perf": {
+        "current_price": 69.87,
+        "days_since_filing": 68,
+        "filing_close": 78.2,
+        "pct_change": -10.7
+      },
+      "price_penalty": 0.0,
+      "rank": 4,
+      "reasons": {
+        "accumulation": [
+          "Built over 3 consecutive quarters"
+        ],
+        "activity": [
+          "Abrams Capital Management opened a NEW position at 8.3% of its book",
+          "3 tracked managers bought this quarter"
+        ],
+        "consensus": [
+          "3 independent buyers: Abrams Capital Management, D1 Capital (Sundheim), Third Point (Loeb)"
+        ],
+        "conviction": [
+          "Largest buyer weight: 8.3% of Abrams Capital Management's portfolio (rank TOP5)"
+        ],
+        "crowding": [
+          "Crowding LOW \u2013 room for further institutional sponsorship"
+        ],
+        "freshness": [
+          "Filing is 23 days old; low-turnover buyers keep it informative"
+        ],
+        "insider": [
+          "$1,885,314 of open-market insider purchases since quarter-end",
+          "1 distinct insider bought including the CEO"
+        ],
+        "manager_quality": [
+          "Highest-quality buyer: Abrams Capital Management (quality 0.88)",
+          "Average buyer quality 0.69 across 3 managers"
+        ]
+      },
+      "score_13f": 83.3,
+      "signal_class": "EARLY_SMART_MONEY_WITH_INSIDER_CONFIRMATION",
+      "signal_label": "Early smart money + insider confirmation",
+      "signal_score": 89.1,
+      "ticker": "SGI",
+      "why": {
+        "bullets": [
+          "Abrams Capital Management opened a NEW position at 8.3% of its book",
+          "Largest buyer weight: 8.3% of Abrams Capital Management's portfolio (rank TOP5)",
+          "Highest-quality buyer: Abrams Capital Management (quality 0.88)",
+          "$1,885,314 of open-market insider purchases since quarter-end",
+          "Institutional accumulation and insider buying confirm each other (13F 83, insider 71) \u2192 +8 confluence"
+        ],
+        "summary": "SGI ranks on new / add activity, portfolio conviction and manager quality, confirmed by $1,885,314 of insider open-market buying since quarter-end.",
+        "top_drivers": [
+          {
+            "factor": "activity",
+            "label": "NEW / ADD activity",
+            "points": 15.0
+          },
+          {
+            "factor": "conviction",
+            "label": "Portfolio conviction",
+            "points": 12.45
+          },
+          {
+            "factor": "manager_quality",
+            "label": "Manager quality",
+            "points": 12.07
+          }
+        ]
+      },
+      "commentary": {
+        "ticker": "SGI",
+        "why_strongest": "SGI ranks on new / add activity, portfolio conviction and manager quality, confirmed by $1,885,314 of insider open-market buying since quarter-end.",
+        "insider_read": "Form 4 filings show $1,885,314 of open-market insider buying since quarter-end.",
+        "risks": [
+          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
+          "Reported weights use long-only AUM and overstate true portfolio exposure."
+        ],
+        "option_note": "",
+        "verdict": "STRONG"
+      },
+      "option": {
+        "ticker": "SGI",
+        "current_price": 69.87,
+        "change_pct": 0.51,
+        "expiries_checked": [
+          "2026-12-18",
+          "2027-01-15",
+          "2027-02-19"
+        ],
+        "iv_metrics": {
+          "iv_rank": 59.7,
+          "hv_30d_pct": 35.1,
+          "iv_hv_ratio": 1.24,
+          "verdict": "MODERATE"
+        },
+        "status": "NO_SUITABLE_OPTION_FOUND",
+        "contract": null,
+        "eligible_count": 0,
+        "candidates_checked": 86,
+        "rejections": {
+          "delta": 72,
+          "open_interest": 83,
+          "spread": 84,
+          "volume": 86
+        },
+        "filters": {
+          "expiry_days": "90\u2013180 days to expiration",
+          "delta": "0.30\u20130.70 call delta (target 0.45)",
+          "spread": "bid-ask spread \u2264 8% of mid",
+          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
+          "open_interest": "open interest \u2265 500",
+          "iv": "implied volatility \u2264 70%"
+        }
       }
     },
     {
@@ -1408,10 +1650,10 @@
           "filing_date_actual": "2026-08-14",
           "freshness_score": 1.0,
           "manager_quality_score": 0.35,
-          "port_weight_pct": 1.105,
+          "port_weight_pct": 0.824,
           "position_tier": "TOP10",
           "report_date": "2026-06-30",
-          "weight_vs_median": 9.06
+          "weight_vs_median": 9.05
         }
       ],
       "flags": [
@@ -1420,7 +1662,6 @@
         "NEW_POSITION",
         "OUTSIZED_VS_MANAGER_TYPICAL",
         "SIZE_EXCEPTIONAL",
-        "SIZE_INTERESTING",
         "SIZE_STRONG",
         "SIZE_VERY_STRONG",
         "SIZE_WEAK",
@@ -1539,7 +1780,7 @@
       },
       "name": "BERKSHIRE HATHAWAY INC DEL",
       "option_eligible": true,
-      "overall_rank": 4,
+      "overall_rank": 5,
       "post_filing_perf": {
         "current_price": 506.03,
         "days_since_filing": 68,
@@ -1547,7 +1788,7 @@
         "pct_change": 1.1
       },
       "price_penalty": 0.0,
-      "rank": 4,
+      "rank": 5,
       "reasons": {
         "accumulation": [
           "Built over 3 consecutive quarters"
@@ -1581,7 +1822,7 @@
       },
       "same_issuer_alternates": [
         {
-          "signal_score": 69.8,
+          "signal_score": 81.1,
           "ticker": "BRK/A"
         }
       ],
@@ -1619,13 +1860,13 @@
       },
       "commentary": {
         "ticker": "BRK/B",
-        "why_strongest": "Ten new institutional buyers include several perfect-quality value managers (Li Lu at 1.00, 0.98), with H&H International at 24.2% of its book. High manager_quality and consensus scores support the read, though crowding is labeled HIGH.",
-        "insider_read": "Net buying of $250,072 across 3 trades by one insider offers modest but positive confirmation.",
+        "why_strongest": "BRK/B ranks on new / add activity, portfolio conviction and manager quality, confirmed by $250,072 of insider open-market buying since quarter-end.",
+        "insider_read": "Form 4 filings show $250,072 of open-market insider buying since quarter-end.",
         "risks": [
-          "Crowding label is HIGH, unlike most other top-10 names",
-          "Insider purchase size is small relative to the scale of institutional buying"
+          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
+          "Reported weights use long-only AUM and overstate true portfolio exposure."
         ],
-        "option_note": "The Jan 2027 520-strike call provides a moderate-delta, reasonably liquid way to track the broad value-manager accumulation.",
+        "option_note": "",
         "verdict": "STRONG"
       },
       "option": {
@@ -1816,7 +2057,7 @@
           "filing_date_actual": "2026-08-13",
           "freshness_score": 1.0,
           "manager_quality_score": 0.35,
-          "port_weight_pct": 0.711,
+          "port_weight_pct": 0.558,
           "position_tier": "OTHER",
           "report_date": "2026-06-30",
           "weight_vs_median": 6.13
@@ -2265,7 +2506,7 @@
       },
       "name": "TAIWAN SEMICONDUCTOR MANUFAC",
       "option_eligible": true,
-      "overall_rank": 5,
+      "overall_rank": 6,
       "post_filing_perf": {
         "current_price": 428.91,
         "days_since_filing": 68,
@@ -2273,7 +2514,7 @@
         "pct_change": -10.2
       },
       "price_penalty": 0.0,
-      "rank": 5,
+      "rank": 6,
       "reasons": {
         "accumulation": [
           "Built over 3 consecutive quarters"
@@ -2339,13 +2580,13 @@
       },
       "commentary": {
         "ticker": "TSM",
-        "why_strongest": "Fifteen independent new buyers, the most of any top-10 name, including Appaloosa, Coatue, and Duquesne, with strong consensus and manager_quality scores. Insider buying across 23 trades by two insiders adds confirmation despite HIGH crowding.",
-        "insider_read": "Net buying of $400,340 across 23 trades by 2 insiders, including an officer/director, supports the institutional accumulation.",
+        "why_strongest": "TSM ranks on new / add activity, portfolio conviction and smart-money consensus, confirmed by $400,340 of insider open-market buying since quarter-end.",
+        "insider_read": "Form 4 filings show $400,340 of open-market insider buying since quarter-end.",
         "risks": [
-          "Crowding label is HIGH and price is down 10% since quarter-end",
-          "Insider purchase total is modest relative to the scale of 13F buying"
+          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
+          "Reported weights use long-only AUM and overstate true portfolio exposure."
         ],
-        "option_note": "The Jan 2027 460-strike call offers tight spread and reasonable open interest to express the broad-based buyer signal.",
+        "option_note": "",
         "verdict": "STRONG"
       },
       "option": {
@@ -2570,7 +2811,7 @@
       },
       "name": "BANK OF AMER CORP",
       "option_eligible": true,
-      "overall_rank": 6,
+      "overall_rank": 8,
       "post_filing_perf": {
         "current_price": 62.68,
         "days_since_filing": 68,
@@ -2578,7 +2819,7 @@
         "pct_change": 10.6
       },
       "price_penalty": 0.0,
-      "rank": 6,
+      "rank": 7,
       "reasons": {
         "accumulation": [
           "Built over 3 consecutive quarters"
@@ -2640,13 +2881,13 @@
       },
       "commentary": {
         "ticker": "BAC",
-        "why_strongest": "Berkshire Hathaway (Buffett, quality 0.96) opened a new 9.2%-of-book position, joined by three other quality managers, with top-tier manager_quality and consensus scores. Multi-quarter building over 2 prior quarters adds depth to the fresh entries.",
-        "insider_read": "No insider activity: zero purchases and zero sales, so there is no insider confirmation of the 13F signal yet.",
+        "why_strongest": "BAC ranks on new / add activity, portfolio conviction and manager quality, without confirming insider purchases so far.",
+        "insider_read": "No open-market insider purchases confirm the 13F signal yet.",
         "risks": [
-          "Insider score is 0.0, leaving the signal reliant solely on institutional filings",
-          "Crowding label is HIGH"
+          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
+          "Reported weights use long-only AUM and overstate true portfolio exposure."
         ],
-        "option_note": "The Jan 2027 65-strike call has solid volume and open interest with a tight spread, suitable for tracking the Buffett-led accumulation.",
+        "option_note": "",
         "verdict": "STRONG"
       },
       "option": {
@@ -3076,7 +3317,7 @@
       },
       "name": "VISA INC",
       "option_eligible": true,
-      "overall_rank": 7,
+      "overall_rank": 9,
       "post_filing_perf": {
         "current_price": 375.07,
         "days_since_filing": 68,
@@ -3084,7 +3325,7 @@
         "pct_change": 9.5
       },
       "price_penalty": 0.0,
-      "rank": 7,
+      "rank": 8,
       "reasons": {
         "accumulation": [
           "Built over 3 consecutive quarters"
@@ -3148,13 +3389,13 @@
       },
       "commentary": {
         "ticker": "V",
-        "why_strongest": "Eight new buyers including TCI Fund Management at 19.8% of its book and ValueAct at 0.98 quality, with the highest manager_quality and consensus scores in the top 10. However, insider activity runs counter to the institutional read.",
-        "insider_read": "Net stance is NET_SELLING: $37,056,411 in sales across 9 trades with zero purchases, directly contradicting the 13F buying.",
+        "why_strongest": "V ranks on new / add activity, portfolio conviction and manager quality, without confirming insider purchases so far.",
+        "insider_read": "No open-market insider purchases confirm the 13F signal yet.",
         "risks": [
-          "Insider score is 0.0 and sales are substantial, a clear divergence from institutional accumulation",
-          "No purchases at all to offset the sales"
+          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
+          "Reported weights use long-only AUM and overstate true portfolio exposure."
         ],
-        "option_note": "The Jan 2027 390-strike call carries a wider 6.9% spread and thin volume, a secondary consideration given the insider divergence.",
+        "option_note": "",
         "verdict": "STRONG"
       },
       "option": {
@@ -3384,7 +3625,7 @@
       },
       "name": "ALLY FINANCIAL INC",
       "option_eligible": true,
-      "overall_rank": 8,
+      "overall_rank": 10,
       "post_filing_perf": {
         "current_price": 43.73,
         "days_since_filing": 68,
@@ -3392,7 +3633,7 @@
         "pct_change": -4.2
       },
       "price_penalty": 0.0,
-      "rank": 8,
+      "rank": 9,
       "reasons": {
         "accumulation": [
           "Built over 3 consecutive quarters"
@@ -3455,14 +3696,14 @@
       },
       "commentary": {
         "ticker": "ALLY",
-        "why_strongest": "Four new buyers including Pabrai's Ancient Art at 12.3% of its book, with strong manager_quality and consensus scores and 2 prior build quarters. Institutional accumulation is broad but lacks insider corroboration.",
-        "insider_read": "Net stance is NET_SELLING: $221,168 in sales in 1 trade, with zero purchases, so no insider confirmation exists.",
+        "why_strongest": "ALLY ranks on new / add activity, portfolio conviction and manager quality, without confirming insider purchases so far.",
+        "insider_read": "No open-market insider purchases confirm the 13F signal yet.",
         "risks": [
-          "Insider score is 0.0 and the only insider activity was a sale",
-          "Price down 4% since quarter-end"
+          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
+          "Reported weights use long-only AUM and overstate true portfolio exposure."
         ],
-        "option_note": "No suitable call option was found; rejections spanned delta, open interest, spread, and volume filters.",
-        "verdict": "ROUTINE"
+        "option_note": "",
+        "verdict": "STRONG"
       },
       "option": {
         "ticker": "ALLY",
@@ -3640,7 +3881,7 @@
       },
       "name": "SPDR GOLD TR",
       "option_eligible": true,
-      "overall_rank": 9,
+      "overall_rank": 11,
       "post_filing_perf": {
         "current_price": 406.77,
         "days_since_filing": 68,
@@ -3648,7 +3889,7 @@
         "pct_change": 10.4
       },
       "price_penalty": 0.0,
-      "rank": 9,
+      "rank": 10,
       "reasons": {
         "accumulation": [
           "Built over 3 consecutive quarters"
@@ -3709,14 +3950,14 @@
       },
       "commentary": {
         "ticker": "GLD",
-        "why_strongest": "Four new institutional buyers including Brown University at 15.3% of its book, with high manager_quality and consensus scores and 2 prior build quarters of accumulation. This is a passive commodity vehicle, so insider dynamics do not apply the same way as operating companies.",
-        "insider_read": "No insider activity: zero purchases and zero sales, consistent with GLD having no traditional insider base.",
+        "why_strongest": "GLD ranks on new / add activity, portfolio conviction and manager quality, without confirming insider purchases so far.",
+        "insider_read": "No open-market insider purchases confirm the 13F signal yet.",
         "risks": [
-          "Insider score of 0.0 is structural for a commodity trust, not a red flag but also not a confirming signal",
-          "Gold accumulation may reflect macro hedging rather than a distinct fundamental view"
+          "13F data is up to 45 days stale and shows no shorts, hedges or cash.",
+          "Reported weights use long-only AUM and overstate true portfolio exposure."
         ],
-        "option_note": "The Jan 2027 425-strike call has a tight 1.3% spread and strong open interest, making it a liquid way to express the accumulation.",
-        "verdict": "ROUTINE"
+        "option_note": "",
+        "verdict": "STRONG"
       },
       "option": {
         "ticker": "GLD",
@@ -3788,346 +4029,46 @@
         },
         "rule_rationale": "Delta 0.45 sits closest to the 0.45 target, strike 4.5% above spot; 131 days to expiry gives the 13F thesis time to play out; spread 1.3% with volume 59 and open interest 13,385 keeps entry and exit liquid."
       }
-    },
-    {
-      "alpha_score_legacy": 47.9,
-      "confluence_bonus": 0.0,
-      "contributions": {
-        "accumulation": 7.5,
-        "activity": 15.0,
-        "consensus": 12.27,
-        "conviction": 15.0,
-        "crowding": 5.0,
-        "freshness": 9.24,
-        "insider": 0.92,
-        "manager_quality": 12.73
-      },
-      "crowding_label": "LOW",
-      "factors": {
-        "accumulation": 75.0,
-        "activity": 100.0,
-        "consensus": 81.8,
-        "conviction": 100.0,
-        "crowding": 100.0,
-        "freshness": 92.4,
-        "insider": 6.1,
-        "manager_quality": 84.9
-      },
-      "filer_count": 4,
-      "filers": [
-        {
-          "alpha_score": 47.9,
-          "delta_pct": null,
-          "delta_type": "NEW",
-          "filer": "Ancient Art (Pabrai)",
-          "filing_date": "2026-08-14",
-          "filing_date_actual": "2026-08-14",
-          "freshness_score": 1.0,
-          "manager_quality_score": 0.929,
-          "port_weight_pct": 22.858,
-          "position_tier": "TOP3",
-          "report_date": "2026-06-30",
-          "weight_vs_median": 5.87
-        },
-        {
-          "alpha_score": 45.3,
-          "delta_pct": null,
-          "delta_type": "NEW",
-          "filer": "RV Capital (Zeller)",
-          "filing_date": "2026-08-14",
-          "filing_date_actual": "2026-08-14",
-          "freshness_score": 1.0,
-          "manager_quality_score": 0.934,
-          "port_weight_pct": 12.755,
-          "position_tier": "TOP5",
-          "report_date": "2026-06-30",
-          "weight_vs_median": 3.96
-        },
-        {
-          "alpha_score": 33.3,
-          "delta_pct": null,
-          "delta_type": "NEW",
-          "filer": "Two Sigma Investments (Quant)",
-          "filing_date": "2026-08-14",
-          "filing_date_actual": "2026-08-14",
-          "freshness_score": 1.0,
-          "manager_quality_score": 0.35,
-          "port_weight_pct": 0.705,
-          "position_tier": "OTHER",
-          "report_date": "2026-06-30",
-          "weight_vs_median": 5.78
-        },
-        {
-          "alpha_score": 37.3,
-          "delta_pct": null,
-          "delta_type": "NEW",
-          "filer": "Viking Global (Halvorsen)",
-          "filing_date": "2026-08-14",
-          "filing_date_actual": "2026-08-14",
-          "freshness_score": 0.893,
-          "manager_quality_score": 0.676,
-          "port_weight_pct": 1.199,
-          "position_tier": "OTHER",
-          "report_date": "2026-06-30",
-          "weight_vs_median": 1.67
-        }
-      ],
-      "flags": [
-        "CLUSTER",
-        "EARLY_SMART_MONEY_ACCUMULATION",
-        "HIGH_CONVICTION",
-        "NEW_POSITION",
-        "OUTSIZED_VS_MANAGER_TYPICAL",
-        "SIZE_EXCEPTIONAL",
-        "SIZE_INTERESTING",
-        "SIZE_WEAK",
-        "TOP3_POSITION",
-        "TOP5_POSITION"
-      ],
-      "grade": "VERY_STRONG",
-      "insider": {
-        "cik": "0001381197",
-        "error": null,
-        "foreign_issuer_skipped": {},
-        "form4_count": 4,
-        "reasons": [
-          "$6,740 of open-market insider purchases since quarter-end"
-        ],
-        "score": 6.1,
-        "since": "2026-06-30",
-        "summary": {
-          "buy_count": 3,
-          "buy_value_usd": 6739.75,
-          "buyer_roles": [],
-          "buys": [
-            {
-              "accession": "0001381197-26-000113",
-              "date": "2026-07-01",
-              "filing_date": "2026-07-01",
-              "insider": "Conkling Lori A",
-              "is_director": true,
-              "is_officer": false,
-              "planned": true,
-              "price": 88.03,
-              "role": "Director",
-              "role_key": "DIRECTOR",
-              "security": "Class A common stock",
-              "shares": 25.0,
-              "shares_after": 2509.0,
-              "stake_change_pct": 1.0,
-              "value_usd": 2200.75
-            },
-            {
-              "accession": "0001381197-26-000140",
-              "date": "2026-08-03",
-              "filing_date": "2026-08-04",
-              "insider": "Conkling Lori A",
-              "is_director": true,
-              "is_officer": false,
-              "planned": true,
-              "price": 87.03,
-              "role": "Director",
-              "role_key": "DIRECTOR",
-              "security": "Class A common stock",
-              "shares": 25.0,
-              "shares_after": 2534.0,
-              "stake_change_pct": 1.0,
-              "value_usd": 2175.75
-            },
-            {
-              "accession": "0001381197-26-000149",
-              "date": "2026-09-01",
-              "filing_date": "2026-09-02",
-              "insider": "Conkling Lori A",
-              "is_director": true,
-              "is_officer": false,
-              "planned": true,
-              "price": 94.53,
-              "role": "Director",
-              "role_key": "DIRECTOR",
-              "security": "Class A common stock",
-              "shares": 25.0,
-              "shares_after": 2559.0,
-              "stake_change_pct": 1.0,
-              "value_usd": 2363.25
-            }
-          ],
-          "cluster_buyers": [],
-          "cluster_buying": false,
-          "discretionary_sell_value_usd": 0,
-          "distinct_buyers": [],
-          "max_stake_change_pct": 0.0,
-          "net_stance": "NET_BUYING",
-          "net_value_usd": 6739.75,
-          "officer_or_director_buyers": [],
-          "planned_sell_count": 0,
-          "planned_sell_value_usd": 0,
-          "sell_count": 0,
-          "sell_value_usd": 0,
-          "sells": [],
-          "significant_buy_count": 0,
-          "skipped_securities": {},
-          "top_role": null
-        },
-        "ticker": "IBKR",
-        "until": "2026-09-06"
-      },
-      "insider_score": 6.1,
-      "mq_signal": {
-        "accumulation_score": 0.0,
-        "avg_delta_pct": 0.0,
-        "build_quarters": 2,
-        "build_score": 2.02,
-        "flags": [],
-        "silent_build": false,
-        "total_quarters": 2,
-        "weight_slope": 3.035
-      },
-      "name": "INTERACTIVE BROKERS GROUP IN",
-      "option_eligible": true,
-      "overall_rank": 10,
-      "post_filing_perf": {
-        "current_price": 92.62,
-        "days_since_filing": 68,
-        "filing_close": 86.96,
-        "pct_change": 6.5
-      },
-      "price_penalty": 0.0,
-      "rank": 10,
-      "reasons": {
-        "accumulation": [
-          "Built over 3 consecutive quarters"
-        ],
-        "activity": [
-          "Ancient Art (Pabrai) opened a NEW position at 22.9% of its book",
-          "4 tracked managers bought this quarter"
-        ],
-        "consensus": [
-          "4 independent buyers: Ancient Art (Pabrai), RV Capital (Zeller), Two Sigma Investments (Quant), Viking Global (Halvorsen)"
-        ],
-        "conviction": [
-          "Largest buyer weight: 22.9% of Ancient Art (Pabrai)'s portfolio (rank TOP3)",
-          "Position is \u22655\u00d7 the manager's own median position size"
-        ],
-        "crowding": [
-          "Crowding LOW \u2013 room for further institutional sponsorship"
-        ],
-        "freshness": [
-          "Filing is 23 days old; low-turnover buyers keep it informative"
-        ],
-        "insider": [
-          "$6,740 of open-market insider purchases since quarter-end"
-        ],
-        "manager_quality": [
-          "Highest-quality buyer: RV Capital (Zeller) (quality 0.93)",
-          "Average buyer quality 0.72 across 4 managers"
-        ]
-      },
-      "score_13f": 90.3,
-      "signal_class": "EARLY_SMART_MONEY_ACCUMULATION",
-      "signal_label": "Early smart money accumulation",
-      "signal_score": 77.7,
-      "ticker": "IBKR",
-      "why": {
-        "bullets": [
-          "Ancient Art (Pabrai) opened a NEW position at 22.9% of its book",
-          "Largest buyer weight: 22.9% of Ancient Art (Pabrai)'s portfolio (rank TOP3)",
-          "Highest-quality buyer: RV Capital (Zeller) (quality 0.93)",
-          "$6,740 of open-market insider purchases since quarter-end"
-        ],
-        "summary": "IBKR ranks on new / add activity, portfolio conviction and manager quality, confirmed by $6,740 of insider open-market buying since quarter-end.",
-        "top_drivers": [
-          {
-            "factor": "activity",
-            "label": "NEW / ADD activity",
-            "points": 15.0
-          },
-          {
-            "factor": "conviction",
-            "label": "Portfolio conviction",
-            "points": 15.0
-          },
-          {
-            "factor": "manager_quality",
-            "label": "Manager quality",
-            "points": 12.73
-          }
-        ]
-      },
-      "commentary": {
-        "ticker": "IBKR",
-        "why_strongest": "Four new buyers including Pabrai's Ancient Art at 22.9% of its book and RV Capital at 12.8%, with strong manager_quality and 2 prior build quarters. Insider activity is present but very small in scale.",
-        "insider_read": "Net buying of only $6,740 across 3 trades by zero identified officers/directors is a minimal, low-confidence confirmation.",
-        "risks": [
-          "Insider purchase size is negligible relative to the institutional buying",
-          "No officer/director involvement in the insider trades"
-        ],
-        "option_note": "No suitable call option was found; rejections spanned delta, open interest, spread, and volume filters.",
-        "verdict": "ROUTINE"
-      },
-      "option": {
-        "ticker": "IBKR",
-        "current_price": 92.62,
-        "change_pct": -0.36,
-        "expiries_checked": [
-          "2026-12-18",
-          "2027-01-15"
-        ],
-        "iv_metrics": {
-          "iv_rank": 51.6,
-          "hv_30d_pct": 45.8,
-          "iv_hv_ratio": 0.82,
-          "verdict": "MODERATE"
-        },
-        "status": "NO_SUITABLE_OPTION_FOUND",
-        "contract": null,
-        "eligible_count": 0,
-        "candidates_checked": 81,
-        "rejections": {
-          "delta": 72,
-          "open_interest": 53,
-          "spread": 46,
-          "volume": 78
-        },
-        "filters": {
-          "expiry_days": "90\u2013180 days to expiration",
-          "delta": "0.30\u20130.70 call delta (target 0.45)",
-          "spread": "bid-ask spread \u2264 8% of mid",
-          "volume": "volume \u2265 300 (waived when open interest \u2265 2,500)",
-          "open_interest": "open interest \u2265 500",
-          "iv": "implied volatility \u2264 70%"
-        }
-      }
     }
   ],
-  "market_context": "This quarter's top signals are dominated by fresh, high-conviction new positions across mega-cap tech, financials, and healthcare, with several names (INTC, TSM, BRK/B) attracting a dozen-plus independent buyers simultaneously. Insider confirmation is mixed: some setups show genuine open-market buying while others (BAC, V, ALLY, GLD, IBKR) show weak or negative insider signals despite strong institutional accumulation.",
-  "commentary_source": "claude-sonnet-5",
+  "market_context": "52 tracked filers were screened; the ten strongest names are led by INTC (score 94.9). 6 of the ten carry confirming insider purchases since quarter-end.",
+  "commentary_source": "rule_based",
   "llm": {
-    "spent_usd": 0.0641,
+    "spent_usd": 0.1839,
     "budget_usd": 1.5,
-    "api_calls": 2,
+    "api_calls": 3,
     "cache_hits": 0,
-    "escalations": 1,
+    "escalations": 2,
     "route": [
       {
         "tier": "haiku",
         "ok": false,
-        "why": "CVNA: why_strongest dollar figure $2,230,000 matches no Form 4 total",
-        "cost_usd": 0.0223,
-        "input_tokens": 6362,
-        "output_tokens": 3188,
+        "why": "ELV: why_strongest dollar figure $1,400,000 matches no Form 4 total",
+        "cost_usd": 0.02046,
+        "input_tokens": 6299,
+        "output_tokens": 2832,
         "cache_read": 0,
         "cache_write": 0
       },
       {
         "tier": "sonnet",
-        "ok": true,
-        "why": "ok",
-        "cost_usd": 0.04175,
-        "input_tokens": 6785,
-        "output_tokens": 2818,
+        "ok": false,
+        "why": "ELV: option_note describes a contract although none qualified",
+        "cost_usd": 0.04006,
+        "input_tokens": 6713,
+        "output_tokens": 2663,
         "cache_read": 0,
         "cache_write": 1327
+      },
+      {
+        "tier": "opus",
+        "ok": false,
+        "why": "ELV: option_note describes a contract although none qualified",
+        "cost_usd": 0.12337,
+        "input_tokens": 6713,
+        "output_tokens": 3592,
+        "cache_read": 0,
+        "cache_write": 1259
       }
     ]
   },
@@ -4149,8 +4090,14 @@
     "open_interest": "open interest \u2265 500",
     "iv": "implied volatility \u2264 70%"
   },
-  "input_fingerprint": "dc574786aaa7e02550120a1ccba4fbe75d97222d4480652099bc6f9c35ec79ca",
-  "ranking_fingerprint": "b3a9bd138c33686ec1722f0e8823140289479a79f3da086ca3dd3c1c09550494",
+  "market": {
+    "state": "closed",
+    "as_of": "2026-09-06T06:58:49+00:00",
+    "description": "Market is closed",
+    "trading_day": "2026-09-06"
+  },
+  "input_fingerprint": "d916875c7c457bde6c8b1f13bdb3b78df14c3aa81990817c903eb66dd2444bef",
+  "ranking_fingerprint": "7b4a8634e083f47b204b4e360eb0d30c36f08734b0cb1799aa7677ddc8874169",
   "sell_signals": [],
   "filer_count": 52,
   "no_option_label": "NO_SUITABLE_OPTION_FOUND",
