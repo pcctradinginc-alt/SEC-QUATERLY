@@ -198,8 +198,11 @@ def factor_conviction(filers: list[dict]) -> tuple[float, list[str]]:
 def factor_manager_quality(filers: list[dict]) -> tuple[float, list[str]]:
     qs = [0.5 if f.get("manager_quality_score") is None else f["manager_quality_score"] for f in filers]
     score = _clamp((0.6 * max(qs) + 0.4 * sum(qs) / len(qs)) * 100.0)
-    best = max(filers, key=lambda f: ((f.get("manager_quality_score") or 0.0), f["filer"]))
-    reasons = [f"Highest-quality buyer: {best['filer']} (quality {best.get('manager_quality_score', 0):.2f})"]
+    def quality_or_neutral(f: dict) -> float:
+        value = f.get("manager_quality_score")
+        return 0.5 if value is None else float(value)
+    best = max(filers, key=lambda f: (quality_or_neutral(f), f["filer"]))
+    reasons = [f"Highest-quality buyer: {best['filer']} (quality {quality_or_neutral(best):.2f})"]
     if len(qs) > 1:
         reasons.append(f"Average buyer quality {sum(qs)/len(qs):.2f} across {len(qs)} managers")
     return round(score, 1), reasons
