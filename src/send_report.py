@@ -456,35 +456,51 @@ def sell_block(sell_signals: list[dict]) -> str:
         f'<div style="background:{CARD};border:1px solid {LINE};border-radius:18px;padding:18px 24px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse">{rows}</table></div>'
 
 
-def track_record_block(bt: dict | None) -> str:
-    """Running record against the S&P 500, shown on every report."""
+def track_record_block(bt: dict | None, current_engine: str = "") -> str:
+    """Never pool or relabel earlier versions as the current model's alpha."""
     s = (bt or {}).get("summary") or {}
-    done = s.get("completed_90d") or 0
-    if not done:
-        return (f'<div style="font-size:11px;color:{INK3};margin-top:18px;padding:0 4px">'
-                f'Track record: no signal has completed its 90-day window yet.</div>')
+    by_engine = s.get("by_engine") or {}
+    current = by_engine.get(current_engine) or {}
+    current_n = current.get("signals") or 0
+    other = [
+        f"{v.get('signals', 0)} from {k}: {v.get('avg_excess_90d_pct', 0) or 0:+.1f}% vs SPY"
+        for k, v in sorted(by_engine.items()) if k != current_engine
+    ]
+    prior_txt = " · ".join(other) if other else "no completed older cohorts"
 
-    ret, bench = s.get("avg_return_90d_pct"), s.get("avg_benchmark_90d_pct")
-    excess, beat = s.get("avg_excess_90d_pct"), s.get("beat_benchmark_90d_pct")
-    col = GREEN if (excess or 0) > 0 else ORANGE
-    eng = (s.get("by_engine") or {})
-    eng_txt = " · ".join(
-        f"{'current engine' if k.startswith('v2') else 'legacy engine'}: "
-        f"{v['signals']} signals, {v.get('avg_excess_90d_pct', 0) or 0:+.1f}% vs {esc(s.get('benchmark', 'SPY'))}"
-        for k, v in sorted(eng.items()))
+    if not current_n:
+        return f"""
+    <div style="background:{CARD};border:1px solid {LINE};border-radius:18px;padding:18px 24px;margin-top:18px">
+      <div class="k2">Forward record · stock signals · 90 days</div>
+      <div style="font-size:13px;color:{INK};margin-top:6px">
+        Current scoring model {esc(current_engine or 'unknown')}: no 90-day outcomes
+        have matured. Alpha is <strong>not established</strong>.
+      </div>
+      <div style="font-size:11px;color:{INK3};margin-top:6px">
+        Older, non-comparable models: {esc(prior_txt)}.
+        Neither previous-model returns nor a green pipeline validate this version.
+      </div>
+    </div>"""
 
+    excess = current.get("avg_excess_90d_pct")
+    ret = current.get("avg_return_90d_pct")
+    bench = current.get("avg_benchmark_90d_pct")
+    beat = current.get("beat_benchmark_pct")
+    def fmt(n):
+        return f"{n:+.1f}%" if n is not None else "n/a"
+
+    col = GREEN if excess is not None and excess > 0 else ORANGE
     return f"""
     <div style="background:{CARD};border:1px solid {LINE};border-radius:18px;padding:18px 24px;margin-top:18px">
-      <div class="k2">Stock signal record · 90 days · vs {esc(s.get('benchmark', 'SPY'))}</div>
+      <div class="k2">Forward record · model {esc(current_engine)} · 90 days vs SPY</div>
       <div style="font-size:14px;color:{INK};margin-top:6px">
-        <span style="font-weight:600;color:{col}">{excess:+.1f}% excess</span> on average
-        ({ret:+.1f}% signal vs {bench:+.1f}% benchmark) across {done} completed signals ·
-        {beat if beat is not None else '–'}% beat the benchmark
+        <span style="font-weight:600;color:{col}">{fmt(excess)} observed excess</span>
+        ({fmt(ret)} share return vs {fmt(bench)} SPY) across {current_n} matured
+        stock signals · {beat if beat is not None else 'n/a'}% beat SPY.
       </div>
-      {f'<div style="font-size:11px;color:{INK3};margin-top:6px">{esc(eng_txt)}</div>' if eng_txt else ''}
       <div style="font-size:11px;color:{INK3};margin-top:6px">
-        Stock returns, not option returns. The current engine has only just begun its forward record;
-        legacy rows come from the earlier LLM-selected top-5 pipeline and are not evidence for it.
+        Descriptive forward tracking, not risk-adjusted or statistically
+        validated alpha. Older model versions are kept separate.
       </div>
     </div>"""
 
@@ -667,7 +683,7 @@ def _generate_html_report(a: dict) -> str:
   {cards}
 
   {sell_block(a.get('sell_signals', []))}
-  {track_record_block(a.get('backtest'))}
+  {track_record_block(a.get('backtest'), a.get('engine_version', ''))}
   {option_record_block(a.get('backtest'))}
   {methodology_block(a)}
 
