@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "failures": [],
+  "warnings": [],
+  "summary": {
+    "counts": {
+      "NEW": 684,
+      "ADDED": 1043,
+      "REDUCED": 1166,
+      "UNCHANGED": 518,
+      "SOLD": 4,
+      "NO_BASELINE": 0
+    },
+    "exits": 354,
+    "total_positions": 3415,
+    "matched_positions": 2731,
+    "new_ratio": 0.20029282576866764,
+    "no_baseline_positions": 0,
+    "filers_with_prior": 48,
+    "filers_without_prior": 0,
+    "capped_without_exits": 3
+  },
+  "current_period": "2026-09-30",
+  "prior_period": "2026-06-30",
+  "expected_prior": "2026-06-30",
+  "checked_at": "2026-11-21"
+}
