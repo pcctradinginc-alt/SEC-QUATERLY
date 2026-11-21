@@ -46,3 +46,31 @@ def test_send_requires_credentials(monkeypatch):
     monkeypatch.setenv("GMAIL_APP_PASSWORD", "")
     with pytest.raises(ValueError, match="must be set"):
         sr.send_gmail("<p>x</p>", "2026-09-05")
+
+
+def test_current_version_never_inherits_legacy_backtest_alpha():
+    summary = {"completed_90d": 10, "avg_excess_90d_pct": -1.4,
+               "by_engine": {"v1_llm_top5": {
+                   "signals": 10, "avg_excess_90d_pct": -1.4,
+                   "avg_return_90d_pct": 6.5, "avg_benchmark_90d_pct": 7.9,
+                   "beat_benchmark_pct": 40.0}}}
+    html = sr.track_record_block({"summary": summary}, "v2.2_material_streak")
+    assert "no 90-day outcomes" in html
+    assert "not established" in html
+    assert "v1_llm_top5" in html
+    assert "non-comparable" in html
+    assert "observed excess" not in html
+
+
+def test_only_current_engine_can_supply_reported_forward_excess():
+    backtest = {"summary": {"by_engine": {
+        "v1_llm_top5": {"signals": 10, "avg_excess_90d_pct": 12.0},
+        "v2.2_material_streak": {
+            "signals": 2, "avg_excess_90d_pct": -3.0,
+            "avg_return_90d_pct": 2.0,
+            "avg_benchmark_90d_pct": 5.0,
+            "beat_benchmark_pct": 0.0,
+        }}}}
+    html = sr.track_record_block(backtest, "v2.2_material_streak")
+    assert "-3.0% observed excess" in html
+    assert "+12.0% observed excess" not in html

@@ -159,8 +159,9 @@ def factor_activity(filers: list[dict]) -> tuple[float, list[str]]:
             d = f.get("delta_pct") or 0.0
             base = 30.0 + min(70.0, max(0.0, d) * 0.7)
         best = max(best, base)
-    breadth = min(20.0, 5.0 * (len(filers) - 1))
-    score = _clamp(best + breadth)
+    # Breadth belongs exclusively to the independent-consensus factor; adding
+    # it here counted the same managers twice in the final weighted score.
+    score = _clamp(best)
 
     news = [f for f in filers if f.get("delta_type") == "NEW"]
     adds = [f for f in filers if f.get("delta_type") != "NEW"]
@@ -171,7 +172,7 @@ def factor_activity(filers: list[dict]) -> tuple[float, list[str]]:
         top = max(adds, key=lambda f: (f.get("delta_pct") or 0.0, f["filer"]))
         reasons.append(f"{top['filer']} added {top.get('delta_pct') or 0:+.0f}% to an existing position")
     if len(filers) > 1:
-        reasons.append(f"{len(filers)} tracked managers bought this quarter")
+        reasons.append(f"{len(independent_buyers(filers))} independent manager groups with material purchases")
     return round(score, 1), reasons
 
 
@@ -195,10 +196,13 @@ def factor_conviction(filers: list[dict]) -> tuple[float, list[str]]:
 
 
 def factor_manager_quality(filers: list[dict]) -> tuple[float, list[str]]:
-    qs = [f.get("manager_quality_score") or 0.5 for f in filers]
+    qs = [0.5 if f.get("manager_quality_score") is None else f["manager_quality_score"] for f in filers]
     score = _clamp((0.6 * max(qs) + 0.4 * sum(qs) / len(qs)) * 100.0)
-    best = max(filers, key=lambda f: ((f.get("manager_quality_score") or 0.0), f["filer"]))
-    reasons = [f"Highest-quality buyer: {best['filer']} (quality {best.get('manager_quality_score', 0):.2f})"]
+    def quality_or_neutral(f: dict) -> float:
+        value = f.get("manager_quality_score")
+        return 0.5 if value is None else float(value)
+    best = max(filers, key=lambda f: (quality_or_neutral(f), f["filer"]))
+    reasons = [f"Highest-quality buyer: {best['filer']} (quality {quality_or_neutral(best):.2f})"]
     if len(qs) > 1:
         reasons.append(f"Average buyer quality {sum(qs)/len(qs):.2f} across {len(qs)} managers")
     return round(score, 1), reasons
@@ -236,9 +240,11 @@ def independent_buyers(filers: list[dict]) -> list[dict]:
 
 
 def factor_consensus(filers: list[dict]) -> tuple[float, list[str]]:
-    independent = independent_buyers(filers) or filers[:1]
+    independent = independent_buyers(filers)
     n = len(independent)
-    qs = [f.get("manager_quality_score") or 0.5 for f in independent]
+    if n == 0:
+        return 0.0, ["No independent investment manager bought this quarter"]
+    qs = [0.5 if f.get("manager_quality_score") is None else f["manager_quality_score"] for f in independent]
     avg_q = sum(qs) / n
     base = {1: 30.0, 2: 60.0, 3: 80.0, 4: 95.0}.get(n, 100.0)
     score = _clamp(base * (0.5 + 0.5 * avg_q))
@@ -252,7 +258,7 @@ def factor_consensus(filers: list[dict]) -> tuple[float, list[str]]:
 
 
 def factor_freshness(filers: list[dict], today: date) -> tuple[float, list[str]]:
-    fs = [f.get("freshness_score") or 0.5 for f in filers]
+    fs = [0.5 if f.get("freshness_score") is None else f["freshness_score"] for f in filers]
     avg_fs = sum(fs) / len(fs)
     ages = []
     for f in filers:

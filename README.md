@@ -22,6 +22,49 @@ workflow run with skipped analysis is **not** proof that a report was delivered.
 
 ---
 
+## Score v2.2: financial semantics and evidence limits (November 2026)
+
+The current deterministic score is `ENGINE_VERSION=v2.2_material_streak`.
+Scores from v2.1 and v2.2 **cannot be compared**: filters and the definition
+of multi-quarter accumulation changed. The historical Q3-2026 report remains
+an archived v2.1 snapshot; changing the model does not silently resend it.
+
+* An ADDED position counts as buying only if reported share count increased
+  **at least 5%** and the position meets the existing 0.5% book-weight floor.
+  This is an explicit, *uncalibrated research threshold*, not a proven alpha
+  cutoff. NEW positions still count; NO_BASELINE never does.
+* Multi-quarter accumulation requires a **continuous adjacent-quarter streak**
+  by the **same manager CIK and same security CUSIP** (ticker fallback only
+  when CUSIP is missing). Different managers buying in different quarters
+  cannot be stitched into one accumulation streak. Small rebalances do not
+  extend the streak.
+* The activity factor no longer adds a bonus for extra buyers: independent
+  economic groups are counted only in the consensus factor. Related vehicles
+  and strategic corporate treasuries do not inflate the independent consensus
+  or the legacy diagnostic cluster counts.
+* Genuine `0.0` manager-quality and freshness scores are no longer replaced
+  with `0.5` by Python truth-value fallback.
+* Long-call hypothetical entry and max-loss are measured at the displayed
+  **ask**, not the midpoint. Bid/ask is still a quote, **not a guaranteed fill**;
+  fees, slippage, IV regime and early-exit mark-to-market are not proved.
+  Legacy snapshots lacking an ask remain explicitly tagged as mid proxies.
+* The separately calculated percentile-based `alpha_score` in `scoring.py`
+  is a **legacy diagnostic** and is NOT the final selection/ranking score.
+  Manager quality is a concentration/turnover style proxy, NOT validated manager
+  outperformance. Do not interpret a score like 80 as an 80% probability of
+  success, or a green pipeline as evidence of positive excess return.
+
+**Prospective research requirement:** Freeze input data as-of actual SEC
+publication/filing timestamps, avoid using observations not published as of
+each decision date, and assess 90d/180d forward total returns by *engine
+version* against market and sector/asset-class benchmarks with costs and
+multiple-testing controls. At present the number of independently matured
+v2.2 recommendations is zero. Weights must not be reoptimized using the
+evaluation period; no autonomous trading or claimed alpha without a
+separately verified out-of-sample study.
+
+---
+
 ## Pipeline
 
 ```

@@ -62,8 +62,9 @@ def test_contract_fields():
     r = osel.select_call([contract("X", strike=105.0, bid=4.9, ask=5.1)], TODAY, spot=100.0)
     c = r["contract"]
     assert c["mid"] == 5.0
-    assert c["max_risk_per_contract"] == 500.0
-    assert c["breakeven"] == 110.0
+    assert c["hypothetical_entry_ask"] == 5.1
+    assert c["max_risk_per_contract"] == 510.0
+    assert c["breakeven"] == 110.1
     assert c["moneyness_pct"] == 5.0
     assert c["dte"] == 120
     assert "Delta" in r["rule_rationale"]

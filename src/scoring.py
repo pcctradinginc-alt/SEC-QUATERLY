@@ -33,11 +33,13 @@ from config import (
     EARLY_SMART_MONEY_MIN_AVG_QUALITY, EARLY_SMART_MONEY_MIN_FUNDS,
     FRESHNESS_K, FRESHNESS_QUARTER_DAYS, HIGH_CONVICTION_MIN_PCT,
     MIN_PORTFOLIO_WEIGHT_PCT, NEW_POSITION_BANDS, PRICE_ACTION_DOWNGRADE_PCT,
+    CORPORATE_STRATEGIC_FILERS, economic_group,
     PRICE_ACTION_STALE_PENALTY, PRICE_ACTION_WARN_PCT,
     PRICE_ACTION_WARN_PENALTY, RELATIVE_OUTSIZED_VS_MEDIAN,
 )
 import manager_quality as manager_quality_mod
 import multi_quarter
+from buy_signal import eligible_common_buy
 
 
 def load_parsed(today_str: str) -> dict:
@@ -300,6 +302,10 @@ def build_scored_universe(
     for filer_name, filer_data in parsed["filers"].items():
         if "positions" not in filer_data:
             continue
+        # A strategic corporate treasury is not an independent stock-picker.
+        # Keep its EDGAR holdings in the parsed archive, not the buy ranking.
+        if filer_name in CORPORATE_STRATEGIC_FILERS:
+            continue
 
         mq_info         = manager_quality.get(filer_name, {})
         quality_score   = mq_info.get("quality_score", 0.5)
@@ -314,23 +320,9 @@ def build_scored_universe(
 
         for pos in filer_data["positions"]:
             tx_type = pos["delta"]["type"]
-            # NO_BASELINE means this filer has no prior quarter on file, so the
-            # position cannot be scored as accumulation - it may have been held
-            # unchanged for years. It still counts for AUM and portfolio weight.
-            if tx_type not in ("NEW", "ADDED"):
-                continue
-            if pos["port_weight_pct"] < MIN_PORTFOLIO_WEIGHT_PCT:
-                continue
-            # Net short/hedged via puts - not a real conviction buy (Section 17).
-            if not pos.get("net_bullish", True):
-                continue
-            # Section 18: don't treat a likely merger/spin-off/share-class
-            # swap as a genuine new buy decision.
-            if pos.get("possible_corporate_action"):
-                continue
-            # Options-only exposure is not share accumulation. It stays in the
-            # book and is reported, but the share-count signal needs shares.
-            if pos.get("exposure_type", "COMMON_LONG") != "COMMON_LONG":
+            # Materiality / common-stock rules are identical for this-quarter
+            # scoring and consecutive-quarter accumulation.
+            if not eligible_common_buy(pos):
                 continue
 
             delta_pct = pos["delta"].get("delta_pct")
@@ -371,12 +363,25 @@ def build_scored_universe(
 # ── Consensus (Section 9) & buyer counting ────────────────────────────────────
 
 def count_buyers_per_ticker(scored: list[dict]) -> dict[str, list[str]]:
-    """All filers buying (NEW/ADDED) each ticker this run - unfiltered by cluster threshold."""
-    buyers: dict[str, list[str]] = defaultdict(list)
+    """Unique independent decision-makers per ticker (no strategic treasuries).
+
+    Return the best-quality representative filer name for downstream manager
+    quality lookups; one Li Lu investment process cannot cast two votes.
+    """
+    groups: dict[str, dict[str, dict]] = defaultdict(dict)
     for e in scored:
-        if e["ticker"]:
-            buyers[e["ticker"]].append(e["filer"])
-    return dict(buyers)
+        if not e["ticker"] or e["filer"] in CORPORATE_STRATEGIC_FILERS:
+            continue
+        group = economic_group(e["filer"])
+        old = groups[e["ticker"]].get(group)
+        if old is None or (
+            e["manager_quality_score"], e["filer"]
+        ) > (old["manager_quality_score"], old["filer"]):
+            groups[e["ticker"]][group] = e
+    return {
+        ticker: sorted(e["filer"] for e in by_group.values())
+        for ticker, by_group in groups.items()
+    }
 
 
 def compute_consensus_raw(scored: list[dict]) -> dict[str, float]:
@@ -385,14 +390,21 @@ def compute_consensus_raw(scored: list[dict]) -> dict[str, float]:
     over buying filers, per ticker. Unnormalized - min-max normalized later
     alongside the other Alpha Score components.
     """
-    raw: dict[str, float] = defaultdict(float)
+    # Legacy diagnostic alpha: aggregate independent groups, not multiple
+    # filings attributable to the same economic manager.
+    by_group: dict[str, dict[str, float]] = defaultdict(dict)
     for e in scored:
-        conviction      = e["port_weight_pct"] / 100.0
-        position_change = min(e["position_change_raw"] / 100.0, 3.0)  # cap extreme deltas
-        raw[e["ticker"]] += (
+        if not e["ticker"] or e["filer"] in CORPORATE_STRATEGIC_FILERS:
+            continue
+        conviction = e["port_weight_pct"] / 100.0
+        position_change = min(e["position_change_raw"] / 100.0, 3.0)
+        contribution = (
             e["manager_quality_score"] * conviction * position_change * e["freshness_score"]
         )
-    return dict(raw)
+        group = economic_group(e["filer"])
+        prior = by_group[e["ticker"]].get(group, 0.0)
+        by_group[e["ticker"]][group] = max(prior, contribution)
+    return {t: sum(groups.values()) for t, groups in by_group.items()}
 
 
 # ── Crowding (Section 13, Tier-2 proxy) ───────────────────────────────────────
@@ -701,8 +713,8 @@ def run():
 
     # 3. Multi-quarter accumulation signals (Section 6)
     print("\n🔍 Analyzing multi-quarter position building...")
-    mq_signals = multi_quarter.build_multi_quarter_signals(today_str)
-    print(f"   {len(mq_signals)} tickers with 2+ build quarters")
+    mq_signals = multi_quarter.build_multi_quarter_signals(today_str, current_parsed=parsed)
+    print(f"   {len(mq_signals)} tickers with 2+ consecutive material-build quarters by the same filer/security")
 
     # 4. Buy-side universe
     scored = build_scored_universe(parsed, manager_quality, freshness_by_filer)

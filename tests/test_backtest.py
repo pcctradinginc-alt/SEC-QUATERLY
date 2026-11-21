@@ -61,3 +61,22 @@ def test_missing_price_data_is_not_scored_as_a_loss(monkeypatch):
     r = bt.option_outcome(_stock(expiry="2020-01-17"), "2019-09-01")
     assert r["option_status"] == "no_price_data"
     assert "option_return_pct" not in r
+
+
+def test_ask_entry_is_used_for_hypothetical_long_call_return(monkeypatch):
+    monkeypatch.setattr(bt, "_underlying_close_on_or_after", lambda t, d: 110.0)
+    call = _stock(strike=100.0, expiry="2020-01-17", mid=5.0)
+    call["option"]["contract"]["ask"] = 6.0
+    r = bt.option_outcome(call, "2019-09-01")
+    assert r["option_entry_basis"] == "ask"
+    assert r["option_entry_price"] == 6.0
+    assert r["option_entry_mid"] == 5.0
+    assert r["option_return_pct"] == round((10.0-6.0)/6.0*100, 1)
+    assert r["option_max_risk"] == 600.0
+
+
+def test_legacy_mid_only_snapshot_is_labeled(monkeypatch):
+    monkeypatch.setattr(bt, "_underlying_close_on_or_after", lambda t, d: 110.0)
+    r = bt.option_outcome(_stock(strike=100.0, expiry="2020-01-17", mid=5.0),
+                          "2019-09-01")
+    assert r["option_entry_basis"] == "mid_legacy_proxy"

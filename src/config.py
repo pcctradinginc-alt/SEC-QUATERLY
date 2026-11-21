@@ -212,6 +212,7 @@ WEIGHT_DELTA_PCT     = 0.20   # how aggressively the manager bought
 
 # ── Scoring thresholds ────────────────────────────────────────────────────────
 MIN_PORTFOLIO_WEIGHT_PCT  = 0.5    # ignore positions < 0.5% of portfolio
+MIN_MATERIAL_ADD_PCT     = 5.0    # research threshold: smaller ADDED changes do not count as buying
 HIGH_CONVICTION_MIN_PCT   = 3.0    # new position >= 3% = HIGH CONVICTION flag
 CLUSTER_MIN_FUNDS         = 2      # 2+ funds buying = cluster signal
 DOUBLE_DOWN_MIN_DELTA     = 20.0   # +20% shares while price fell = double-down
@@ -332,7 +333,7 @@ NO_SUITABLE_OPTION     = "NO_SUITABLE_OPTION_FOUND"
 # A capped price-action penalty is subtracted afterwards (see below).
 # Rule version of the scoring model. Bump it whenever the ranking rules change,
 # so the backtest never pools results produced by different models.
-ENGINE_VERSION = "v2.1_dissent"
+ENGINE_VERSION = "v2.2_material_streak"  # new non-comparable ranking; reset forward validation
 TOP_N = 10
 SIGNAL_WEIGHTS = {
     "activity":        15,   # NEW / ADD activity strength

@@ -12,6 +12,7 @@ from datetime import date
 from pathlib import Path
 
 from config import DATA_DIR, MULTI_QUARTER_BUILD_MIN, MULTI_QUARTER_MAX
+from buy_signal import eligible_common_buy, material_buy
 
 
 def _had_real_comparison(parsed: dict, sample: int = 400) -> bool:
@@ -77,129 +78,120 @@ def load_historical_parsed(today_str: str) -> list[dict]:
     return ordered[:MULTI_QUARTER_MAX]
 
 
-def build_multi_quarter_signals(today_str: str) -> dict[str, dict]:
+def build_multi_quarter_signals(today_str: str, current_parsed: dict | None = None) -> dict[str, dict]:
+    """Only reward *consecutive*, material buys of the SAME security and CIK.
+
+    Counting any positive quarter for any tracked manager gave EWY/LSCC
+    spurious 75-100 accumulation points even when their per-ticker aggregate
+    exhibited net reductions. No cross-manager stitching, nonconsecutive
+    quarters, different CUSIPs or minor rebalance trades are accepted.
+
+    build_quarters is the count of PRIOR consecutive qualifying quarters.
+    signal_engine.factor_accumulation then adds the current qualifying
+    quarter exactly once (legacy interface preserved).
     """
-    For every ticker seen across historical quarters, computes:
-      - How many quarters had net buying activity
-      - Average delta pct per building quarter
-      - Slope of portfolio weight (positive = growing conviction)
-      - Silent build flag (small but consistent adds)
+    from parse_13f import infer_report_date, previous_quarter_end
 
-    Returns {ticker: signal_dict} only for tickers with 2+ build quarters.
-    """
-    history = load_historical_parsed(today_str)
+    if current_parsed is None:
+        with (DATA_DIR / f"{today_str}_holdings_parsed.json").open() as fh:
+            current_parsed = json.load(fh)
 
-    if len(history) < 2:
-        print(f"  ⚠️  Multi-quarter: only {len(history)} historical quarter(s) available. Signals will be sparse.")
-        if not history:
-            return {}
+    current_quarter = infer_report_date(current_parsed)
+    if not current_quarter:
+        raise ValueError("Current reporting quarter is missing; cannot score accumulation")
 
-    # Aggregate per ticker, per quarter
-    ticker_quarters: dict[str, list[dict]] = {}
+    historical = load_historical_parsed(today_str)
+    by_quarter = {infer_report_date(p): p for p in historical if infer_report_date(p)}
+    current_filers = current_parsed.get("filers", {})
+    result: dict[str, dict] = {}
 
-    for quarter_data in history:
-        # The reporting quarter, not the run date: a Q2-2026 build must not be
-        # labelled "2026-09-06" internally.
-        from parse_13f import infer_report_date
-        quarter_str = infer_report_date(quarter_data) or quarter_data.get("date", "")
-        for filer_name, filer_data in quarter_data.get("filers", {}).items():
-            for pos in filer_data.get("positions", []):
-                ticker = pos.get("ticker") or pos.get("cusip", "")
-                if not ticker:
-                    continue
-
-                if ticker not in ticker_quarters:
-                    ticker_quarters[ticker] = []
-
-                ticker_quarters[ticker].append({
-                    "quarter":     quarter_str,
-                    "filer":       filer_name,
-                    "delta_type":  pos["delta"]["type"],
-                    "delta_pct":   pos["delta"].get("delta_pct"),
-                    "port_weight": pos["port_weight_pct"],
-                })
-
-    signals = {}
-
-    for ticker, entries in ticker_quarters.items():
-        quarters_seen = sorted(set(e["quarter"] for e in entries), reverse=True)
-
-        build_quarters = 0
-        delta_pcts: list[float] = []
-        weights_by_quarter: list[float] = []
-
-        for q in quarters_seen:
-            q_entries = [e for e in entries if e["quarter"] == q]
-            has_buy    = any(e["delta_type"] in ("NEW", "ADDED") for e in q_entries)
-            has_reduce = any(e["delta_type"] in ("REDUCED", "SOLD") for e in q_entries)
-
-            if has_buy and not has_reduce:
-                build_quarters += 1
-                for e in q_entries:
-                    if e["delta_pct"] is not None:
-                        delta_pcts.append(abs(e["delta_pct"]))
-
-            avg_w = sum(e["port_weight"] for e in q_entries) / len(q_entries)
-            weights_by_quarter.append(avg_w)
-
-        if build_quarters < 2:
+    for filer_name, filer in current_filers.items():
+        cik = str(filer.get("cik", "") or "").zfill(10)
+        if not cik.strip("0"):
+            # Never blend unidentified filers into a multi-quarter chain.
             continue
+        for pos in filer.get("positions", []):
+            if not eligible_common_buy(pos):
+                continue
+            ticker = pos.get("ticker") or pos.get("cusip")
+            cusip = pos.get("cusip") or ""
+            if not ticker:
+                continue
 
-        avg_delta = sum(delta_pcts) / len(delta_pcts) if delta_pcts else 0.0
+            # A NEW position cannot already be an unbroken accumulation of
+            # the same security unless the data are internally contradictory.
+            prior_streak = 0
+            consecutive = [pos]
+            period = current_quarter
+            if pos["delta"]["type"] == "ADDED":
+                for _ in range(MULTI_QUARTER_MAX - 1):
+                    period = previous_quarter_end(period)
+                    old = by_quarter.get(period)
+                    if old is None:
+                        break
+                    prior_filer = next((
+                        f for f in old.get("filers", {}).values()
+                        if str(f.get("cik", "") or "").zfill(10) == cik
+                    ), None)
+                    if prior_filer is None:
+                        break
+                    old_pos = next((
+                        p for p in prior_filer.get("positions", [])
+                        if (cusip and p.get("cusip") == cusip) or
+                        (not cusip and p.get("ticker") == ticker)
+                    ), None)
+                    if old_pos is None or not eligible_common_buy(old_pos):
+                        break
+                    prior_streak += 1
+                    consecutive.append(old_pos)
+                    if old_pos["delta"]["type"] == "NEW":
+                        break
 
-        # Weight slope: positive means portfolio weight growing over time
-        # weights_by_quarter[0] = most recent, [-1] = oldest
-        slope = 0.0
-        if len(weights_by_quarter) >= 2:
-            slope = (weights_by_quarter[0] - weights_by_quarter[-1]) / len(weights_by_quarter)
+            if prior_streak == 0:
+                continue
 
-        # Silent Build: 3+ quarters of small, consistent adds (5–25% delta)
-        silent_build = (
-            build_quarters >= 3
-            and len(delta_pcts) >= 3
-            and all(5.0 <= d <= 25.0 for d in delta_pcts[-3:])
-        )
+            full_count = prior_streak + 1
+            deltas = [p["delta"].get("delta_pct") or 0.0 for p in consecutive]
+            weights = [p.get("port_weight_pct") or 0.0 for p in consecutive]
+            silent = (
+                full_count >= 3
+                and all(p["delta"]["type"] == "ADDED" for p in consecutive[:3])
+                and all(5.0 <= d <= 25.0 for d in deltas[:3])
+            )
+            recency = (0.5, 0.3, 0.2)
+            weighted_delta = sum(
+                recency[i] * deltas[i] for i in range(min(3, len(deltas)))
+            )
+            slope = ((weights[0] - weights[-1]) / (full_count - 1)) if full_count > 1 else 0.0
 
-        # Build score: more quarters + higher avg delta + positive slope
-        # (legacy composite metric, kept for logging/debugging only - the
-        # Alpha Score's accumulation component uses accumulation_score below)
-        build_score = (build_quarters / 4.0) * max(avg_delta, 1.0) * (1.0 + max(slope, 0.0))
+            flags = []
+            if full_count >= MULTI_QUARTER_BUILD_MIN:
+                flags.append("MULTI_QUARTER_BUILD")
+            if full_count >= 5:
+                flags.append("STRONG_BUILD")
+            if silent:
+                flags.append("SILENT_ACCUMULATION")
 
-        # Section 6: Accumulation Score with explicit recency weighting
-        # (0.5 x current quarter's delta + 0.3 x prior + 0.2 x the one before).
-        # Recent quarters count more heavily than older ones - a stock bought
-        # aggressively 3 quarters ago and left untouched since is a weaker
-        # signal than one still being actively built right now.
-        RECENCY_WEIGHTS = (0.5, 0.3, 0.2)
-        quarter_avg_deltas = []  # aligned with quarters_seen (most recent first)
-        for q in quarters_seen[:len(RECENCY_WEIGHTS)]:
-            q_entries = [e for e in entries if e["quarter"] == q]
-            q_deltas = [e["delta_pct"] for e in q_entries if e["delta_pct"] is not None]
-            quarter_avg_deltas.append(sum(q_deltas) / len(q_deltas) if q_deltas else 0.0)
+            info = {
+                "build_quarters": prior_streak,
+                "total_quarters": full_count,
+                "consecutive_quarters": full_count,
+                "manager_cik": cik,
+                "manager_name": filer_name,
+                "security_cusip": cusip,
+                "avg_delta_pct": round(sum(deltas) / len(deltas), 1),
+                "weight_slope": round(slope, 3),
+                "build_score": round(full_count / 4.0 * max(weighted_delta, 0.0), 2),
+                "accumulation_score": round(weighted_delta, 2),
+                "silent_build": silent,
+                "flags": flags,
+            }
+            previous = result.get(ticker)
+            if previous is None or (full_count, weighted_delta, cik) > (
+                previous["consecutive_quarters"],
+                previous["accumulation_score"],
+                previous["manager_cik"],
+            ):
+                result[ticker] = info
 
-        accumulation_score = sum(
-            w * quarter_avg_deltas[i]
-            for i, w in enumerate(RECENCY_WEIGHTS)
-            if i < len(quarter_avg_deltas)
-        )
-
-        flags = []
-        if build_quarters >= MULTI_QUARTER_BUILD_MIN:
-            flags.append("MULTI_QUARTER_BUILD")
-        if build_quarters >= 5:
-            flags.append("STRONG_BUILD")
-        if silent_build:
-            flags.append("SILENT_ACCUMULATION")
-
-        signals[ticker] = {
-            "build_quarters":     build_quarters,
-            "total_quarters":     len(quarters_seen),
-            "avg_delta_pct":      round(avg_delta, 1),
-            "weight_slope":       round(slope, 3),
-            "build_score":        round(build_score, 2),
-            "accumulation_score": round(accumulation_score, 2),
-            "silent_build":       silent_build,
-            "flags":              flags,
-        }
-
-    return signals
+    return result
