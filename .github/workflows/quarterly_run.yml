@@ -2,9 +2,16 @@ name: SEC 13F Signal Engine
 
 on:
   schedule:
-    # Daily at 14:00 UTC on the 14th–20th of Feb/May/Aug/Nov;
-    # date_check.py decides whether today is the actual run date.
-    - cron: '0 14 14-20 2,5,8,11 *'
+    # Daily AFTER the SEC filing deadline (23:37 UTC = after midnight
+    # Berlin time); retry missed triggers until SMTP success is recorded.
+    # 23:37 avoids GitHub's high-load minute 0.
+    - cron: '37 23 * * *'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/quarterly_run.yml'
+  pull_request:
+    branches: [main]
   workflow_dispatch:
     inputs:
       force_run:
@@ -28,6 +35,9 @@ on:
         required: false
         default: 'false'
 
+permissions:
+  contents: write
+
 # Runs write generated data back to the branch. Two of them in flight means one
 # loses its push, so they queue instead of racing.
 concurrency:
@@ -39,6 +49,7 @@ jobs:
   # render a report and mail it out in parallel.
   analyze:
     needs: tests
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     # Every step must agree on "today": each script keys its data files on the
@@ -134,6 +145,10 @@ jobs:
           # now points at as the base and re-commit this run's output on top.
           commit_output() {
             git add $PATHS
+            # The checkpoint does not exist on --no-send / baseline-only runs.
+            if [ -f data/notification_state.json ]; then
+              git add data/notification_state.json
+            fi
             git diff --staged --quiet && return 1
             git commit -m "$MSG"
           }
@@ -151,11 +166,31 @@ jobs:
           done
           echo "could not push after 3 attempts"; exit 1
 
-      - name: Send failure alert
-        if: failure() && steps.date_check.outputs.should_run == 'true'
+      - name: Monthly activity heartbeat (protect public-repo cron)
+        if: github.event_name == 'schedule' && steps.date_check.outputs.should_run == 'false'
+        run: |
+          # GitHub can disable schedules after 60 days without repo activity.
+          # Make a small, explicit monthly commit to keep the workflow active.
+          if [ "$(date -u +%d)" != "01" ]; then exit 0; fi
+          date -u +%Y-%m > data/scheduler_heartbeat.txt
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/scheduler_heartbeat.txt
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "chore: monthly SEC workflow heartbeat"
+          git push
+
+  notify_failure:
+    needs: [tests, analyze]
+    if: ${{ always() && github.event_name != 'pull_request' && (needs.tests.result == 'failure' || needs.analyze.result == 'failure') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Alert on analysis or test failure
         env:
           GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          REPORT_RECIPIENT: ${{ secrets.REPORT_RECIPIENT }}
         run: |
           python src/notify.py \
             "GitHub Actions – SEC 13F Signal Engine" \

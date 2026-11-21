@@ -12,8 +12,13 @@ every name with a **deterministic 0–100 SIGNAL SCORE**, selects one liquid Cal
 per stock under predefined filters (or reports `NO_SUITABLE_OPTION_FOUND`), and
 e-mails a responsive, minimalist HTML report.
 
-Runs automatically on **16 May / 16 Aug / 16 Nov / 16 Feb** (next business day
-if weekend) via GitHub Actions.
+Runs are checked **daily at 23:37 UTC**, after the SEC filing deadline.
+The system uses the actual SEC deadline (45 days after quarter-end, rolled to
+the next US business day), not a fixed day of the month. The analysis runs on
+the next Berlin calendar day, ensuring late SEC filings are available.
+If GitHub skips a scheduled event, later checks catch up until SMTP acceptance
+for that quarter is recorded in `data/notification_state.json`. A successful
+workflow run with skipped analysis is **not** proof that a report was delivered.
 
 ---
 
@@ -238,6 +243,22 @@ Typical run: one Haiku call, well under $0.05.
 
 Gmail App Password: enable 2-factor auth → *App passwords* → Mail → copy the
 16-character password.
+
+### E-mail delivery and catch-up
+
+- The scheduled job retries a pending quarter every day until its e-mail is
+  accepted by Gmail SMTP. A sent-quarter checkpoint is committed with the report.
+  This documents SMTP acceptance, **not guaranteed inbox delivery**.
+- A manual **workflow_dispatch** with `force_run=true` can resend the same report.
+  Use `skip_email=true` to rebuild without sending or changing the checkpoint.
+- Reports are sent to `REPORT_RECIPIENT`, falling back to `GMAIL_ADDRESS`;
+  failure alerts use the same recipient and will fail visibly if SMTP is broken.
+- A monthly heartbeat commit attempts to prevent GitHub's automatic 60-day
+  scheduled-workflow deactivation for inactive public repositories. GitHub can
+  still delay or drop scheduled runs; review the Actions activity after each
+  13F deadline if delivery is business-critical.
+- Changing the workflow on `main` triggers an immediate catch-up check. PRs
+  run tests but **never send investor e-mails**.
 
 ### Local
 

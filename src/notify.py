@@ -23,17 +23,17 @@ def send_alert(subject: str, body: str):
     Sends a plain-text alert email to GMAIL_ADDRESS.
     Silently skips if credentials are not set (local dev).
     """
-    gmail_address  = os.environ.get("GMAIL_ADDRESS", "")
-    gmail_password = os.environ.get("GMAIL_APP_PASSWORD", "")
+    gmail_address  = os.environ.get("GMAIL_ADDRESS", "").strip()
+    gmail_password = os.environ.get("GMAIL_APP_PASSWORD", "").strip()
+    recipient = (os.environ.get("REPORT_RECIPIENT") or "").strip() or gmail_address
 
-    if not gmail_address or not gmail_password:
-        print(f"[notify] No Gmail credentials set – alert not sent.\n{subject}")
-        return
+    if not gmail_address or not gmail_password or "@" not in recipient:
+        raise RuntimeError("Cannot send failure alert: Gmail credentials or recipient are missing")
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"]    = gmail_address
-    msg["To"]      = gmail_address
+    msg["To"]      = recipient
 
     html_body = f"""
     <div style="font-family:monospace;background:#fef2f2;border:1px solid #fca5a5;
@@ -54,11 +54,10 @@ def send_alert(subject: str, body: str):
             server.ehlo()
             server.starttls()
             server.login(gmail_address, gmail_password)
-            server.sendmail(gmail_address, gmail_address, msg.as_string())
-        print(f"[notify] Alert sent: {subject}")
+            server.sendmail(gmail_address, [recipient], msg.as_string())
+        print(f"[notify] SMTP accepted failure alert: {subject}")
     except Exception as e:
-        # Don't let the notifier itself crash the workflow
-        print(f"[notify] Failed to send alert email: {e}")
+        raise RuntimeError(f"Failure alert SMTP delivery failed: {e}") from e
 
 
 if __name__ == "__main__":

@@ -1,26 +1,20 @@
-"""
-date_check.py
-Determines if today is a valid SEC 13F analysis run date.
-Target dates: 16th of May, Aug, Nov, Feb (Berlin time)
-Weekend/holiday → next business day
-Writes GitHub Actions output: should_run=true/false
-"""
+"""Determine when an SEC 13F quarter is due and whether its report was e-mailed.
 
+The SEC deadline is 45 calendar days after quarter-end, adjusted to the
+next US business day. We run AFTER the deadline, so late-day filings are in
+EDGAR. Every scheduled check can catch up after missed GitHub cron events.
+"""
 import os
-import sys
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
 
 import holidays
 
+from email_state import last_sent_quarter
 
-TARGET_MONTHS = {2, 5, 8, 11}
-TARGET_DAY = 16
-
-# The filing deadline this pipeline follows is a US one, so the calendar has to
-# be US federal holidays - not German ones. A run landing on Independence Day or
-# Thanksgiving would otherwise fire on a day EDGAR support and the markets are
-# shut, and the option quotes would be a stale snapshot.
-US_HOLIDAYS = holidays.UnitedStates(years=range(2024, 2036))
+US_HOLIDAYS = holidays.UnitedStates(years=range(2024, 2041))
+QUARTER_ENDS = ((3, 31), (6, 30), (9, 30), (12, 31))
+DEADLINE_MONTHS = (2, 5, 8, 11)
 
 
 def is_business_day(d: date) -> bool:
@@ -28,67 +22,79 @@ def is_business_day(d: date) -> bool:
 
 
 def next_business_day(d: date) -> date:
-    """Advance d until it is a US business day (weekends and federal holidays)."""
     while not is_business_day(d):
         d += timedelta(days=1)
     return d
 
 
+def filing_deadline(quarter_end: date) -> date:
+    """SEC Form 13F filing deadline for the quarter's period of report."""
+    if (quarter_end.month, quarter_end.day) not in QUARTER_ENDS:
+        raise ValueError(f"Not a quarter end: {quarter_end}")
+    return next_business_day(quarter_end + timedelta(days=45))
+
+
 def get_expected_run_date(ref: date) -> date:
-    """
-    For the given reference date's month/year, return the actual
-    run date (16th of that month → adjusted for weekends).
-    Only valid if ref.month is in TARGET_MONTHS.
-    """
-    target = date(ref.year, ref.month, TARGET_DAY)
-    return next_business_day(target)
+    """Filing deadline for the 13F filing month (legacy public API)."""
+    if ref.month not in DEADLINE_MONTHS:
+        raise ValueError(f"{ref.month} is not a 13F filing month")
+    year = ref.year - 1 if ref.month == 2 else ref.year
+    month_day = {2: (12, 31), 5: (3, 31), 8: (6, 30), 11: (9, 30)}
+    q = date(year, *month_day[ref.month])
+    return filing_deadline(q)
+
+
+def latest_due_quarter(today: date) -> tuple[str, date]:
+    """Latest due reporting quarter, including a missed quarter after its month."""
+    quarters = [
+        date(year, month, day)
+        for year in (today.year - 2, today.year - 1, today.year)
+        for month, day in QUARTER_ENDS
+    ]
+    eligible = [q for q in quarters if q < today and filing_deadline(q) < today]
+    if not eligible:
+        raise ValueError(f"No due quarter identified for {today}")
+    last = max(eligible)
+    return last.isoformat(), filing_deadline(last)
 
 
 def should_run_today(today: date, force: bool = False, target_override: str = "") -> bool:
     if force:
-        print(f"FORCE_RUN=true → running regardless of date ({today})")
+        print(f"FORCE_RUN=true: explicit manual re-run on {today}; may resend a report")
         return True
-
     if target_override:
         try:
-            override = date.fromisoformat(target_override)
-            result = today == override
-            print(f"Target override {override}: today={today}, match={result}")
-            return result
-        except ValueError:
-            print(f"Invalid TARGET_DATE '{target_override}', ignoring.")
+            target = date.fromisoformat(target_override)
+        except ValueError as exc:
+            raise ValueError(f"Invalid TARGET_DATE: {target_override!r}") from exc
+        return today == target
 
-    if today.month not in TARGET_MONTHS:
-        print(f"Month {today.month} is not a target month {TARGET_MONTHS}. Skip.")
+    quarter, deadline = latest_due_quarter(today)
+    sent = last_sent_quarter()
+    if sent == quarter:
+        print(f"Quarter {quarter} already e-mailed; no new report is needed")
         return False
-
-    expected = get_expected_run_date(today)
-    result = today == expected
-    print(f"Expected run date for {today.year}-{today.month:02d}: {expected}. Today: {today}. Run: {result}")
-    return result
+    print(f"SEC 13F quarter {quarter} was due {deadline}; "
+          f"last e-mailed={sent or 'never'}; catch-up is required")
+    return True
 
 
-def write_github_output(key: str, value: str):
-    """Write to GITHUB_OUTPUT file (new Actions syntax)."""
-    output_file = os.environ.get("GITHUB_OUTPUT", "")
-    if output_file:
-        with open(output_file, "a") as f:
-            f.write(f"{key}={value}\n")
+def write_github_output(key: str, value: str) -> None:
+    output = os.environ.get("GITHUB_OUTPUT", "")
+    if output:
+        with open(output, "a", encoding="utf-8") as handle:
+            handle.write(f"{key}={value}\n")
     else:
-        # Local testing fallback
         print(f"[local] {key}={value}")
 
 
 if __name__ == "__main__":
-    today = date.today()
-    force = os.environ.get("FORCE_RUN", "false").lower() == "true"
+    today = datetime.now(ZoneInfo("Europe/Berlin")).date()
+    force = os.environ.get("FORCE_RUN", "false").strip().lower() == "true"
     target_override = os.environ.get("TARGET_DATE", "").strip()
-
     run = should_run_today(today, force=force, target_override=target_override)
     write_github_output("should_run", "true" if run else "false")
-
-    if not run:
-        print("Not a run date. Pipeline will stop here.")
-        sys.exit(0)
-
-    print(f"✅ Run date confirmed: {today}")
+    if run:
+        print(f"Scheduled analysis due as of {today}")
+    else:
+        print(f"No unnotified SEC quarter due as of {today}")
