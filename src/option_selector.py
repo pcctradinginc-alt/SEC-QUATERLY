@@ -165,8 +165,11 @@ def select_call(chain: list[dict], today: date, spot: float | None = None) -> di
         "implied_volatility": (round(float(best["implied_volatility"]), 4)
                                if best.get("implied_volatility") is not None else None),
         "moneyness_pct":     moneyness,
-        "max_risk_per_contract": round(mid * 100, 2),
-        "breakeven":         round(float(best["strike"]) + mid, 2),
+        # Paying the ask is a conservative executable-entry assumption. Mid
+        # remains displayed as a quote reference, NEVER the simulated fill.
+        "hypothetical_entry_ask": ask,
+        "max_risk_per_contract": round(ask * 100, 2),
+        "breakeven":         round(float(best["strike"]) + ask, 2),
         "selection_cost":    round(selection_cost(best, today), 4),
     }
     runner_up = [
