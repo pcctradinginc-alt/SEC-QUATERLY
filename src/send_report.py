@@ -680,6 +680,8 @@ def _generate_html_report(a: dict) -> str:
 
 
 # ── e-mail ────────────────────────────────────────────────────────────────────
+from email_state import record_sent
+
 
 def resolve_recipient(env: dict | None = None) -> str:
     """
@@ -749,9 +751,20 @@ def run(today_str: str | None = None, send: bool = True) -> str:
     print(f"💾 HTML report saved to {report_path} ({len(html_out)//1024} KB)")
 
     if send:
+        # The actual period-of-report comes from the SEC fetch, not from a
+        # guessed calendar date or the subject line of the e-mail.
+        raw_path = DATA_DIR / f"{today_str}_raw_holdings.json"
+        with raw_path.open(encoding="utf-8") as handle:
+            quarter = json.load(handle).get("report_date", "")
+        if not quarter:
+            raise RuntimeError("SEC quarter missing in raw data; refusing to send")
         send_gmail(html_out, today_str)
+        # SMTP acceptance is the only point at which we can mark this quarter
+        # as notified. A --no-send run must never advance the checkpoint.
+        record_sent(quarter, today_str)
+        print(f"  Delivery checkpoint recorded for SEC quarter {quarter}")
     else:
-        print("  (email send skipped)")
+        print("  (email send skipped; notification checkpoint unchanged)")
     return html_out
 
 
