@@ -83,7 +83,9 @@ def test_manager_streak_requires_same_cik_cusip_and_adjacent_quarters(tmp_path, 
     assert results["AAA"]["build_quarters"] == 2
     assert results["AAA"]["consecutive_quarters"] == 3
     assert results["AAA"]["manager_cik"] == "0000000001"
-    assert se.factor_accumulation(results["AAA"], True)[0] == 75.0
+    # Three 5-25% consecutive adds also qualify for the documented Silent Build +10.
+    assert results["AAA"]["silent_build"] is True
+    assert se.factor_accumulation(results["AAA"], True)[0] == 85.0
 
     swapped_manager = quarter("2026-09-30", {
         "Different manager": ("0000000002", [position(pct=25)])
