@@ -8,8 +8,13 @@ on:
     - cron: '37 23 * * *'
   push:
     branches: [main]
+    # Deploy check after any pipeline/test change, not just YAML changes.
+    # Generated data/report commits do NOT retrigger a costly run.
     paths:
       - '.github/workflows/quarterly_run.yml'
+      - 'src/**'
+      - 'tests/**'
+      - 'requirements.txt'
   pull_request:
     branches: [main]
   workflow_dispatch:

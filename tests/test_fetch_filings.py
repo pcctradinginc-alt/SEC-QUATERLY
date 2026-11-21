@@ -76,13 +76,16 @@ def test_share_count_is_read_from_the_nested_element():
     assert holdings[0]["value_usd_thousands"] == 577211815
 
 
-def test_target_report_date_follows_the_45_day_deadline():
+def test_target_report_date_follows_the_sec_business_day_deadline(monkeypatch):
+    monkeypatch.delenv("SEC_TARGET_REPORT_DATE", raising=False)
     t = ff.target_report_date
     assert t("2026-09-06") == "2026-06-30"
-    assert t("2026-08-16") == "2026-06-30"   # just past the deadline
-    assert t("2026-08-13") == "2026-03-31"   # deadline not reached yet
-    assert t("2026-02-16") == "2025-12-31"
-    assert t("2026-01-10") == "2025-12-31"
+    assert t("2026-08-16") == "2026-06-30"   # after August 14 filing deadline
+    assert t("2026-08-13") == "2026-03-31"   # before August 14
+    assert t("2026-02-16") == "2025-09-30"   # Presidents' Day, Q4 not due
+    assert t("2026-02-17") == "2025-09-30"   # Q4 deadline itself
+    assert t("2026-02-18") == "2025-12-31"   # first eligible day
+    assert t("2026-01-10") == "2025-09-30"
 
 
 class _Resp:
