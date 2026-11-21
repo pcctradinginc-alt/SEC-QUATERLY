@@ -357,7 +357,7 @@ def option_block(s: dict) -> str:
         ("Expiry", esc(c["expiration"]), f"{c['dte']} days"),
         ("Delta", f"{c['delta']:.2f}", (f"IV {c['implied_volatility']:.0%}" if c.get("implied_volatility") else "")),
         ("Bid / Ask", f"${c['bid']:.2f} / ${c['ask']:.2f}", f"spread {c['spread_pct']}%"),
-        ("Mid", f"${c['mid']:.2f}", "entry reference"),
+        ("Mid", f"${c['mid']:.2f}", "indicative, not a fill"),
         ("Liquidity", f"{c['volume']:,} / {c['open_interest']:,}", "vol / OI"),
         ("Max risk", f"${c['max_risk_per_contract']:,.0f}", f"BE ${c['breakeven']:,.2f}"),
     ]
