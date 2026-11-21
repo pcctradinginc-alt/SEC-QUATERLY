@@ -302,6 +302,10 @@ def build_scored_universe(
     for filer_name, filer_data in parsed["filers"].items():
         if "positions" not in filer_data:
             continue
+        # A strategic corporate treasury is not an independent stock-picker.
+        # Keep its EDGAR holdings in the parsed archive, not the buy ranking.
+        if filer_name in CORPORATE_STRATEGIC_FILERS:
+            continue
 
         mq_info         = manager_quality.get(filer_name, {})
         quality_score   = mq_info.get("quality_score", 0.5)
