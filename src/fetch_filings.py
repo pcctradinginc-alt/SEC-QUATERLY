@@ -40,7 +40,7 @@ def edgar_get(url: str) -> requests.Response:
 def target_report_date(as_of: str | None = None) -> str:
     """
     The quarter-end this run is about: the most recent quarter-end whose 13F
-    deadline (45 days later) has passed.
+    deadline (45 days later, US-business-day adjusted) has passed.
 
     Taking whatever 13F a CIK filed most recently is wrong - a filer that has
     not reported yet would contribute a year-old book, and that book would then
@@ -48,12 +48,15 @@ def target_report_date(as_of: str | None = None) -> str:
     """
     override = os.environ.get("SEC_TARGET_REPORT_DATE", "").strip()
     if override:
-        return override
+        q = date.fromisoformat(override)
+        if (q.month, q.day) not in ((3, 31), (6, 30), (9, 30), (12, 31)):
+            raise ValueError(f"Override is not a SEC quarter end: {override!r}")
+        return q.isoformat()
+    # Use exactly the same US-business-day deadline as date_check; a fixed
+    # 45-day offset can select the next quarter BEFORE that filing is due.
+    from date_check import latest_due_quarter
     today = date.fromisoformat(as_of or run_date())
-    ends = [date(today.year - 1, 12, 31), date(today.year, 3, 31),
-            date(today.year, 6, 30), date(today.year, 9, 30), date(today.year, 12, 31)]
-    due = [q for q in ends if (today - q).days >= 45]
-    return max(due).isoformat() if due else ends[0].isoformat()
+    return latest_due_quarter(today)[0]
 
 
 def get_latest_13f_filing(cik: str, want_report_date: str | None = None) -> dict | None:
