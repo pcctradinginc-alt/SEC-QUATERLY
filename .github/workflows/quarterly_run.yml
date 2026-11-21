@@ -136,7 +136,7 @@ jobs:
           git config --local user.name "GitHub Action"
           # data/insider_cache/ is deliberately git-ignored: it is a raw EDGAR
           # cache, and a stale snapshot can silently carry wrong data forward.
-          PATHS="data/holdings/ data/llm_cache/ data/notification_state.json reports/"
+          PATHS="data/holdings/ data/llm_cache/ reports/"
           MSG="📊 Quarterly 13F signal run $(date +%Y-%m-%d)"
 
           # These files are generated wholesale, so a three-way merge on them is
@@ -145,6 +145,10 @@ jobs:
           # now points at as the base and re-commit this run's output on top.
           commit_output() {
             git add $PATHS
+            # The checkpoint does not exist on --no-send / baseline-only runs.
+            if [ -f data/notification_state.json ]; then
+              git add data/notification_state.json
+            fi
             git diff --staged --quiet && return 1
             git commit -m "$MSG"
           }
