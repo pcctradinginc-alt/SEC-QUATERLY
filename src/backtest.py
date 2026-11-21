@@ -146,7 +146,11 @@ def option_outcome(stock: dict, signal_date_str: str) -> dict:
     if not contract:
         return {"option_status": "NO_OPTION", "option_reason": opt.get("status")}
 
-    entry = contract.get("mid")
+    # Mid-point fills are not guaranteed. Use ask for a hypothetical long
+    # call entry when available, and tag legacy mid-only snapshots explicitly.
+    ask = contract.get("ask")
+    entry = ask if ask is not None and float(ask) > 0 else contract.get("mid")
+    entry_basis = "ask" if ask is not None and float(ask) > 0 else "mid_legacy_proxy"
     strike = contract.get("strike")
     expiry = contract.get("expiration")
     if not (entry and strike and expiry):
@@ -156,8 +160,10 @@ def option_outcome(stock: dict, signal_date_str: str) -> dict:
         "option_symbol":     contract.get("symbol"),
         "option_strike":     strike,
         "option_expiration": expiry,
-        "option_entry_mid":  entry,
-        "option_max_risk":   contract.get("max_risk_per_contract"),
+        "option_entry_mid":  contract.get("mid"),
+        "option_entry_price": entry,
+        "option_entry_basis": entry_basis,
+        "option_max_risk":   round(float(entry) * 100, 2),
         "option_breakeven":  contract.get("breakeven"),
     }
 
