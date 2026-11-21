@@ -38,6 +38,7 @@ from config import (
 )
 import manager_quality as manager_quality_mod
 import multi_quarter
+from buy_signal import eligible_common_buy
 
 
 def load_parsed(today_str: str) -> dict:
@@ -314,23 +315,9 @@ def build_scored_universe(
 
         for pos in filer_data["positions"]:
             tx_type = pos["delta"]["type"]
-            # NO_BASELINE means this filer has no prior quarter on file, so the
-            # position cannot be scored as accumulation - it may have been held
-            # unchanged for years. It still counts for AUM and portfolio weight.
-            if tx_type not in ("NEW", "ADDED"):
-                continue
-            if pos["port_weight_pct"] < MIN_PORTFOLIO_WEIGHT_PCT:
-                continue
-            # Net short/hedged via puts - not a real conviction buy (Section 17).
-            if not pos.get("net_bullish", True):
-                continue
-            # Section 18: don't treat a likely merger/spin-off/share-class
-            # swap as a genuine new buy decision.
-            if pos.get("possible_corporate_action"):
-                continue
-            # Options-only exposure is not share accumulation. It stays in the
-            # book and is reported, but the share-count signal needs shares.
-            if pos.get("exposure_type", "COMMON_LONG") != "COMMON_LONG":
+            # Materiality / common-stock rules are identical for this-quarter
+            # scoring and consecutive-quarter accumulation.
+            if not eligible_common_buy(pos):
                 continue
 
             delta_pct = pos["delta"].get("delta_pct")
@@ -701,8 +688,8 @@ def run():
 
     # 3. Multi-quarter accumulation signals (Section 6)
     print("\n🔍 Analyzing multi-quarter position building...")
-    mq_signals = multi_quarter.build_multi_quarter_signals(today_str)
-    print(f"   {len(mq_signals)} tickers with 2+ build quarters")
+    mq_signals = multi_quarter.build_multi_quarter_signals(today_str, current_parsed=parsed)
+    print(f"   {len(mq_signals)} tickers with 2+ consecutive material-build quarters by the same filer/security")
 
     # 4. Buy-side universe
     scored = build_scored_universe(parsed, manager_quality, freshness_by_filer)
