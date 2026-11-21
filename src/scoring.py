@@ -33,6 +33,7 @@ from config import (
     EARLY_SMART_MONEY_MIN_AVG_QUALITY, EARLY_SMART_MONEY_MIN_FUNDS,
     FRESHNESS_K, FRESHNESS_QUARTER_DAYS, HIGH_CONVICTION_MIN_PCT,
     MIN_PORTFOLIO_WEIGHT_PCT, NEW_POSITION_BANDS, PRICE_ACTION_DOWNGRADE_PCT,
+    CORPORATE_STRATEGIC_FILERS, economic_group,
     PRICE_ACTION_STALE_PENALTY, PRICE_ACTION_WARN_PCT,
     PRICE_ACTION_WARN_PENALTY, RELATIVE_OUTSIZED_VS_MEDIAN,
 )
@@ -358,12 +359,25 @@ def build_scored_universe(
 # ── Consensus (Section 9) & buyer counting ────────────────────────────────────
 
 def count_buyers_per_ticker(scored: list[dict]) -> dict[str, list[str]]:
-    """All filers buying (NEW/ADDED) each ticker this run - unfiltered by cluster threshold."""
-    buyers: dict[str, list[str]] = defaultdict(list)
+    """Unique independent decision-makers per ticker (no strategic treasuries).
+
+    Return the best-quality representative filer name for downstream manager
+    quality lookups; one Li Lu investment process cannot cast two votes.
+    """
+    groups: dict[str, dict[str, dict]] = defaultdict(dict)
     for e in scored:
-        if e["ticker"]:
-            buyers[e["ticker"]].append(e["filer"])
-    return dict(buyers)
+        if not e["ticker"] or e["filer"] in CORPORATE_STRATEGIC_FILERS:
+            continue
+        group = economic_group(e["filer"])
+        old = groups[e["ticker"]].get(group)
+        if old is None or (
+            e["manager_quality_score"], e["filer"]
+        ) > (old["manager_quality_score"], old["filer"]):
+            groups[e["ticker"]][group] = e
+    return {
+        ticker: sorted(e["filer"] for e in by_group.values())
+        for ticker, by_group in groups.items()
+    }
 
 
 def compute_consensus_raw(scored: list[dict]) -> dict[str, float]:
@@ -372,14 +386,21 @@ def compute_consensus_raw(scored: list[dict]) -> dict[str, float]:
     over buying filers, per ticker. Unnormalized - min-max normalized later
     alongside the other Alpha Score components.
     """
-    raw: dict[str, float] = defaultdict(float)
+    # Legacy diagnostic alpha: aggregate independent groups, not multiple
+    # filings attributable to the same economic manager.
+    by_group: dict[str, dict[str, float]] = defaultdict(dict)
     for e in scored:
-        conviction      = e["port_weight_pct"] / 100.0
-        position_change = min(e["position_change_raw"] / 100.0, 3.0)  # cap extreme deltas
-        raw[e["ticker"]] += (
+        if not e["ticker"] or e["filer"] in CORPORATE_STRATEGIC_FILERS:
+            continue
+        conviction = e["port_weight_pct"] / 100.0
+        position_change = min(e["position_change_raw"] / 100.0, 3.0)
+        contribution = (
             e["manager_quality_score"] * conviction * position_change * e["freshness_score"]
         )
-    return dict(raw)
+        group = economic_group(e["filer"])
+        prior = by_group[e["ticker"]].get(group, 0.0)
+        by_group[e["ticker"]][group] = max(prior, contribution)
+    return {t: sum(groups.values()) for t, groups in by_group.items()}
 
 
 # ── Crowding (Section 13, Tier-2 proxy) ───────────────────────────────────────
